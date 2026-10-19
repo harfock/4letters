@@ -206,7 +206,7 @@ function hint(){
  if(!target){say('這個成語沒有可揭示的字。');return}
  revealCell(s,g,target.r+','+target.c,target.ch);sel=target.r+','+target.c;say('已揭示一字。');checkAll();render();
 }
-function checkOne(){const p=grid().ps[W];if(cells(p).map(val).join('')===p.word){state().completed[W]=true;checkAll();say('正確！')}else say('本詞尚未正確，請調整候選字。');render()}
+function checkOne(){const p=grid().ps[W];if(cells(p).map(val).join('')===p.word){checkAll();say(state().completed[W]?'正確！':'字詞已符合，請再檢查交叉格。')}else say('本詞尚未正確，請調整候選字。');render()}
 function clearSelected(){
  if(!sel){say('請先點選一個格子。');return}
  const s=state(),g=grid(),z=g.m.get(sel);
