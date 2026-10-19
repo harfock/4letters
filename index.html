@@ -103,10 +103,62 @@ button.primary{background:linear-gradient(135deg,#a6f0d5,#70d8c2);color:#093943;
  .next-float small{font-size:9px}
  .next-float button{font-size:11px;padding:9px 4px}
 }
+
+/* Responsive-first layout: never require page-level left/right scrolling */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+.layout-viewport{width:100%;max-width:100%;overflow-x:hidden;overflow-y:visible;touch-action:pan-y;overscroll-behavior-x:none}
+.layout,.layout.levels-open{width:100%;min-width:0;max-width:100%;display:grid;grid-template-columns:minmax(0,1fr);margin:0;gap:0}
+.game-panel{width:100%;min-width:0;max-width:100%;padding:clamp(7px,1.5vw,14px)}
+.layout aside{display:none!important}
+.board-row{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;width:100%;min-width:0;align-items:stretch}
+.board-row.has-next{grid-template-columns:112px minmax(0,1fr)}
+.boardwrap{width:100%;min-width:0;max-width:100%;overflow-x:hidden;overflow-y:auto;padding:6px;max-height:58vh}
+.board{width:max-content;max-width:100%;margin:0 auto;gap:1px}
+.cell{width:var(--cell);height:var(--cell);min-width:0;min-height:0;font-size:var(--cell-font,clamp(7px,2.3vw,20px));padding:0;border-radius:clamp(1px,calc(var(--cell)*.15),7px)}
+.cell .num{font-size:clamp(5px,calc(var(--cell)*.22),9px);top:0;left:1px}
+.candidate-panel,.actions,.level-panel{width:100%;min-width:0}
+.actions{gap:6px}
+.actions button{padding:8px 10px;min-height:40px}
+.level-panel[hidden],.next-float[hidden]{display:none!important}
+.level-panel{margin-top:10px!important;animation:panel-in .16s ease-out}
+.next-float{position:relative;inset:auto;min-width:0;max-width:100%;width:100%;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:8px;padding:10px 8px;border:1px solid rgba(255,209,102,.8);border-radius:14px;background:linear-gradient(155deg,#275869,#143d4e 78%);box-shadow:0 8px 22px rgba(0,10,25,.23),inset 0 1px 0 rgba(255,255,255,.08);text-align:center;animation:next-pop .2s ease-out;align-self:stretch}
+.next-float strong{font-size:13px;line-height:1.35;color:#ffdf8c}
+.next-float small{font-size:10px;line-height:1.4;color:#d3efea;overflow-wrap:anywhere}
+.next-float button{white-space:normal;padding:10px 6px;line-height:1.2;box-shadow:0 3px 0 rgba(0,25,30,.3)}
+@media(min-width:760px){
+ .board-row.has-next{grid-template-columns:108px minmax(0,1fr)}
+ .next-float{max-width:108px}
+}
+@media(max-width:759px){
+ header,main{padding-left:8px;padding-right:8px}
+ .summarybar{gap:6px;padding:7px}
+ #title{white-space:normal;font-size:12px}
+ .summary-metrics{gap:4px}
+ .summarymetric{padding:5px;font-size:10px}
+ .board-row.has-next{grid-template-columns:minmax(0,1fr);gap:6px}
+ .next-float{flex-direction:row;align-items:center;justify-content:space-between;text-align:left;padding:8px 9px;gap:8px}
+ .next-float strong{font-size:12px;flex:1}
+ .next-float small{font-size:10px;flex:1}
+ .next-float button{font-size:12px;min-width:88px;padding:9px 8px}
+ .boardwrap{max-height:52vh}
+ .candidate-panel{padding:9px}
+ .candidate-list{gap:8px}
+ .candidate-tile{width:44px;height:50px;min-width:44px}
+}
+@media(max-width:380px){
+ :root{--cell:30px}
+ header .top-stats{gap:3px}
+ header .stat{font-size:9px;padding:4px}
+ .summary-metrics{gap:3px}
+ .summarymetric{font-size:9px;padding:4px}
+ .next-float small{display:none}
+ .next-float button{min-width:82px}
+ .actions button{flex:1 1 auto;font-size:12px}
+}
+
 </style></head><body><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
-<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div class="boardwrap"><div id="board" class="board"></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section>
-<aside><section class="panel"><h3 style="margin-top:0">本關成語</h3><div id="words" class="wordlist"></div></section><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section></aside></div></div>
+<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
 <p class="foot">詞目以教育部《成語典》主條四字詞目為基礎；提示採遊戲內揭示字，不複製官方釋義。<a style="color:var(--mint)" href="https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html" target="_blank" rel="noopener">官方資料下載頁</a></p></main>
 <div id="modalback" class="modalback"><div class="modal"><h2 id="modalTitle">完成本關</h2><p id="modalBody"></p><div class="actions"><button id="review">留在本關</button><button id="advance" class="primary">下一關</button></div><small id="note"></small></div></div>
 <script>
@@ -159,7 +211,16 @@ function canDrop(k){
 }
 function render(){
  const g=grid(),s=state(),b=$('board');ensureTiles(s,g);
- b.innerHTML='';b.style.gridTemplateColumns='repeat('+(g.maxc-g.minc+1)+',var(--cell))';
+ b.innerHTML='';
+ const colCount=g.maxc-g.minc+1;
+ const wrap=$('boardWrap');
+ const available=Math.max(80,wrap.clientWidth-12);
+ const gap=colCount>18?1:2;
+ const cellSize=Math.max(7,Math.min(40,(available-gap*(colCount-1))/colCount));
+ b.style.setProperty('--cell',cellSize+'px');
+ b.style.setProperty('--cell-font',Math.max(6,Math.min(20,cellSize*.62))+'px');
+ b.style.gap=gap+'px';
+ b.style.gridTemplateColumns='repeat('+colCount+','+cellSize+'px)';
  const starts=new Map();g.ps.forEach((p,i)=>starts.set(p.row+','+p.col,i+1));
  for(let r=g.minr;r<=g.maxr;r++)for(let c=g.minc;c<=g.maxc;c++){
   const z=g.m.get(r+','+c),el=document.createElement('button');el.type='button';el.className='cell'+(z?'':' block');el.style.gridRow=r-g.minr+1;el.style.gridColumn=c-g.minc+1;
@@ -233,12 +294,11 @@ function renderCandidates(s){
  });
 }
 function setLevelPanelOpen(open){
- const panel=$('levelPanel'),layout=$('layout'),viewport=$('layoutViewport');
+ const panel=$('levelPanel'),layout=$('layout');
  panel.hidden=!open;
  layout.classList.toggle('levels-open',open);
  $('chooseLevelBtn').textContent=open?'收起關卡':'選擇關卡';
- if(open){viewport.scrollTo({left:viewport.scrollWidth,behavior:'smooth'})}
- else{viewport.scrollTo({left:0,behavior:'smooth'})}
+ if(open)panel.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 function switchLevel(i){
  cancelActiveDrag();close();setLevelPanelOpen(false);
@@ -409,22 +469,7 @@ $('export').onclick=()=>{save();const a=document.createElement('a'),u=URL.create
 $('import').onclick=()=>$('file').click();
 $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.state?.levels)throw Error('檔案格式不正確');S=d.state;for(const x of Object.values(S.levels)){if(!x.tileAssignment)x.tileAssignment={};if(!x.exhaustedTiles)x.exhaustedTiles=[]}L=0;render();say('進度已匯入。')}catch(x){alert('匯入失敗：'+x.message)}};r.readAsText(f)};
 setInterval(()=>{if(!D)return;const s=state();if(!s.finished){s.seconds++;S.total++;$('timer').textContent=fmt(s.seconds);$('total').textContent=fmt(S.total);save()}},1000);
-const pan=$('layoutViewport');
-if(pan){
- let panDown=false,panMoved=false,startX=0,startScroll=0;
- pan.addEventListener('pointerdown',e=>{
-  if(e.pointerType!=='mouse'||e.button!==0)return;
-  if(e.target.closest('button,input,a,.boardwrap,.candidate-panel'))return;
-  panDown=true;panMoved=false;startX=e.clientX;startScroll=pan.scrollLeft;
- });
- window.addEventListener('pointermove',e=>{
-  if(!panDown)return;
-  const dx=e.clientX-startX;if(Math.abs(dx)>4)panMoved=true;
-  if(panMoved){pan.scrollLeft=startScroll-dx;e.preventDefault()}
- },{passive:false});
- window.addEventListener('pointerup',()=>{panDown=false});
- window.addEventListener('pointercancel',()=>{panDown=false});
-}
+window.addEventListener('resize',()=>{if(D)render()});
 fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部署');return r.json()}).then(d=>{
  if(!d.levels||d.levels.length!==21)throw Error('棋盤資料格式錯誤');
  D=d;
