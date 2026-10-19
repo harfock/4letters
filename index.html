@@ -277,9 +277,40 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
   overscroll-behavior-y:contain;
  }
 }
+
+/* Board viewport navigation and zoom: all floating controls are anchored to the
+   board stage, so landscape arrows stay at the board edge rather than the phone edge. */
+#boardStage{position:relative;width:100%;min-width:0;isolation:isolate}
+#boardWrap.boardwrap{position:relative;width:100%;min-width:0;max-width:100%;height:min(58vh,620px);max-height:58vh;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+#board.board{width:max-content;max-width:none;margin:0 auto}
+.board-nav{position:absolute;inset:0;z-index:8;pointer-events:none}
+.board-nav button{position:absolute;pointer-events:auto;display:flex;align-items:center;justify-content:center;width:38px;height:38px;min-width:38px;padding:0;border:1px solid rgba(255,224,154,.88);border-radius:50%;font-size:23px;font-weight:900;line-height:1;color:#073744;background:rgba(166,240,213,.94);box-shadow:0 3px 12px rgba(0,0,0,.35)}
+.board-nav button[hidden]{display:none!important}
+#navUp{top:7px;left:50%;transform:translateX(-50%)}
+#navDown{bottom:7px;left:50%;transform:translateX(-50%)}
+#navLeft{left:7px;top:50%;transform:translateY(-50%)}
+#navRight{right:7px;top:50%;transform:translateY(-50%)}
+.board-zoom{position:absolute;right:7px;bottom:7px;display:flex;align-items:center;gap:4px;padding:4px;border:1px solid rgba(116,220,230,.48);border-radius:999px;background:rgba(5,31,43,.9);box-shadow:0 3px 12px rgba(0,0,0,.34);pointer-events:auto}
+.board-zoom button{position:static;width:34px;height:34px;min-width:34px;border:0;border-radius:50%;padding:0;font-size:23px;line-height:1;background:linear-gradient(145deg,#a6f0d5,#70d8c2);color:#093943}
+.board-zoom span{min-width:43px;text-align:center;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;color:#f5fbf7}
+@media (orientation:landscape){
+ #boardWrap.boardwrap{height:calc(100dvh - 190px);max-height:calc(100dvh - 190px);min-height:150px}
+}
+@media(max-width:759px) and (orientation:portrait){
+ #boardWrap.boardwrap{height:min(56vh,600px);max-height:56vh}
+ .board-nav button{width:34px;height:34px;min-width:34px;font-size:21px}
+ .board-zoom{right:5px;bottom:5px;gap:2px}
+ .board-zoom button{width:31px;height:31px;min-width:31px;font-size:21px}
+}
+@media (orientation:landscape) and (max-height:520px) and (pointer:coarse){
+ #boardWrap.boardwrap{height:calc(100dvh - 150px);max-height:calc(100dvh - 150px);min-height:120px}
+ .board-nav button{width:31px;height:31px;min-width:31px;font-size:20px}
+ .board-zoom{right:4px;bottom:4px}
+ .board-zoom button{width:28px;height:28px;min-width:28px}
+}
 </style></head><body><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
-<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
+<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
 <p class="foot">詞目以教育部《成語典》主條四字詞目為基礎；提示採遊戲內揭示字，不複製官方釋義。<a style="color:var(--mint)" href="https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html" target="_blank" rel="noopener">官方資料下載頁</a></p></main>
 <div id="modalback" class="modalback"><div class="modal"><h2 id="modalTitle">完成本關</h2><p id="modalBody"></p><div class="actions"><button id="review">留在本關</button><button id="advance" class="primary">下一關</button></div><small id="note"></small></div></div>
 <script>
@@ -293,7 +324,7 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
    Only a gesture that starts on a candidate tile is arbitrated by the tile's
    pointer handler below: short movement scrolls; a stationary hold starts a drag. */
 
-let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null;
+let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
 let lastTouchCellTap=null,lastTouchDoubleTap=null,suppressTouchCellClick=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const fresh=()=>({levels:{},total:0});
@@ -318,6 +349,45 @@ function grid(){
   m.get(k).ids.push(i);
  }));
  return{ps,m,minr,minc,maxr,maxc};
+}
+function boardCellSize(available,gap){
+ const first=D.levels[0].placements;
+ let minc=Infinity,maxc=-Infinity;
+ first.forEach(p=>cells(p).forEach(x=>{minc=Math.min(minc,x.c);maxc=Math.max(maxc,x.c)}));
+ const firstCols=maxc-minc+1;
+ return Math.max(7,Math.min(40,(available-gap*(firstCols-1))/firstCols));
+}
+function focusBoardCell(key){
+ if(!key)return;
+ const wrap=$('boardWrap'),cell=document.querySelector('.cell[data-key="'+key+'"]');
+ if(!wrap||!cell)return;
+ const wr=wrap.getBoundingClientRect(),cr=cell.getBoundingClientRect();
+ const topDelta=cr.top-wr.top, bottomDelta=cr.bottom-wr.bottom;
+ if(topDelta<0)wrap.scrollTop+=topDelta-(wrap.clientHeight-cr.height)/2;
+ else if(bottomDelta>0)wrap.scrollTop+=bottomDelta+(cr.height-wrap.clientHeight)/2;
+ const leftDelta=cr.left-wr.left,rightDelta=cr.right-wr.right;
+ if(leftDelta<0)wrap.scrollLeft+=leftDelta-(wrap.clientWidth-cr.width)/2;
+ else if(rightDelta>0)wrap.scrollLeft+=rightDelta+(cr.width-wrap.clientWidth)/2;
+ updateBoardControls();
+}
+function applyPendingBoardFocus(){
+ if(!pendingBoardFocus)return;
+ const key=pendingBoardFocus;pendingBoardFocus=null;
+ requestAnimationFrame(()=>focusBoardCell(key));
+}
+function updateBoardControls(){
+ const wrap=$('boardWrap');if(!wrap)return;
+ const canLeft=wrap.scrollLeft>2,canRight=wrap.scrollLeft+wrap.clientWidth<wrap.scrollWidth-2;
+ const canUp=wrap.scrollTop>2,canDown=wrap.scrollTop+wrap.clientHeight<wrap.scrollHeight-2;
+ $('navLeft').hidden=!canLeft;$('navRight').hidden=!canRight;
+ $('navUp').hidden=!canUp;$('navDown').hidden=!canDown;
+ const s=state(),zoom=Math.round((Number(s.zoom)||1)*100);
+ $('zoomLabel').textContent=zoom+'%';
+}
+function setZoom(delta){
+ const s=state(),current=Number(s.zoom)||1;
+ s.zoom=Math.max(.65,Math.min(2.5,Math.round((current+delta)*100)/100));
+ save();render();
 }
 function ensureTiles(s,g){
  if(!s.tileAssignment)s.tileAssignment={};
@@ -356,9 +426,11 @@ function render(){
  b.innerHTML='';
  const colCount=g.maxc-g.minc+1;
  const wrap=$('boardWrap');
+ const oldScrollTop=wrap.scrollTop,oldScrollLeft=wrap.scrollLeft;
  const available=Math.max(80,wrap.clientWidth-12);
  const gap=colCount>18?1:2;
- const cellSize=Math.max(7,Math.min(40,(available-gap*(colCount-1))/colCount));
+ const baseCellSize=boardCellSize(available,gap);
+ const cellSize=Math.max(7,Math.min(100,baseCellSize*(Number(s.zoom)||1)));
  b.style.setProperty('--cell',cellSize+'px');
  b.style.setProperty('--cell-font',Math.max(6,Math.min(20,cellSize*.62))+'px');
  b.style.gap=gap+'px';
@@ -418,6 +490,7 @@ function render(){
   }
   b.append(el);
  }
+ wrap.scrollTop=oldScrollTop;wrap.scrollLeft=oldScrollLeft;
  $('title').textContent='第 '+(L+1)+' 關 · '+g.ps.length+' 個成語';
  $('doneCount').textContent=Object.values(s.completed).filter(Boolean).length+' / '+g.ps.length;
  $('timer').textContent=fmt(s.seconds);
@@ -441,6 +514,8 @@ function render(){
  $('levels').innerHTML='';
  D.levels.forEach((p,i)=>{const el=document.createElement('button');el.textContent=i+1;el.className=(i===L?'current ':'')+(S.levels[i+1]?.finished?'done':'');el.onclick=()=>switchLevel(i);$('levels').append(el)});
  renderCandidates(s);
+ updateBoardControls();
+ applyPendingBoardFocus();
  $('count').textContent=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
  $('total').textContent=fmt(S.total);save();
 }
@@ -470,7 +545,11 @@ function setLevelPanelOpen(open){
 }
 function switchLevel(i){
  cancelActiveDrag();close();setLevelPanelOpen(false);
- L=Math.max(0,Math.min(20,i));W=0;sel='';render();
+ L=Math.max(0,Math.min(20,i));W=0;sel='';
+ const s=state(),g=grid();
+ const clue=Object.keys(s.revealed||{})[0];
+ pendingBoardFocus=clue||(()=>{const p=g.ps.find((x,j)=>!s.completed[j]);if(!p)return null;const x=cells(p)[0];return x.r+','+x.c})();
+ render();
 }
 function say(t){$('toast').textContent=t}
 function beginDrag(e,tile){
@@ -631,6 +710,7 @@ function hint(){
  if(chosen<0){say('本關所有成語都已完成，沒有更多提示。');return}
  W=chosen;
  const k=target.r+','+target.c;
+ pendingBoardFocus=k;
  revealCell(s,g,k,target.ch);
  sel=k;
  say('提示：第 '+(chosen+1)+' 組「'+g.ps[chosen].word+'」已揭示「'+target.ch+'」。');
@@ -658,7 +738,13 @@ $('nextLevelBtn').onclick=()=>{
  switchLevel(last?0:L+1);
  if(last)say('已重新開始第 1 關。');
 };
-$('hint').onclick=hint;$('hintFloat').onclick=hint;$('check').onclick=checkOne;$('clear').onclick=clearSelected;
+$('hint').onclick=hint;$('hintFloat').onclick=hint;$('check').onclick=checkOne;
+$('zoomOut').onclick=()=>setZoom(-.15);$('zoomIn').onclick=()=>setZoom(.15);
+$('navLeft').onclick=()=>{$('boardWrap').scrollBy({left:-Math.max(100,$('boardWrap').clientWidth*.72),behavior:'smooth'})};
+$('navRight').onclick=()=>{$('boardWrap').scrollBy({left:Math.max(100,$('boardWrap').clientWidth*.72),behavior:'smooth'})};
+$('navUp').onclick=()=>{$('boardWrap').scrollBy({top:-Math.max(90,$('boardWrap').clientHeight*.72),behavior:'smooth'})};
+$('navDown').onclick=()=>{$('boardWrap').scrollBy({top:Math.max(90,$('boardWrap').clientHeight*.72),behavior:'smooth'})};
+$('boardWrap').addEventListener('scroll',updateBoardControls,{passive:true});$('clear').onclick=clearSelected;
 $('reset').onclick=()=>{if(confirm('清除本關答案並重玩？')){delete S.levels[L+1];sel='';W=0;save();render()}};
 $('review').onclick=close;$('advance').onclick=goNext;
 $('export').onclick=()=>{save();const a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({version:3,state:S},null,2)],{type:'application/json'}));a.href=u;a.download='idiom-progress.json';a.click();URL.revokeObjectURL(u)};
@@ -683,6 +769,8 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
  D=d;
  return fetch('data/strokes.json').then(r=>{if(!r.ok)throw Error('筆畫資料尚未部署');return r.json()}).then(map=>{STROKES=map}).catch(e=>{STROKES={};console.warn('Stroke-count data unavailable; candidates will use character-code order.',e)}).then(()=>{
   try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
+  const initial=state(),initialClue=Object.keys(initial.revealed||{})[0];
+  if(initialClue)pendingBoardFocus=initialClue;
   render();
   say(Object.keys(STROKES).length?'棋盤已載入。候選字按筆畫由少至多排列；拖曳時會自動吸附到附近的正確空格。':'棋盤已載入；筆畫資料暫不可用，候選字已用備用排序。');
  });
