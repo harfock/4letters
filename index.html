@@ -205,7 +205,7 @@ document.addEventListener('contextmenu',e=>{e.preventDefault();return false;});
 document.addEventListener('dragstart',e=>e.preventDefault());
 document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea'))e.preventDefault();});
 
-let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null;
+let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingTileTouch=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const fresh=()=>({levels:{},total:0});
 function state(){
@@ -353,13 +353,80 @@ function beginDrag(e,tile){
  if(e.pointerType==='mouse'&&e.button!==0)return;
  const s=state(),g=grid();ensureTiles(s,g);
  if(!availableTiles(s).some(t=>t.id===tile.id))return;
+ // Touch on a candidate tile is ambiguous: a quick swipe scrolls the page,
+ // while a brief hold arms the actual letter drag.
+ if(e.pointerType==='touch'){
+  cancelPendingTilePointer();
+  const pending={
+   tile,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,
+   lastX:e.clientX,lastY:e.clientY,mode:'pending',timer:null
+  };
+  pendingTileTouch=pending;
+  e.preventDefault();
+  pending.timer=setTimeout(()=>{
+   if(pendingTileTouch!==pending||pending.mode!=='pending')return;
+   removePendingTileListeners();
+   pendingTileTouch=null;
+   startTileDrag({
+    pointerType:'touch',button:0,pointerId:pending.pointerId,
+    clientX:pending.lastX,clientY:pending.lastY,
+    preventDefault(){}
+   },pending.tile);
+  },220);
+  document.addEventListener('pointermove',handlePendingTileMove,{passive:false});
+  document.addEventListener('pointerup',finishPendingTilePointer);
+  document.addEventListener('pointercancel',finishPendingTilePointer);
+  return;
+ }
+ startTileDrag(e,tile);
+}
+function startTileDrag(e,tile){
+ if(e.pointerType==='mouse'&&e.button!==0)return;
+ const s=state(),g=grid();ensureTiles(s,g);
+ if(!availableTiles(s).some(t=>t.id===tile.id))return;
  e.preventDefault();cancelActiveDrag(false);
  const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.textContent=tile.char;ghost.setAttribute('aria-hidden','true');document.body.append(ghost);
  activeDrag={tile,tileId:tile.id,pointerId:e.pointerId,ghost,targetKey:null};
- moveDrag(e);
+ ghost.style.left=e.clientX+'px';
+ ghost.style.top=Math.max(42,e.clientY-72)+'px';
  document.addEventListener('pointermove',moveDrag,{passive:false});
  document.addEventListener('pointerup',endDrag);
  document.addEventListener('pointercancel',cancelActiveDrag);
+}
+function removePendingTileListeners(){
+ document.removeEventListener('pointermove',handlePendingTileMove);
+ document.removeEventListener('pointerup',finishPendingTilePointer);
+ document.removeEventListener('pointercancel',finishPendingTilePointer);
+}
+function cancelPendingTilePointer(){
+ if(pendingTileTouch&&pendingTileTouch.timer)clearTimeout(pendingTileTouch.timer);
+ pendingTileTouch=null;
+ removePendingTileListeners();
+}
+function handlePendingTileMove(e){
+ const p=pendingTileTouch;
+ if(!p||e.pointerId!==p.pointerId)return;
+ const dx=e.clientX-p.startX,dy=e.clientY-p.startY;
+ if(p.mode==='pending'&&Math.hypot(dx,dy)>8){
+  p.mode='scroll';
+  if(p.timer)clearTimeout(p.timer);
+  p.timer=null;
+ }
+ if(p.mode==='scroll'){
+  e.preventDefault();
+  // The tile itself disables native panning so that long-press drag remains
+  // reliable; emulate the same vertical page pan for quick swipes begun on it.
+  const delta=p.lastY-e.clientY;
+  if(delta)window.scrollBy(0,delta);
+  p.lastX=e.clientX;p.lastY=e.clientY;
+ }
+}
+function finishPendingTilePointer(e){
+ const p=pendingTileTouch;
+ if(!p||e.pointerId!==p.pointerId)return;
+ if(p.timer)clearTimeout(p.timer);
+ pendingTileTouch=null;
+ removePendingTileListeners();
 }
 function dragVisualPoint(e){
  // The floating tile uses translate(-50%,-50%), so its CSS top is its visual centre.
