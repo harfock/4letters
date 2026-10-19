@@ -388,6 +388,7 @@ function render(){
     if(lastTouchDoubleTap&&lastTouchDoubleTap.k===k&&Date.now()-lastTouchDoubleTap.time<700)return;
     returnFilledLetter(k);
    };
+  }
   b.append(el);
  }
  $('title').textContent='第 '+(L+1)+' 關 · '+g.ps.length+' 個成語';
