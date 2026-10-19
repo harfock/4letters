@@ -85,8 +85,23 @@ button.primary{background:linear-gradient(135deg,#a6f0d5,#70d8c2);color:#093943;
 @media(max-width:800px){
  .layout{width:900px;min-width:900px;grid-template-columns:minmax(0,1fr)}
  .layout.levels-open{grid-template-columns:minmax(0,1fr) 245px}
+ .layout:not(.levels-open) aside{display:none}
  .board-row.has-next{grid-template-columns:100px minmax(0,1fr)}
  .next-float{padding:10px 6px;gap:7px}
+}
+
+/* Level picker stays collapsed until requested; completion action floats beside the grid. */
+.layout:not(.levels-open) aside{display:none}
+.layout.levels-open aside{display:block}
+#chooseLevelBtn{white-space:nowrap}
+.board-row.has-next .next-float{align-self:stretch;position:sticky;left:0}
+@media(max-width:800px){
+ .layout.levels-open{grid-template-columns:minmax(0,1fr) 245px}
+ .layout.levels-open aside{display:block}
+ .board-row.has-next{grid-template-columns:96px minmax(0,1fr)}
+ .next-float strong{font-size:12px}
+ .next-float small{font-size:9px}
+ .next-float button{font-size:11px;padding:9px 4px}
 }
 </style></head><body><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
