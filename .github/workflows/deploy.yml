@@ -1,0 +1,39 @@
+name: Build and deploy game
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install openpyxl
+      - name: Download official MOE idiom data
+        run: curl -L --fail --retry 3 -o /tmp/source.zip https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/download/dict_idioms_2020_20260929.zip
+      - name: Extract workbook
+        run: |
+          python - <<'PY'
+          import zipfile
+          z=zipfile.ZipFile('/tmp/source.zip')
+          files=[n for n in z.namelist() if n.lower().endswith('.xlsx')]
+          if not files: raise SystemExit('Official ZIP contains no XLSX workbook')
+          with open('/tmp/source.xlsx','wb') as f: f.write(z.read(files[0]))
+          PY
+      - name: Generate and validate static levels
+        run: python tools/build_levels.py /tmp/source.xlsx public/data/levels.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - uses: actions/deploy-pages@v4
