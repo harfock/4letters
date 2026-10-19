@@ -154,17 +154,18 @@ function dropTile(tile,k){
 function releaseTileAt(s,k){if(s.tileAssignment[k])delete s.tileAssignment[k];delete s.letters[k]}
 function revealCell(s,g,k,ch){
  if(s.revealed[k])return;
- const oldTileId=s.tileAssignment[k];
- if(oldTileId){delete s.tileAssignment[k];delete s.letters[k]}
  const current=s.letters[k];
+ const oldTileId=s.tileAssignment[k];
+ const oldTile=oldTileId?s.tiles.find(t=>t.id===oldTileId):null;
+ if(oldTileId){delete s.tileAssignment[k];delete s.letters[k]}
  if(current===ch){
+  if(oldTile&&oldTile.char===ch&&!s.exhaustedTiles.includes(oldTile.id))s.exhaustedTiles.push(oldTile.id);
   s.revealed[k]=ch;
-  if(oldTileId&&!s.exhaustedTiles.includes(oldTileId))s.exhaustedTiles.push(oldTileId);
   return;
  }
  delete s.letters[k];
  const used=assignedIds(s),spent=exhaustedIds(s);
- let clueTile=s.tiles.find(t=>t.char===ch&&!used.has(t.id)&&!spent.has(t.id));
+ let clueTile=oldTile&&oldTile.char===ch?oldTile:s.tiles.find(t=>t.char===ch&&!used.has(t.id)&&!spent.has(t.id));
  if(!clueTile){
   for(const [otherKey,tileId] of Object.entries(s.tileAssignment)){
    const tile=s.tiles.find(t=>t.id===tileId),z=g.m.get(otherKey);
