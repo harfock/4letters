@@ -81,9 +81,11 @@ button.primary{background:linear-gradient(135deg,#a6f0d5,#70d8c2);color:#093943;
 .next-float strong{font-size:13px;line-height:1.35;color:#ffdf8c}
 .next-float small{font-size:10px;line-height:1.45;color:#d3efea;overflow-wrap:anywhere}
 .next-float button{white-space:normal;padding:10px 7px;line-height:1.2;box-shadow:0 3px 0 rgba(0,25,30,.3)}
-/* Brief celebratory shimmer on the persistent level-complete message. */
-.next-float.finish-shine{animation:finish-border-shine 1.15s ease-out 1}
-.next-float.finish-shine:before{animation:finish-glow-shine 1.15s ease-out 1}
+/* Keep a visible next-level message outlined by a continuous flashing gold border. */
+.next-float:not([hidden]){animation:next-pop .2s ease-out,finish-border-shine 1.15s ease-in-out .2s infinite}
+.next-float:not([hidden]):before{animation:finish-glow-shine 1.15s ease-in-out .2s infinite}
+.next-float.finish-shine{animation:next-pop .2s ease-out,finish-border-shine 1.15s ease-in-out .2s infinite}
+.next-float.finish-shine:before{animation:finish-glow-shine 1.15s ease-in-out .2s infinite}
 @keyframes finish-border-shine{
  0%{border-color:#fff7cc;box-shadow:0 0 0 0 rgba(255,226,132,0),0 8px 22px rgba(0,10,25,.28),inset 0 1px 0 rgba(255,255,255,.08)}
  24%{border-color:#fffbe5;box-shadow:0 0 0 3px rgba(255,226,132,.52),0 0 26px 8px rgba(255,215,103,.5),0 8px 22px rgba(0,10,25,.28)}
@@ -100,7 +102,7 @@ button.primary{background:linear-gradient(135deg,#a6f0d5,#70d8c2);color:#093943;
 .level-time-popup span{font-size:14px;font-weight:750;letter-spacing:.04em;color:#ffe8a6}
 .level-time-popup strong{font-size:clamp(32px,8vw,48px);line-height:1.05;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(255,225,141,.4)}
 @keyframes level-time-pop{from{opacity:0;transform:translate(-50%,-50%) scale(.86)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-@media(prefers-reduced-motion:reduce){.next-float.finish-shine,.next-float.finish-shine:before,.level-time-popup{animation-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){.next-float:not([hidden]),.next-float:not([hidden]):before,.next-float.finish-shine,.next-float.finish-shine:before,.level-time-popup{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 @keyframes next-pop{from{opacity:0;transform:translateY(4px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(max-width:800px){
  .layout{width:900px;min-width:900px;grid-template-columns:minmax(0,1fr)}
