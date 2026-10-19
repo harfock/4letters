@@ -9,7 +9,7 @@
 <script>
 (()=>{'use strict';const $=x=>document.getElementById(x),KEY='idiom-crossword-progress-v1';let D,S,L=0,W=0,sel='',advanceTimer=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'),fresh=()=>({levels:{},total:0});
-function state(){return S.levels[L+1]||(S.levels[L+1]={letters:{},revealed:{},completed:{},seconds:0,finished:false})}
+function state(){let key=L+1;if(!S.levels[key]){let s=S.levels[key]={letters:{},revealed:{},completed:{},seconds:0,finished:false};if(D&&D.levels[L])D.levels[L].placements.forEach(p=>{if(p.initialReveal){let c=cells(p)[0];s.revealed[c.r+','+c.c]=c.ch}})}return S.levels[key]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function cells(p){return [...p.word].map((ch,i)=>({r:p.row+(p.direction==='down'?i:0),c:p.col+(p.direction==='across'?i:0),ch}))}
 function grid(){let ps=D.levels[L].placements,m=new Map(),minr=1e9,minc=1e9,maxr=-1e9,maxc=-1e9;ps.forEach((p,i)=>cells(p).forEach(x=>{minr=Math.min(minr,x.r);minc=Math.min(minc,x.c);maxr=Math.max(maxr,x.r);maxc=Math.max(maxc,x.c);let k=x.r+','+x.c;if(!m.has(k))m.set(k,{r:x.r,c:x.c,ids:[]});m.get(k).ids.push(i)}));return{ps,m,minr,minc,maxr,maxc}}
