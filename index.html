@@ -134,7 +134,14 @@ function render(){
    if(z.ids.includes(W))el.classList.add('active');
    if(isLocked(z,s))el.classList.add('locked');
    if(starts.has(k)){const n=document.createElement('span');n.className='num';n.textContent=starts.get(k);el.textContent='';el.append(n,document.createTextNode(letter))}
-   el.onclick=()=>{sel=k;if(!z.ids.includes(W))W=z.ids[0];say(isLocked(z,s)?'這格已屬於完成的成語。':'已選取格子；把候選字拖到空格。');render()};
+   el.onclick=()=>{
+    sel=k;if(!z.ids.includes(W))W=z.ids[0];
+    say(isLocked(z,state())?'這格已屬於已完成的成語。':'已選取格子；雙擊已填字可退回候選字區。');
+    document.querySelectorAll('.cell[data-key]').forEach(cell=>{
+     const info=g.m.get(cell.dataset.key);
+     cell.classList.toggle('active',!!info&&info.ids.includes(W));
+    });
+   };
    el.ondblclick=ev=>{
     ev.preventDefault();ev.stopPropagation();
     const current=state();
