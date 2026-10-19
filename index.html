@@ -7,7 +7,7 @@
 <p class="foot">詞目以教育部《成語典》主條四字詞目為基礎；提示採遊戲內揭示字，不複製官方釋義。<a style="color:var(--mint)" href="https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html" target="_blank" rel="noopener">官方資料下載頁</a></p></main>
 <div id="modalback" class="modalback"><div class="modal"><h2 id="modalTitle">完成本關</h2><p id="modalBody"></p><div class="actions"><button id="review">留在本關</button><button id="advance" class="primary">下一關</button></div><small id="note"></small></div></div>
 <script>
-(()=>{'use strict';const $=x=>document.getElementById(x),KEY='idiom-crossword-progress-v1';let D,S,L=0,W=0,sel='',advanceTimer=null;
+(()=>{'use strict';const $=x=>document.getElementById(x),KEY='idiom-crossword-progress-v2';let D,S,L=0,W=0,sel='',advanceTimer=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'),fresh=()=>({levels:{},total:0});
 function state(){let key=L+1;if(!S.levels[key]){let s=S.levels[key]={letters:{},revealed:{},completed:{},seconds:0,finished:false};if(D&&D.levels[L])D.levels[L].placements.forEach(p=>{if(p.initialReveal){cells(p).slice(0,p.initialReveal).forEach(c=>{s.revealed[c.r+','+c.c]=c.ch})}})}return S.levels[key]}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
