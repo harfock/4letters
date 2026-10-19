@@ -23,7 +23,26 @@ $('count').textContent=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.c
 function switchLevel(i){close();L=Math.max(0,Math.min(20,i));W=0;sel='';render()}
 function say(t){$('toast').textContent=t}
 function put(){let chars=[...$('char').value.trim()];if(!chars.length)return;let g=grid();if(!sel){let c=cells(g.ps[W])[0];sel=c.r+','+c.c}for(let ch of chars){let k=sel;if(state().revealed[k])continue;state().letters[k]=ch;let p=g.ps[W],cs=cells(p),i=cs.findIndex(x=>x.r+','+x.c===k);if(i>=0&&i<cs.length-1)sel=cs[i+1].r+','+cs[i+1].c} $('char').value='';checkAll();render();$('char').focus()}
-function checkAll(){let s=state(),g=grid();g.ps.forEach((p,i)=>{if(s.completed[i])return;let cs=cells(p);if(cs.map(val).join('')===p.word){s.completed[i]=true;cs.forEach((x,j)=>s.letters[x.r+','+x.c]=p.word[j]);cs.forEach(x=>g.m.get(x.r+','+x.c).ids.forEach(j=>{if(j!==i&&!s.completed[j]&&!g.ps[j].initialReveal){let c=cells(g.ps[j])[0];s.revealed[c.r+','+c.c]=c.ch}}));say('答對：'+p.word+'！已揭示相交成語的提示字。'}});if(Object.values(s.completed).filter(Boolean).length===g.ps.length&&!s.finished){s.finished=true;complete()}}
+function checkAll(){
+let s=state(),g=grid();
+g.ps.forEach((p,i)=>{
+ if(s.completed[i])return;
+ let cs=cells(p);
+ if(cs.map(val).join('')===p.word){
+  s.completed[i]=true;
+  cs.forEach((x,j)=>{s.letters[x.r+','+x.c]=p.word[j]});
+  cs.forEach(x=>{
+   g.m.get(x.r+','+x.c).ids.forEach(j=>{
+    if(j!==i&&!s.completed[j]&&!g.ps[j].initialReveal){
+     let c=cells(g.ps[j])[0];s.revealed[c.r+','+c.c]=c.ch;
+    }
+   });
+  });
+  say('答對：'+p.word+'！已揭示相交成語的提示字。');
+ }
+});
+if(Object.values(s.completed).filter(Boolean).length===g.ps.length&&!s.finished){s.finished=true;complete()}
+}
 function hint(){let p=grid().ps[W],c=cells(p).find(x=>!val(x))||cells(p)[0];state().revealed[c.r+','+c.c]=c.ch;sel=c.r+','+c.c;say('已揭示一字。');checkAll();render()}
 function checkOne(){let p=grid().ps[W];if(cells(p).map(val).join('')===p.word){state().completed[W]=true;checkAll();say('正確！')}else say('本詞尚未正確。');render()}
 function complete(){ $('modalTitle').textContent=L===20?'恭喜完成全部 21 關！':'第 '+(L+1)+' 關完成！';$('modalBody').textContent='本關用時 '+fmt(state().seconds)+'。累計完成 '+$('count').textContent+' 個成語。';$('advance').textContent=L===20?'重玩第 1 關':'下一關';$('modalback').classList.add('show');let n=3;advanceTimer=setInterval(()=>{n--;if(n<=0)goNext();else $('note').textContent=n+' 秒後自動前往下一關'},1000)}
