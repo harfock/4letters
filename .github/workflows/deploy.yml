@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -47,6 +47,17 @@ jobs:
           PY
       - name: Generate and validate static levels
         run: python tools/build_levels.py /tmp/source.xlsx public/data/levels.json
+      - name: Keep generated levels available to all Pages sources
+        run: |
+          mkdir -p data
+          cp public/data/levels.json data/levels.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/levels.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update generated crossword level data"
+            git push origin HEAD:main
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
