@@ -264,12 +264,15 @@ function render(){
   $('completionTitle').textContent=L===20?'全部 21 關完成！':'第 '+(L+1)+' 關完成';
   $('completionDetail').textContent=L===20?'總用時 '+fmt(S.total)+' · '+completed+'/420':'本關用時 '+fmt(s.seconds);
  }
- $('words').innerHTML='';
- g.ps.forEach((p,i)=>{
-  const el=document.createElement('button');el.className='wordrow'+(i===W?' active ':'')+(s.completed[i]?' done':'');
-  el.innerHTML='<span class="n">'+(i+1)+'</span><span class="desc">'+(s.completed[i]?p.word:(p.direction==='across'?'橫向':'直向')+' · '+(cells(p).some(c=>s.revealed[c.r+','+c.c])?'有提示字':'待解鎖'))+'</span><span>'+(s.completed[i]?'✓':'›')+'</span>';
-  el.onclick=()=>{W=i;const c=cells(p)[0];sel=c.r+','+c.c;render()};$('words').append(el);
- });
+ const words=$('words');
+ if(words){
+  words.innerHTML='';
+  g.ps.forEach((p,i)=>{
+   const el=document.createElement('button');el.className='wordrow'+(i===W?' active ':'')+(s.completed[i]?' done':'');
+   el.innerHTML='<span class="n">'+(i+1)+'</span><span class="desc">'+(s.completed[i]?p.word:(p.direction==='across'?'橫向':'直向')+' · '+(cells(p).some(c=>s.revealed[c.r+','+c.c])?'有提示字':'待解鎖'))+'</span><span>'+(s.completed[i]?'✓':'›')+'</span>';
+   el.onclick=()=>{W=i;const c=cells(p)[0];sel=c.r+','+c.c;render()};words.append(el);
+  });
+ }
  $('levels').innerHTML='';
  D.levels.forEach((p,i)=>{const el=document.createElement('button');el.textContent=i+1;el.className=(i===L?'current ':'')+(S.levels[i+1]?.finished?'done':'');el.onclick=()=>switchLevel(i);$('levels').append(el)});
  renderCandidates(s);
