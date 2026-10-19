@@ -33,14 +33,17 @@ def make_level(pool,n,level):
         used={candidates[0]['word']}; remaining=[x for x in candidates[1:] if x['word'] not in used]
         while len(ps)<n:
             occ=collections.defaultdict(list)
+            cross=collections.defaultdict(list)
             for pi,p in enumerate(ps):
-                for pos,ch in cells(p).items(): occ[pos].append((pi,ch,p['direction']))
+                for pos,ch in cells(p).items():
+                    occ[pos].append((pi,ch,p['direction']))
+                    cross[(ch,p['direction'])].append(pos)
             choices=[]
             for item in remaining:
                 for d in ('across','down'):
+                    other='down' if d=='across' else 'across'
                     for off,ch in enumerate(item['word']):
-                        for (r,c),entries in occ.items():
-                            if not any(ec==ch and ed!=d for _,ec,ed in entries): continue
+                        for r,c in cross.get((ch,other),[]):
                             p={'word':item['word'],'pinyin':item['pinyin'],'row':r-(off if d=='down' else 0),'col':c-(off if d=='across' else 0),'direction':d,'initialReveal':False,'clue':''}
                             nc=cells(p); valid=True; crossings=0
                             for pos,cc in nc.items():
@@ -55,7 +58,7 @@ def make_level(pool,n,level):
                                 allpos=list(occ)+list(nc); h=max(x[0] for x in allpos)-min(x[0] for x in allpos)+1; w=max(x[1] for x in allpos)-min(x[1] for x in allpos)+1
                                 choices.append((crossings*10-abs(w-h)*.02-w*h*.0005+rng.random(),p,item))
             if not choices: break
-            choices.sort(key=lambda x:(x[0],x[1]['word']),reverse=True); _,p,item=choices[0]
+            _,p,item=max(choices,key=lambda x:x[0])
             ps.append(p); used.add(item['word']); remaining=[x for x in remaining if x['word']!=item['word']]
         if len(ps)==n:
             mr=min(p['row'] for p in ps); mc=min(p['col'] for p in ps)
