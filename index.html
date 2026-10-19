@@ -192,6 +192,54 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 .boardwrap{overflow-x:clip;overflow-y:visible;max-height:none}
 .drag-ghost{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 
+
+/* Landscape layout: board left, candidate library right, no horizontal page overflow. */
+@media (orientation:landscape) and (min-width:640px){
+ header,main{padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right))}
+ header{padding-top:6px;padding-bottom:4px}
+ header h1{font-size:clamp(15px,2vw,20px)}
+ main{padding-top:3px;padding-bottom:8px}
+ .summarybar{padding:6px 10px;min-height:36px;margin-bottom:6px}
+ .layout-viewport{overflow-x:clip;overflow-y:visible}
+ .layout,.layout.levels-open{width:100%;min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr);margin:0}
+ .game-panel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(225px,32%);
+  grid-template-areas:"board candidates" "toast candidates" "actions actions" "level level" "help help";
+  gap:7px 10px;
+  align-items:start;
+  padding:9px;
+ }
+ #boardRow{grid-area:board;min-width:0;align-self:start}
+ .boardwrap{min-width:0;width:100%;max-width:100%;max-height:none;overflow:visible;padding:3px}
+ .board{max-width:100%;margin:0 auto}
+ .candidate-panel{grid-area:candidates;min-width:0;max-width:100%;margin-top:0;align-self:stretch;padding:8px;display:flex;flex-direction:column}
+ .candidate-heading{gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
+ .candidate-heading strong{font-size:13px}
+ .candidate-heading small{font-size:11px}
+ .candidate-panel .muted{font-size:13px!important;line-height:1.45!important;margin-bottom:6px!important}
+ #candidates{flex:1;min-height:0;max-height:calc(100dvh - 220px);overflow-y:auto;overflow-x:clip;align-content:start;gap:6px;padding:2px}
+ .candidate-tile{width:40px;height:44px;min-width:40px;font-size:20px;padding:2px 0 7px}
+ .candidate-character{font-size:20px}
+ .stroke-count{font-size:9px}
+ #toast{grid-area:toast;min-width:0;margin-top:0}
+ .actions{grid-area:actions;margin-top:0}
+ #levelPanel{grid-area:level}
+ .game-panel>.foot{grid-area:help;margin:0}
+ .board-row.has-next{grid-template-columns:88px minmax(0,1fr);gap:6px}
+ .next-float{padding:7px 4px;gap:5px}
+ .next-float strong{font-size:11px}
+ .next-float small{font-size:9px}
+ .next-float button{font-size:10px;padding:7px 4px}
+}
+/* Mobile/tablet touch: run one consistent vertical scroll gesture across the page,
+   except on candidate tiles where a hold-and-drag moves the character instead. */
+@media (pointer:coarse){
+ html,body,header,main,.layout-viewport,.layout,.game-panel,.summarybar,.board-row,
+ .boardwrap,.board,.cell,.candidate-panel,.candidate-heading,.candidate-list,
+ .toast,.actions,.level-panel,.foot{touch-action:none}
+}
+
 </style></head><body><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
 <div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
@@ -204,6 +252,33 @@ const $=x=>document.getElementById(x),KEY='idiom-crossword-progress-v3';
 document.addEventListener('contextmenu',e=>{e.preventDefault();return false;});
 document.addEventListener('dragstart',e=>e.preventDefault());
 document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea'))e.preventDefault();});
+/* Custom vertical page panning for touch devices. This avoids Safari/browser scroll
+   arbitration with the crossword's many button cells. Candidate letters are excluded:
+   their own handlers decide between a short swipe (scroll) and a hold (drag letter). */
+let pagePan=null;
+document.addEventListener('touchstart',e=>{
+ if(e.touches.length!==1){pagePan=null;return}
+ const t=e.touches[0],target=e.target;
+ pagePan={
+  startX:t.clientX,startY:t.clientY,lastX:t.clientX,lastY:t.clientY,
+  scrolling:false,skip:!!(target.closest&&target.closest('.candidate-tile'))
+ };
+},{passive:true,capture:true});
+document.addEventListener('touchmove',e=>{
+ const p=pagePan;
+ if(!p||p.skip||e.touches.length!==1)return;
+ const t=e.touches[0];
+ const dx=t.clientX-p.startX,dy=t.clientY-p.startY;
+ if(!p.scrolling&&Math.hypot(dx,dy)<6)return;
+ p.scrolling=true;
+ e.preventDefault();
+ const delta=p.lastY-t.clientY;
+ if(delta)window.scrollBy(0,delta);
+ p.lastX=t.clientX;p.lastY=t.clientY;
+},{passive:false,capture:true});
+const stopPagePan=()=>{pagePan=null};
+document.addEventListener('touchend',stopPagePan,{passive:true,capture:true});
+document.addEventListener('touchcancel',stopPagePan,{passive:true,capture:true});
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingTileTouch=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
