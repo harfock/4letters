@@ -27,7 +27,7 @@ def cells(p):
 
 def make_level(pool,n,level):
     for attempt in range(70):
-        candidates=list(pool); random.Random(level*1009+attempt).shuffle(candidates)
+        candidates=list(pool); rng=random.Random(level*1009+attempt); rng.shuffle(candidates)
         if not candidates: return None
         ps=[{'word':candidates[0]['word'],'pinyin':candidates[0]['pinyin'],'row':0,'col':0,'direction':'across','initialReveal':True,'clue':''}]
         used={candidates[0]['word']}; remaining=[x for x in candidates[1:] if x['word'] not in used]
@@ -53,7 +53,7 @@ def make_level(pool,n,level):
                                     if any(a in occ and a not in nc for a in ((rr-1,cl),(rr+1,cl),(rr,cl-1),(rr,cl+1))): valid=False; break
                             if valid and crossings:
                                 allpos=list(occ)+list(nc); h=max(x[0] for x in allpos)-min(x[0] for x in allpos)+1; w=max(x[1] for x in allpos)-min(x[1] for x in allpos)+1
-                                choices.append((crossings*10-abs(w-h)*.02-w*h*.0005,p,item))
+                                choices.append((crossings*10-abs(w-h)*.02-w*h*.0005+rng.random(),p,item))
             if not choices: break
             choices.sort(key=lambda x:(x[0],x[1]['word']),reverse=True); _,p,item=choices[0]
             ps.append(p); used.add(item['word']); remaining=[x for x in remaining if x['word']!=item['word']]
