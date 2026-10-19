@@ -29,7 +29,7 @@ python - <<'PY'
 import re
 from pathlib import Path
 html = Path("index.html").read_text(encoding="utf-8")
-match = re.search(r"<script\\b[^>]*>(.*?)</script\\s*>", html, re.S | re.I)
+match = re.search(r"<script\b[^>]*>(.*?)</script\s*>", html, re.S | re.I)
 if not match:
     raise SystemExit("No inline JavaScript found")
 Path("/tmp/4letters-game.js").write_text(match.group(1), encoding="utf-8")
