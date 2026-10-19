@@ -60,7 +60,7 @@ def make_level(pool,n,level):
         if len(ps)==n:
             mr=min(p['row'] for p in ps); mc=min(p['col'] for p in ps)
             for p in ps:p['row']-=mr;p['col']-=mc
-            for i,p in enumerate(ps):p['initialReveal']=i<n//2
+            for i,p in enumerate(ps):p['initialReveal']=(1+((i+level)%2)) if i<n//2 else 0
             return ps
     return None
 
