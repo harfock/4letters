@@ -422,11 +422,10 @@ function returnFilledLetter(k){
  sel=k;say('已將「'+oldChar+'」退回候選字區。');render();return true;
 }
 function render(){
- const g=grid(),s=state(),b=$('board');ensureTiles(s,g);
+ const g=grid(),s=state(),b=$('board'),wrap=$('boardWrap');ensureTiles(s,g);
+ const oldScrollTop=wrap.scrollTop,oldScrollLeft=wrap.scrollLeft;
  b.innerHTML='';
  const colCount=g.maxc-g.minc+1;
- const wrap=$('boardWrap');
- const oldScrollTop=wrap.scrollTop,oldScrollLeft=wrap.scrollLeft;
  const available=Math.max(80,wrap.clientWidth-12);
  const gap=colCount>18?1:2;
  const baseCellSize=boardCellSize(available,gap);
