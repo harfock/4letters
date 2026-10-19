@@ -21,7 +21,7 @@ python tools/filter_idioms.py dict_idioms_2020_20260929.xlsx data/idioms.json
 
 輸出只含詞目與拼音，不含官方釋義。棋盤資料與提示須另行產生並通過驗證。
 
-## 開發驗收標準
+## 棋盤資料驗證\n\n預先編排棋盤後，將 21 關放在 `data/levels.json`，使用下列命令驗證：\n\n\`\`\`bash\npython tools/validate_levels.py data/levels.json\n\`\`\`\n\n驗證器會檢查關卡數、420 個擺放位置、每關 10–30 個成語、重複詞、交叉字元衝突、同方向重疊，以及交叉圖是否連通。\n\n## 開發驗收標準
 
 - 21 關；每關 10 至 30 個成語，總計 420 個擺放位置。
 - 每關所有成語都在同一個交叉連通圖內，不得有孤立詞目。
