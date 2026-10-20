@@ -431,6 +431,7 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
 let pendingHintEffectKey=null,pendingBounceKeys=[];
+const pendingDelayedRevealKeys=new Set();
 let lastTouchCellTap=null,lastTouchDoubleTap=null,suppressTouchCellClick=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const fresh=()=>({levels:{},total:0});
@@ -500,9 +501,10 @@ function applyPendingVisualEffects(){
  const bounceKeys=pendingBounceKeys.splice(0);
  const hintKey=pendingHintEffectKey;
  pendingHintEffectKey=null;
- if(!bounceKeys.length&&!hintKey)return;
- // Serialize visual effects. A hint requested by the same action as a solved
- // four-letter word waits until every solved tile has completed its double bounce.
+ const delayedRevealKeys=[...pendingDelayedRevealKeys];
+ if(!bounceKeys.length&&!hintKey&&!delayedRevealKeys.length)return;
+ // Serialize visual effects. Newly unlocked clue letters remain hidden until
+ // the solved-letter double-bounce sequence ends, followed by a 500 ms pause.
  visualEffectQueue=visualEffectQueue.then(async()=>{
   for(const key of bounceKeys){
    const tile=document.querySelector('.cell[data-key="'+key+'"]');
@@ -511,12 +513,26 @@ function applyPendingVisualEffects(){
    void tile.offsetWidth;tile.classList.add('correct-double-bounce');
    await waitForAnimation(tile,'correct-double-bounce');
   }
+  if(delayedRevealKeys.length&&bounceKeys.length){
+   await new Promise(resolve=>setTimeout(resolve,500));
+   delayedRevealKeys.forEach(key=>pendingDelayedRevealKeys.delete(key));
+   // Re-render only after the delay so the newly unlocked hint letter is
+   // actually revealed at the intended time, rather than merely animated later.
+   render();
+   for(const key of delayedRevealKeys){
+    const tile=document.querySelector('.cell[data-key="'+key+'"]');
+    if(!tile)continue;
+    focusHintCell(key);
+    tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
+    tile.classList.add('hint-flash-effect');
+    await waitForAnimation(tile,'hint-flash-effect');
+   }
+  }
   if(hintKey){
-   // Start a new hint effect exactly 500 ms after the preceding bounce sequence ends.
+   // Manual hint effects also wait 500 ms after any bounce in the same action.
    if(bounceKeys.length) await new Promise(resolve=>setTimeout(resolve,500));
    const tile=document.querySelector('.cell[data-key="'+hintKey+'"]');
    if(tile){
-    // Focus only when the flash starts, after the success bounce queue is clear.
     focusHintCell(hintKey);
     tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
     tile.classList.add('hint-flash-effect');
@@ -593,9 +609,9 @@ function render(){
  for(let r=g.minr;r<=g.maxr;r++)for(let c=g.minc;c<=g.maxc;c++){
   const z=g.m.get(r+','+c),el=document.createElement('button');el.type='button';el.className='cell'+(z?'':' block');el.style.gridRow=r-g.minr+1;el.style.gridColumn=c-g.minc+1;
   if(z){
-   const k=r+','+c,letter=s.letters[k]||s.revealed[k]||'';el.dataset.key=k;el.textContent=letter;
+   const k=r+','+c,letter=pendingDelayedRevealKeys.has(k)?'':(s.letters[k]||s.revealed[k]||'');el.dataset.key=k;el.textContent=letter;
    if(s.letters[k])el.classList.add('filled');
-   if(s.revealed[k])el.classList.add('revealed');
+   if(s.revealed[k]&&!pendingDelayedRevealKeys.has(k))el.classList.add('revealed');
    if(z.ids.includes(W))el.classList.add('active');
    if(isLocked(z,s))el.classList.add('locked');
    if(starts.has(k)){const n=document.createElement('span');n.className='num';n.textContent=starts.get(k);el.textContent='';el.append(n,document.createTextNode(letter))}
@@ -840,7 +856,9 @@ function checkAll(){
     z.ids.forEach(j=>{
      if(j!==i&&!s.completed[j]&&!g.ps[j].initialReveal){
       const clue=cells(g.ps[j])[0],k=clue.r+','+clue.c;
+      const wasRevealed=!!s.revealed[k];
       revealCell(s,g,k,clue.ch);
+      if(!wasRevealed&&s.revealed[k])pendingDelayedRevealKeys.add(k);
      }
     });
    });
