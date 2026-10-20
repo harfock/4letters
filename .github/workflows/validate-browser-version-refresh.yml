@@ -12,6 +12,8 @@ on:
       - 'data/**'
       - 'app-icon.svg'
       - 'manifest.webmanifest'
+      - 'tools/build_cloudflare_pages.py'
+      - 'CLOUDFLARE_TEST_SETUP.md'
 permissions:
   contents: read
 jobs:
@@ -26,69 +28,46 @@ jobs:
         with:
           node-version: '22'
       - run: python -m pip install openpyxl pillow cairosvg
-      - name: Generate a branch preview and validate versions
+      - name: Build Cloudflare Pages output and validate
         env:
-          BUILD_VERSION: ${{ github.sha }}
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
         run: |
+          python tools/build_cloudflare_pages.py
           python - <<'PY'
-          import json, os, re, subprocess
+          import json, re, subprocess
           from pathlib import Path
-          import cairosvg
 
-          source = Path("index.html").read_text(encoding="utf-8")
-          if source.count('__APP_BUILD_VERSION__') < 1:
-              raise SystemExit("The app version placeholder is missing")
-          if "version.json" not in source or "cache:'no-store'" not in source:
-              raise SystemExit("The browser version checker is missing its freshness fetch")
-
-          version = os.environ["BUILD_VERSION"]
-          preview = Path("preview-site")
-          (preview / "data").mkdir(parents=True, exist_ok=True)
-
-          html = re.sub(
-              r'(<meta name="app-version" content=")[^"]*(">)',
-              lambda m: m.group(1) + version + m.group(2),
-              source,
-              count=1,
-          )
-          if f'<meta name="app-version" content="{version}">' not in html:
-              raise SystemExit("Build version was not stamped into index.html")
-          (preview / "index.html").write_text(html, encoding="utf-8")
-          (preview / "version.json").write_text(
-              json.dumps({"version": version}), encoding="utf-8"
-          )
-
-          for name in ("app-icon.svg", "manifest.webmanifest"):
-              (preview / name).write_bytes(Path(name).read_bytes())
-          for name in ("levels.json", "strokes.json"):
-              (preview / "data" / name).write_bytes((Path("data") / name).read_bytes())
-
-          levels_data = json.loads(Path("data/levels.json").read_text(encoding="utf-8"))
-          levels = levels_data.get("levels", [])
-          placements = sum(len(level.get("placements", [])) for level in levels)
-          if len(levels) != 21 or placements != 420:
-              raise SystemExit(f"Unexpected crossword data: {len(levels)} levels, {placements} placements")
-
-          for size, name in ((180, "apple-touch-icon.png"), (192, "icon-192.png"), (512, "icon-512.png")):
-              cairosvg.svg2png(url="app-icon.svg", write_to=str(preview / name), output_width=size, output_height=size)
-
-          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html)
+          output = Path("dist")
+          html = (output / "index.html").read_text(encoding="utf-8")
+          version = json.loads((output / "version.json").read_text(encoding="utf-8"))["version"]
+          meta = re.search(r'<meta name="app-version" content="([^"]+)"', html)
+          if not meta or meta.group(1) != version:
+              raise SystemExit("index.html and version.json build versions do not match")
+          if "__APP_BUILD_VERSION__" in html:
+              raise SystemExit("Version placeholder remains in published HTML")
+          if "version.json" not in html or "cache:'no-store'" not in html:
+              raise SystemExit("Browser version checker is missing")
+          scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html)
           if not scripts:
               raise SystemExit("No inline JavaScript found")
           for i, script in enumerate(scripts):
               path = f"/tmp/game-{i}.js"
               Path(path).write_text(script, encoding="utf-8")
               subprocess.run(["node", "--check", path], check=True)
-
-          published_version = json.loads((preview / "version.json").read_text(encoding="utf-8"))["version"]
-          if published_version != version:
-              raise SystemExit("index.html and version.json build versions do not match")
+          levels_data = json.loads((output / "data/levels.json").read_text(encoding="utf-8"))
+          levels = levels_data.get("levels", [])
+          placements = sum(len(level.get("placements", [])) for level in levels)
+          if len(levels) != 21 or placements != 420:
+              raise SystemExit(f"Unexpected crossword data: {len(levels)} levels, {placements} placements")
+          for path in ("_headers", "app-icon.svg", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"):
+              if not (output / path).is_file():
+                  raise SystemExit(f"Required deployed asset missing: {path}")
           print(f"PASS: {len(levels)} levels / {placements} placements; {len(scripts)} scripts; version {version}")
           PY
       - name: Upload test build artifact
         uses: actions/upload-artifact@v4
         with:
           name: browser-version-refresh-preview
-          path: preview-site/
+          path: dist/
           if-no-files-found: error
           retention-days: 7
