@@ -485,25 +485,43 @@ function focusHintCell(key){
  wrap.scrollTo({top:Math.max(0,top),left:Math.max(0,left),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
  updateBoardControls();
 }
+let visualEffectQueue=Promise.resolve();
+function waitForAnimation(tile,className){
+ return new Promise(resolve=>{
+  let settled=false;
+  const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
+  const onEnd=e=>{if(e.target===tile)finish()};
+  tile.addEventListener('animationend',onEnd);
+  // Safety fallback for hidden tabs or browsers that suppress animation events.
+  setTimeout(finish,1400);
+ });
+}
 function applyPendingVisualEffects(){
- if(pendingHintEffectKey){
-  const key=pendingHintEffectKey;pendingHintEffectKey=null;
-  const tile=document.querySelector('.cell[data-key="'+key+'"]');
-  if(tile){
-   tile.classList.remove('hint-flash-effect');void tile.offsetWidth;tile.classList.add('hint-flash-effect');
-   focusHintCell(key);
-   tile.addEventListener('animationend',()=>tile.classList.remove('hint-flash-effect'),{once:true});
-  }
- }
- if(pendingBounceKeys.length){
-  const keys=pendingBounceKeys.splice(0);
-  keys.forEach((key,index)=>{
-   const tile=document.querySelector('.cell[data-key="'+key+'"]');if(!tile)return;
-   tile.classList.remove('correct-double-bounce');tile.style.animationDelay=(index*85)+'ms';
+ const bounceKeys=pendingBounceKeys.splice(0);
+ const hintKey=pendingHintEffectKey;
+ pendingHintEffectKey=null;
+ if(!bounceKeys.length&&!hintKey)return;
+ // Serialize visual effects. A hint requested by the same action as a solved
+ // four-letter word waits until every solved tile has completed its double bounce.
+ visualEffectQueue=visualEffectQueue.then(async()=>{
+  for(const key of bounceKeys){
+   const tile=document.querySelector('.cell[data-key="'+key+'"]');
+   if(!tile)continue;
+   tile.classList.remove('correct-double-bounce');tile.style.animationDelay='0ms';
    void tile.offsetWidth;tile.classList.add('correct-double-bounce');
-   tile.addEventListener('animationend',()=>{tile.classList.remove('correct-double-bounce');tile.style.animationDelay='';},{once:true});
-  });
- }
+   await waitForAnimation(tile,'correct-double-bounce');
+  }
+  if(hintKey){
+   const tile=document.querySelector('.cell[data-key="'+hintKey+'"]');
+   if(tile){
+    // Focus only when the flash starts, after the success bounce queue is clear.
+    focusHintCell(hintKey);
+    tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
+    tile.classList.add('hint-flash-effect');
+    await waitForAnimation(tile,'hint-flash-effect');
+   }
+  }
+ }).catch(err=>console.warn('Visual effect sequence recovered after an animation error.',err));
 }
 function applyPendingBoardFocus(){
  if(!pendingBoardFocus)return;
