@@ -512,6 +512,8 @@ function applyPendingVisualEffects(){
    await waitForAnimation(tile,'correct-double-bounce');
   }
   if(hintKey){
+   // Start a new hint effect exactly 500 ms after the preceding bounce sequence ends.
+   if(bounceKeys.length) await new Promise(resolve=>setTimeout(resolve,500));
    const tile=document.querySelector('.cell[data-key="'+hintKey+'"]');
    if(tile){
     // Focus only when the flash starts, after the success bounce queue is clear.
