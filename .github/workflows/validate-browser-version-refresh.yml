@@ -47,7 +47,7 @@ jobs:
               raise SystemExit("Version placeholder remains in app-version metadata")
           if "version.json" not in html or "cache:'no-store'" not in html:
               raise SystemExit("Browser version checker is missing")
-          scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html)
+          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html)
           if not scripts:
               raise SystemExit("No inline JavaScript found")
           for i, script in enumerate(scripts):
