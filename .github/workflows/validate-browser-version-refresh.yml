@@ -59,10 +59,9 @@ jobs:
           )
 
           for name in ("app-icon.svg", "manifest.webmanifest"):
-              Path(name).replace if False else None
               (preview / name).write_bytes(Path(name).read_bytes())
           for name in ("levels.json", "strokes.json"):
-              (preview / "data" / name).write_bytes(Path("data" / name).read_bytes())
+              (preview / "data" / name).write_bytes((Path("data") / name).read_bytes())
 
           levels_data = json.loads(Path("data/levels.json").read_text(encoding="utf-8"))
           levels = levels_data.get("levels", [])
