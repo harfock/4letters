@@ -395,6 +395,24 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
  .board-zoom{right:4px;bottom:4px}
  .board-zoom button{width:28px;height:28px;min-width:28px}
 }
+
+/* Art-directed feedback: hint reveal flash and sequential double-bounce for solved idioms. */
+.cell.hint-flash-effect{z-index:4;animation:hint-color-reverse .88s steps(1,end) both;outline:3px solid var(--gold);outline-offset:1px}
+@keyframes hint-color-reverse{
+ 0%,100%{background:var(--gold);color:#513a08}
+ 12.5%,37.5%,62.5%,87.5%{background:#173946;color:#f1f2e8;box-shadow:0 0 0 3px rgba(255,209,102,.42),0 0 16px rgba(255,209,102,.55)}
+ 25%,50%,75%{background:var(--gold);color:#513a08;box-shadow:0 0 0 2px rgba(255,209,102,.24)}
+}
+.cell.correct-double-bounce{z-index:3;animation:correct-tile-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both;will-change:transform}
+@keyframes correct-tile-bounce{
+ 0%,100%{transform:translateY(0) scale(1);box-shadow:0 1px 0 rgba(1,19,31,.22)}
+ 22%{transform:translateY(-7px) scale(1.06);box-shadow:0 8px 13px rgba(0,0,0,.24)}
+ 45%{transform:translateY(0) scale(.98)}
+ 68%{transform:translateY(-4px) scale(1.035);box-shadow:0 5px 9px rgba(0,0,0,.18)}
+ 84%{transform:translateY(0) scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.cell.hint-flash-effect,.cell.correct-double-bounce{animation-duration:.01ms!important;animation-iteration-count:1!important;will-change:auto}}
+
 </style></head><body><div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
 <div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
@@ -412,6 +430,7 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
    pointer handler below: short movement scrolls; a stationary hold starts a drag. */
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
+let pendingHintEffectKey=null,pendingBounceKeys=[];
 let lastTouchCellTap=null,lastTouchDoubleTap=null,suppressTouchCellClick=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const fresh=()=>({levels:{},total:0});
@@ -456,6 +475,35 @@ function focusBoardCell(key){
  if(leftDelta<0)wrap.scrollLeft+=leftDelta-(wrap.clientWidth-cr.width)/2;
  else if(rightDelta>0)wrap.scrollLeft+=rightDelta+(cr.width-wrap.clientWidth)/2;
  updateBoardControls();
+}
+function focusHintCell(key){
+ const wrap=$('boardWrap'),cell=document.querySelector('.cell[data-key="'+key+'"]');
+ if(!wrap||!cell)return;
+ const wr=wrap.getBoundingClientRect(),cr=cell.getBoundingClientRect();
+ const top=wrap.scrollTop+(cr.top-wr.top)-(wrap.clientHeight-cr.height)/2;
+ const left=wrap.scrollLeft+(cr.left-wr.left)-(wrap.clientWidth-cr.width)/2;
+ wrap.scrollTo({top:Math.max(0,top),left:Math.max(0,left),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+ updateBoardControls();
+}
+function applyPendingVisualEffects(){
+ if(pendingHintEffectKey){
+  const key=pendingHintEffectKey;pendingHintEffectKey=null;
+  const tile=document.querySelector('.cell[data-key="'+key+'"]');
+  if(tile){
+   tile.classList.remove('hint-flash-effect');void tile.offsetWidth;tile.classList.add('hint-flash-effect');
+   focusHintCell(key);
+   tile.addEventListener('animationend',()=>tile.classList.remove('hint-flash-effect'),{once:true});
+  }
+ }
+ if(pendingBounceKeys.length){
+  const keys=pendingBounceKeys.splice(0);
+  keys.forEach((key,index)=>{
+   const tile=document.querySelector('.cell[data-key="'+key+'"]');if(!tile)return;
+   tile.classList.remove('correct-double-bounce');tile.style.animationDelay=(index*85)+'ms';
+   void tile.offsetWidth;tile.classList.add('correct-double-bounce');
+   tile.addEventListener('animationend',()=>{tile.classList.remove('correct-double-bounce');tile.style.animationDelay='';},{once:true});
+  });
+ }
 }
 function applyPendingBoardFocus(){
  if(!pendingBoardFocus)return;
@@ -602,6 +650,7 @@ function render(){
  renderCandidates(s);
  updateBoardControls();
  applyPendingBoardFocus();
+ applyPendingVisualEffects();
  $('count').textContent=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
  $('total').textContent=fmt(S.total);save();
 }
@@ -764,6 +813,7 @@ function checkAll(){
   const cs=cells(p);
   if(cs.map(val).join('')===p.word){
    s.completed[i]=true;
+   cs.forEach(x=>pendingBounceKeys.push(x.r+','+x.c));
    cs.forEach((x,j)=>{s.letters[x.r+','+x.c]=p.word[j]});
    cs.forEach(x=>{
     const z=g.m.get(x.r+','+x.c);
@@ -797,7 +847,9 @@ function hint(){
  W=chosen;
  const k=target.r+','+target.c;
  pendingBoardFocus=k;
+ const wasRevealed=!!s.revealed[k];
  revealCell(s,g,k,target.ch);
+ if(!wasRevealed&&s.revealed[k])pendingHintEffectKey=k;
  sel=k;
  say('提示：第 '+(chosen+1)+' 組「'+g.ps[chosen].word+'」已揭示「'+target.ch+'」。');
  checkAll();render();
