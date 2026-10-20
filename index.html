@@ -1,4 +1,69 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><title>成語圖譜・縱橫解字</title><style>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="__APP_BUILD_VERSION__"><title>成語圖譜・縱橫解字</title>
+<script>
+/* Auto-refresh stale game builds. The build workflow stamps this page and version.json with the same commit SHA. */
+(()=>{'use strict';
+ const meta=document.querySelector('meta[name="app-version"]');
+ const running=meta&&meta.content;
+ if(!running||running.includes('__APP_BUILD_VERSION__'))return;
+ let checking=false,stopped=false;
+ const cleanVersionParams=()=>{
+  const u=new URL(location.href);
+  ['__appVersion','__appRetry','__appBust'].forEach(k=>u.searchParams.delete(k));
+  history.replaceState(null,document.title,u.pathname+(u.search?u.search:'')+u.hash);
+ };
+ function showRefreshNotice(latest){
+  const show=()=>{
+   if(document.getElementById('appVersionNotice'))return;
+   const box=document.createElement('div');
+   box.id='appVersionNotice';box.setAttribute('role','alert');
+   box.style.cssText='position:fixed;z-index:2147483647;left:12px;right:12px;top:12px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:14px 16px;border:2px solid #ffd166;border-radius:14px;background:#103b4a;color:#f5fbf7;box-shadow:0 8px 28px #0008;font:600 15px/1.5 system-ui,-apple-system,sans-serif';
+   const msg=document.createElement('span');msg.textContent='遊戲已有新版，但瀏覽器仍載入舊版本。請重新載入以更新。';
+   const btn=document.createElement('button');btn.type='button';btn.textContent='重新載入新版';
+   btn.style.cssText='padding:10px 14px;border-radius:9px;border:1px solid #8ce7c7;background:#8ce7c7;color:#093943;font:800 14px system-ui;cursor:pointer';
+   btn.addEventListener('click',()=>{
+    const u=new URL(location.href);
+    u.searchParams.set('__appVersion',latest);
+    u.searchParams.set('__appRetry','0');
+    u.searchParams.set('__appBust',String(Date.now()));
+    location.replace(u.href);
+   });
+   box.append(msg,btn);(document.body||document.documentElement).append(box);
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else show();
+ }
+ async function checkVersion(){
+  if(checking||stopped)return;
+  checking=true;
+  try{
+   const url=new URL('./version.json',document.baseURI);
+   url.searchParams.set('_check',String(Date.now()));
+   const response=await fetch(url.href,{cache:'no-store',credentials:'same-origin'});
+   if(!response.ok)return;
+   const info=await response.json();
+   const latest=String(info.version||'');
+   if(!latest)return;
+   if(latest===running){cleanVersionParams();return;}
+   const current=new URL(location.href);
+   const target=current.searchParams.get('__appVersion');
+   const retries=target===latest?Number(current.searchParams.get('__appRetry')||0):0;
+   if(retries<2){
+    current.searchParams.set('__appVersion',latest);
+    current.searchParams.set('__appRetry',String(retries+1));
+    current.searchParams.set('__appBust',String(Date.now()));
+    stopped=true;
+    location.replace(current.href);
+   }else{
+    stopped=true;showRefreshNotice(latest);
+   }
+  }catch(_err){/* Offline or a temporary network failure must not block play. */}
+  finally{checking=false;}
+ }
+ checkVersion();
+ window.addEventListener('pageshow',checkVersion);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkVersion()});
+ window.setInterval(checkVersion,120000);
+})();
+</script><style>
 :root{color-scheme:dark;--bg:#0b3433;--p:#154744;--line:#326b62;--ink:#f7f1df;--mint:#b9e8cf;--gold:#f4d99c;--cell:40px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a514b,var(--bg) 62%);color:var(--ink);font-family:system-ui,-apple-system,"PingFang TC","Noto Sans TC",sans-serif}header,main{max-width:1200px;margin:auto;padding:16px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{font-size:clamp(1.2rem,3vw,2rem);margin:0}small,.muted,.foot{color:#b7d0c5}.panel,.stat{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:12px}.stats,.actions{display:flex;gap:8px;flex-wrap:wrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:12px;margin-top:12px}button,input{font:inherit}button{cursor:pointer;background:#205750;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px}button.primary{background:var(--mint);color:var(--bg);font-weight:800}.boardwrap{overflow:auto;max-height:58vh;background:#0d3835;border-radius:12px;padding:12px}.board{display:grid;gap:3px;width:max-content;margin:auto}.cell{width:var(--cell);height:var(--cell);border:0;border-radius:6px;background:#e9e5d5;color:#183e39;padding:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;position:relative}.cell.block{background:#103c39;border:1px solid #1b4b45}.cell.filled{background:var(--mint)}.cell.revealed{background:var(--gold)}.cell.active{outline:3px solid var(--gold)}.num{position:absolute;top:1px;left:3px;font-size:9px;line-height:1;color:#54736b}.entry{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}.entry input{width:150px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px}.wordlist{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}.wordrow{display:flex;gap:8px;align-items:center;text-align:left;width:100%;padding:8px;background:var(--bg)}.wordrow.active{border-color:var(--gold)}.wordrow.done{color:var(--mint);text-decoration:line-through}.wordrow .n{color:var(--gold);min-width:20px}.wordrow .desc{flex:1}.levelgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.levelgrid button{padding:8px 0}.levelgrid .current{outline:2px solid var(--gold)}.levelgrid .done{background:var(--mint);color:var(--bg)}.toast{min-height:1.5em;color:var(--gold)}.candidate-panel{margin-top:12px;background:#103c39;border:1px solid var(--line);border-radius:13px;padding:12px}.candidate-heading{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:9px}.candidate-list{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:3px 2px}.candidate-tile{position:relative;width:48px;height:54px;min-width:48px;padding:3px 0 8px;display:flex;align-items:center;justify-content:center;background:#e9e5d5;color:#183e39;border:2px solid #c5d9c7;border-radius:10px;font-size:23px;font-weight:850;box-shadow:0 2px 0 #0a302d;touch-action:none;user-select:none;-webkit-user-select:none}.candidate-character{font-size:23px;line-height:1}.stroke-count{position:absolute;right:3px;bottom:1px;color:#4c6b63;font-size:9px;line-height:1;font-weight:650}.candidate-tile:active{background:var(--mint)}.candidate-empty{color:var(--muted);font-size:.9rem;padding:8px 2px}.cell.drop-target{outline:4px solid var(--gold);outline-offset:2px;background:var(--mint);transform:scale(1.06);z-index:2}.cell.locked{box-shadow:inset 0 0 0 2px #a9d9bd}.drag-ghost{position:fixed;z-index:99999;width:66px;height:70px;display:flex;align-items:center;justify-content:center;border-radius:16px;background:var(--mint);color:#0b3433;border:3px solid #f4d99c;font-size:36px;font-weight:900;box-shadow:0 10px 28px #0009;pointer-events:none;transform:translate(-50%,-50%) scale(1.12);transition:transform .06s linear;will-change:left,top}.foot{font-size:.82rem;line-height:1.6}.modalback{display:none;position:fixed;inset:0;background:#001a19cc;z-index:5;align-items:center;justify-content:center;padding:18px}.modalback.show{display:flex}.modal{max-width:430px;width:100%;background:var(--p);border:1px solid #7aab96;border-radius:18px;padding:22px}@media(max-width:800px){:root{--cell:35px}header,main{padding:12px}.layout{grid-template-columns:1fr}.boardwrap{max-height:48vh}.wordlist{max-height:210px}}@media(max-width:390px){:root{--cell:30px}}
 
 /* Refined jade / ocean / ivory theme and compact two-row information */
@@ -330,6 +395,24 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
  .board-zoom{right:4px;bottom:4px}
  .board-zoom button{width:28px;height:28px;min-width:28px}
 }
+
+/* Art-directed feedback: hint reveal flash and sequential double-bounce for solved idioms. */
+.cell.hint-flash-effect{z-index:4;animation:hint-color-reverse .88s steps(1,end) both;outline:3px solid var(--gold);outline-offset:1px}
+@keyframes hint-color-reverse{
+ 0%,100%{background:var(--gold);color:#513a08;transform:scale(1)}
+ 12.5%,37.5%,62.5%,87.5%{background:#173946;color:#f1f2e8;transform:scale(1.28);box-shadow:0 0 0 3px rgba(255,209,102,.42),0 0 16px rgba(255,209,102,.55)}
+ 25%,50%,75%{background:var(--gold);color:#513a08;transform:scale(1.12);box-shadow:0 0 0 2px rgba(255,209,102,.24)}
+}
+.cell.correct-double-bounce{z-index:3;animation:correct-tile-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both;will-change:transform}
+@keyframes correct-tile-bounce{
+ 0%,100%{transform:translateY(0) scale(1);box-shadow:0 1px 0 rgba(1,19,31,.22)}
+ 22%{transform:translateY(-7px) scale(1.06);box-shadow:0 8px 13px rgba(0,0,0,.24)}
+ 45%{transform:translateY(0) scale(.98)}
+ 68%{transform:translateY(-4px) scale(1.035);box-shadow:0 5px 9px rgba(0,0,0,.18)}
+ 84%{transform:translateY(0) scale(1)}
+}
+@media(prefers-reduced-motion:reduce){.cell.hint-flash-effect,.cell.correct-double-bounce{animation-duration:.01ms!important;animation-iteration-count:1!important;will-change:auto}}
+
 </style></head><body><div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
 <div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
@@ -347,6 +430,8 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
    pointer handler below: short movement scrolls; a stationary hold starts a drag. */
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
+let pendingHintEffectKey=null,pendingBounceKeys=[];
+const pendingDelayedRevealKeys=new Set();
 let lastTouchCellTap=null,lastTouchDoubleTap=null,suppressTouchCellClick=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const fresh=()=>({levels:{},total:0});
@@ -391,6 +476,70 @@ function focusBoardCell(key){
  if(leftDelta<0)wrap.scrollLeft+=leftDelta-(wrap.clientWidth-cr.width)/2;
  else if(rightDelta>0)wrap.scrollLeft+=rightDelta+(cr.width-wrap.clientWidth)/2;
  updateBoardControls();
+}
+function focusHintCell(key){
+ const wrap=$('boardWrap'),cell=document.querySelector('.cell[data-key="'+key+'"]');
+ if(!wrap||!cell)return;
+ const wr=wrap.getBoundingClientRect(),cr=cell.getBoundingClientRect();
+ const top=wrap.scrollTop+(cr.top-wr.top)-(wrap.clientHeight-cr.height)/2;
+ const left=wrap.scrollLeft+(cr.left-wr.left)-(wrap.clientWidth-cr.width)/2;
+ wrap.scrollTo({top:Math.max(0,top),left:Math.max(0,left),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+ updateBoardControls();
+}
+let visualEffectQueue=Promise.resolve();
+function waitForAnimation(tile,className){
+ return new Promise(resolve=>{
+  let settled=false;
+  const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
+  const onEnd=e=>{if(e.target===tile)finish()};
+  tile.addEventListener('animationend',onEnd);
+  // Safety fallback for hidden tabs or browsers that suppress animation events.
+  setTimeout(finish,1400);
+ });
+}
+function applyPendingVisualEffects(){
+ const bounceKeys=pendingBounceKeys.splice(0);
+ const hintKey=pendingHintEffectKey;
+ pendingHintEffectKey=null;
+ const delayedRevealKeys=[...pendingDelayedRevealKeys];
+ if(!bounceKeys.length&&!hintKey&&!delayedRevealKeys.length)return;
+ // Serialize visual effects. Newly unlocked clue letters remain hidden until
+ // the solved-letter double-bounce sequence ends, followed by a 500 ms pause.
+ visualEffectQueue=visualEffectQueue.then(async()=>{
+  for(const key of bounceKeys){
+   const tile=document.querySelector('.cell[data-key="'+key+'"]');
+   if(!tile)continue;
+   tile.classList.remove('correct-double-bounce');tile.style.animationDelay='0ms';
+   void tile.offsetWidth;tile.classList.add('correct-double-bounce');
+   await waitForAnimation(tile,'correct-double-bounce');
+  }
+  if(delayedRevealKeys.length&&bounceKeys.length){
+   await new Promise(resolve=>setTimeout(resolve,500));
+   delayedRevealKeys.forEach(key=>pendingDelayedRevealKeys.delete(key));
+   // Re-render only after the delay so the newly unlocked hint letter is
+   // actually revealed at the intended time, rather than merely animated later.
+   render();
+   for(const key of delayedRevealKeys){
+    const tile=document.querySelector('.cell[data-key="'+key+'"]');
+    if(!tile)continue;
+    focusHintCell(key);
+    tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
+    tile.classList.add('hint-flash-effect');
+    await waitForAnimation(tile,'hint-flash-effect');
+   }
+  }
+  if(hintKey){
+   // Manual hint effects also wait 500 ms after any bounce in the same action.
+   if(bounceKeys.length) await new Promise(resolve=>setTimeout(resolve,500));
+   const tile=document.querySelector('.cell[data-key="'+hintKey+'"]');
+   if(tile){
+    focusHintCell(hintKey);
+    tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
+    tile.classList.add('hint-flash-effect');
+    await waitForAnimation(tile,'hint-flash-effect');
+   }
+  }
+ }).catch(err=>console.warn('Visual effect sequence recovered after an animation error.',err));
 }
 function applyPendingBoardFocus(){
  if(!pendingBoardFocus)return;
@@ -460,9 +609,9 @@ function render(){
  for(let r=g.minr;r<=g.maxr;r++)for(let c=g.minc;c<=g.maxc;c++){
   const z=g.m.get(r+','+c),el=document.createElement('button');el.type='button';el.className='cell'+(z?'':' block');el.style.gridRow=r-g.minr+1;el.style.gridColumn=c-g.minc+1;
   if(z){
-   const k=r+','+c,letter=s.letters[k]||s.revealed[k]||'';el.dataset.key=k;el.textContent=letter;
+   const k=r+','+c,letter=pendingDelayedRevealKeys.has(k)?'':(s.letters[k]||s.revealed[k]||'');el.dataset.key=k;el.textContent=letter;
    if(s.letters[k])el.classList.add('filled');
-   if(s.revealed[k])el.classList.add('revealed');
+   if(s.revealed[k]&&!pendingDelayedRevealKeys.has(k))el.classList.add('revealed');
    if(z.ids.includes(W))el.classList.add('active');
    if(isLocked(z,s))el.classList.add('locked');
    if(starts.has(k)){const n=document.createElement('span');n.className='num';n.textContent=starts.get(k);el.textContent='';el.append(n,document.createTextNode(letter))}
@@ -537,6 +686,7 @@ function render(){
  renderCandidates(s);
  updateBoardControls();
  applyPendingBoardFocus();
+ applyPendingVisualEffects();
  $('count').textContent=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
  $('total').textContent=fmt(S.total);save();
 }
@@ -699,13 +849,16 @@ function checkAll(){
   const cs=cells(p);
   if(cs.map(val).join('')===p.word){
    s.completed[i]=true;
+   cs.forEach(x=>pendingBounceKeys.push(x.r+','+x.c));
    cs.forEach((x,j)=>{s.letters[x.r+','+x.c]=p.word[j]});
    cs.forEach(x=>{
     const z=g.m.get(x.r+','+x.c);
     z.ids.forEach(j=>{
      if(j!==i&&!s.completed[j]&&!g.ps[j].initialReveal){
       const clue=cells(g.ps[j])[0],k=clue.r+','+clue.c;
+      const wasRevealed=!!s.revealed[k];
       revealCell(s,g,k,clue.ch);
+      if(!wasRevealed&&s.revealed[k])pendingDelayedRevealKeys.add(k);
      }
     });
    });
@@ -732,7 +885,9 @@ function hint(){
  W=chosen;
  const k=target.r+','+target.c;
  pendingBoardFocus=k;
+ const wasRevealed=!!s.revealed[k];
  revealCell(s,g,k,target.ch);
+ if(!wasRevealed&&s.revealed[k])pendingHintEffectKey=k;
  sel=k;
  say('提示：第 '+(chosen+1)+' 組「'+g.ps[chosen].word+'」已揭示「'+target.ch+'」。');
  checkAll();render();

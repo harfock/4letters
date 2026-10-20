@@ -1,0 +1,73 @@
+name: Validate browser-version-refresh feature
+on:
+  push:
+    branches:
+      - feature/browser-version-refresh
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - '.github/workflows/**'
+      - 'data/**'
+      - 'app-icon.svg'
+      - 'manifest.webmanifest'
+      - 'tools/build_cloudflare_pages.py'
+      - 'CLOUDFLARE_TEST_SETUP.md'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install openpyxl pillow cairosvg
+      - name: Build Cloudflare Pages output and validate
+        env:
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+        run: |
+          python tools/build_cloudflare_pages.py
+          python - <<'PY'
+          import json, re, subprocess
+          from pathlib import Path
+
+          output = Path("dist")
+          html = (output / "index.html").read_text(encoding="utf-8")
+          version = json.loads((output / "version.json").read_text(encoding="utf-8"))["version"]
+          meta = re.search(r'<meta name="app-version" content="([^"]+)"', html)
+          if not meta or meta.group(1) != version:
+              raise SystemExit("index.html and version.json build versions do not match")
+          if meta.group(1) == "__APP_BUILD_VERSION__":
+              raise SystemExit("Version placeholder remains in app-version metadata")
+          if "version.json" not in html or "cache:'no-store'" not in html:
+              raise SystemExit("Browser version checker is missing")
+          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html)
+          if not scripts:
+              raise SystemExit("No inline JavaScript found")
+          for i, script in enumerate(scripts):
+              path = f"/tmp/game-{i}.js"
+              Path(path).write_text(script, encoding="utf-8")
+              subprocess.run(["node", "--check", path], check=True)
+          levels_data = json.loads((output / "data/levels.json").read_text(encoding="utf-8"))
+          levels = levels_data.get("levels", [])
+          placements = sum(len(level.get("placements", [])) for level in levels)
+          if len(levels) != 21 or placements != 420:
+              raise SystemExit(f"Unexpected crossword data: {len(levels)} levels, {placements} placements")
+          for path in ("_headers", "app-icon.svg", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"):
+              if not (output / path).is_file():
+                  raise SystemExit(f"Required deployed asset missing: {path}")
+          print(f"PASS: {len(levels)} levels / {placements} placements; {len(scripts)} scripts; version {version}")
+          PY
+      - name: Upload test build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-version-refresh-preview
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
