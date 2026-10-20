@@ -33,14 +33,40 @@ jobs:
           for size,name in [(180,'apple-touch-icon.png'),(192,'icon-192.png'),(512,'icon-512.png')]:
               cairosvg.svg2png(url='app-icon.svg',write_to='public/'+name,output_width=size,output_height=size)
           PY
+      - name: Stamp browser app version and publish version endpoint
+        env:
+          BUILD_VERSION: ${{ github.sha }}
+        run: |
           python - <<'PY'
-          import re
-          html=open('index.html',encoding='utf-8').read()
-          match=re.search(r'<script>([\s\S]*?)</script>',html)
-          if not match: raise SystemExit('No inline JavaScript found')
-          open('/tmp/game.js','w',encoding='utf-8').write(match.group(1))
+          import json, os, re
+          version = os.environ["BUILD_VERSION"]
+          path = "public/index.html"
+          html = open(path, encoding="utf-8").read()
+          html, count = re.subn(
+              r'(<meta name="app-version" content=")[^"]*(">)',
+              lambda m: m.group(1) + version + m.group(2),
+              html,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("Missing app-version meta tag")
+          open(path, "w", encoding="utf-8").write(html)
+          with open("public/version.json", "w", encoding="utf-8") as f:
+              json.dump({"version": version}, f)
+          print("Generated browser version:", version)
           PY
-          node --check /tmp/game.js
+          python - <<'PY'
+          import re, subprocess
+          html = open("public/index.html", encoding="utf-8").read()
+          scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html)
+          if not scripts:
+              raise SystemExit("No inline JavaScript found")
+          for i, script in enumerate(scripts):
+              path = f"/tmp/game-{i}.js"
+              open(path, "w", encoding="utf-8").write(script)
+              subprocess.run(["node", "--check", path], check=True)
+          print(f"Syntax checked {len(scripts)} inline script(s).")
+          PY
       - name: Download official MOE idiom data
         run: curl -L --fail --retry 3 -o /tmp/source.zip https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/download/dict_idioms_2020_20260929.zip
       - name: Extract workbook
