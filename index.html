@@ -399,9 +399,9 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 /* Art-directed feedback: hint reveal flash and sequential double-bounce for solved idioms. */
 .cell.hint-flash-effect{z-index:4;animation:hint-color-reverse .88s steps(1,end) both;outline:3px solid var(--gold);outline-offset:1px}
 @keyframes hint-color-reverse{
- 0%,100%{background:var(--gold);color:#513a08}
- 12.5%,37.5%,62.5%,87.5%{background:#173946;color:#f1f2e8;box-shadow:0 0 0 3px rgba(255,209,102,.42),0 0 16px rgba(255,209,102,.55)}
- 25%,50%,75%{background:var(--gold);color:#513a08;box-shadow:0 0 0 2px rgba(255,209,102,.24)}
+ 0%,100%{background:var(--gold);color:#513a08;transform:scale(1)}
+ 12.5%,37.5%,62.5%,87.5%{background:#173946;color:#f1f2e8;transform:scale(1.28);box-shadow:0 0 0 3px rgba(255,209,102,.42),0 0 16px rgba(255,209,102,.55)}
+ 25%,50%,75%{background:var(--gold);color:#513a08;transform:scale(1.12);box-shadow:0 0 0 2px rgba(255,209,102,.24)}
 }
 .cell.correct-double-bounce{z-index:3;animation:correct-tile-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both;will-change:transform}
 @keyframes correct-tile-bounce{
