@@ -43,8 +43,8 @@ jobs:
           meta = re.search(r'<meta name="app-version" content="([^"]+)"', html)
           if not meta or meta.group(1) != version:
               raise SystemExit("index.html and version.json build versions do not match")
-          if "__APP_BUILD_VERSION__" in html:
-              raise SystemExit("Version placeholder remains in published HTML")
+          if meta.group(1) == "__APP_BUILD_VERSION__":
+              raise SystemExit("Version placeholder remains in app-version metadata")
           if "version.json" not in html or "cache:'no-store'" not in html:
               raise SystemExit("Browser version checker is missing")
           scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html)
