@@ -53,8 +53,9 @@ def main() -> None:
     )
     if count != 1:
         raise SystemExit('index.html must contain <meta name="app-version" ...>.')
-    if "__APP_BUILD_VERSION__" in stamped:
-        raise SystemExit("The app-version placeholder remains unstamped.")
+    version_meta = re.search(r'<meta name="app-version" content="([^"]+)"', stamped)
+    if not version_meta or version_meta.group(1) != version:
+        raise SystemExit("The app-version meta tag was not stamped correctly.")
     (OUT / "index.html").write_text(stamped, encoding="utf-8")
 
     for relative in (
