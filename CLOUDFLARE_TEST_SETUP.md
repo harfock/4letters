@@ -39,4 +39,4 @@ The game title in the top-left corner is a home control. Clicking it from gamepl
 
 ## Output validation
 
-The build script checks the included dataset for 21 levels and 420 placements. It also copies `assets/opening-comic-bg.svg`, the data files, the manifest, and generated icons into `dist`. The GitHub Pages workflow for `main` remains separate; Cloudflare deployments use this Pages build script on the connected feature branch.
+The build script checks the included dataset for 40 levels and 980 placements. It also copies `assets/opening-comic-bg.svg`, the data files, the manifest, and generated icons into `dist`. The GitHub Pages workflow for `main` remains separate; Cloudflare deployments use this Pages build script on the connected feature branch.
