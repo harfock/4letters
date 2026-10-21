@@ -113,9 +113,12 @@ def main() -> None:
     data = json.loads((OUT / "data/levels.json").read_text(encoding="utf-8"))
     levels = data.get("levels", [])
     placements = sum(len(level.get("placements", [])) for level in levels)
-    if len(levels) != 21 or placements != 420:
+    expected_levels = 40
+    expected_placements = 980
+    if len(levels) != expected_levels or placements != expected_placements:
         raise SystemExit(
-            f"Unexpected crossword dataset: {len(levels)} levels, {placements} placements."
+            f"Unexpected crossword dataset: {len(levels)} levels, {placements} placements; "
+            f"expected {expected_levels} levels and {expected_placements} placements."
         )
 
     print(f"Cloudflare Pages site ready: version={version}, levels={len(levels)}, placements={placements}, output={OUT}")
