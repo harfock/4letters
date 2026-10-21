@@ -1,6 +1,7 @@
 <!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-kinetic-opening-fix-20261022-01"><title>成語圖譜・縱橫解字</title>
 <script>
-/* Cloudflare-compatible build refresh and legacy opening compatibility. */
+/* Cloudflare-compatible version gate, opening, and legacy compatibility. */
+window.__4lettersOpeningActive = true;
 // Older cached opening controllers called say() from outside the game IIFE.
 // Keep a safe global fallback so that call cannot stop the opening buttons.
 window.say = window.say || function(message){
@@ -39,17 +40,19 @@ window.say = window.say || function(message){
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else show();
  }
  async function checkVersion(){
-  if(checking||stopped)return;
+  if(checking)return true;
+  if(stopped)return false;
   checking=true;
   try{
    const url=new URL('./version.json',document.baseURI);
    url.searchParams.set('_check',String(Date.now()));
    const response=await fetch(url.href,{cache:'no-store',credentials:'same-origin'});
-   if(!response.ok)return;
+   // A missing version endpoint must not strand an offline player on a blank screen.
+   if(!response.ok)return true;
    const info=await response.json();
    const latest=String(info.version||'');
-   if(!latest)return;
-   if(latest===running){cleanVersionParams();return;}
+   if(!latest)return true;
+   if(latest===running){cleanVersionParams();return true;}
    const current=new URL(location.href);
    const target=current.searchParams.get('__appVersion');
    const retries=target===latest?Number(current.searchParams.get('__appRetry')||0):0;
@@ -59,16 +62,24 @@ window.say = window.say || function(message){
     current.searchParams.set('__appBust',String(Date.now()));
     stopped=true;
     location.replace(current.href);
-   }else{
-    stopped=true;showRefreshNotice(latest);
+    return false;
    }
-  }catch(_err){/* Offline or a temporary network failure must not block play. */}
-  finally{checking=false;}
+   stopped=true;showRefreshNotice(latest);
+   return false;
+  }catch(_err){
+   // Offline or a temporary network failure must not block play.
+   return true;
+  }finally{checking=false;}
  }
- checkVersion();
- window.addEventListener('pageshow',checkVersion);
- document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkVersion()});
- window.setInterval(checkVersion,120000);
+ // The game waits for this launch-time check before showing the opening.
+ if(!running||running.includes('__APP_BUILD_VERSION__')){
+  window.__4lettersVersionReady=Promise.resolve(true);
+ }else{
+  window.__4lettersVersionReady=checkVersion();
+ }
+ // Check again if this document is restored from the back-forward cache, not on every
+ // visibility change (which could interrupt an active puzzle when the player switches apps).
+ window.addEventListener('pageshow',event=>{if(event.persisted)checkVersion()});
 })();
 </script><style>
 :root{color-scheme:dark;--bg:#0b3433;--p:#154744;--line:#326b62;--ink:#f7f1df;--mint:#b9e8cf;--gold:#f4d99c;--cell:40px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a514b,var(--bg) 62%);color:var(--ink);font-family:system-ui,-apple-system,"PingFang TC","Noto Sans TC",sans-serif}header,main{max-width:1200px;margin:auto;padding:16px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1{font-size:clamp(1.2rem,3vw,2rem);margin:0}small,.muted,.foot{color:#b7d0c5}.panel,.stat{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:12px}.stats,.actions{display:flex;gap:8px;flex-wrap:wrap}.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:12px;margin-top:12px}button,input{font:inherit}button{cursor:pointer;background:#205750;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px}button.primary{background:var(--mint);color:var(--bg);font-weight:800}.boardwrap{overflow:auto;max-height:58vh;background:#0d3835;border-radius:12px;padding:12px}.board{display:grid;gap:3px;width:max-content;margin:auto}.cell{width:var(--cell);height:var(--cell);border:0;border-radius:6px;background:#e9e5d5;color:#183e39;padding:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;position:relative}.cell.block{background:#103c39;border:1px solid #1b4b45}.cell.filled{background:var(--mint)}.cell.revealed{background:var(--gold)}.cell.active{outline:3px solid var(--gold)}.num{position:absolute;top:1px;left:3px;font-size:9px;line-height:1;color:#54736b}.entry{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0}.entry input{width:150px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px}.wordlist{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto}.wordrow{display:flex;gap:8px;align-items:center;text-align:left;width:100%;padding:8px;background:var(--bg)}.wordrow.active{border-color:var(--gold)}.wordrow.done{color:var(--mint);text-decoration:line-through}.wordrow .n{color:var(--gold);min-width:20px}.wordrow .desc{flex:1}.levelgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.levelgrid button{padding:8px 0}.levelgrid .current{outline:2px solid var(--gold)}.levelgrid .done{background:var(--mint);color:var(--bg)}.toast{min-height:1.5em;color:var(--gold)}.candidate-panel{margin-top:12px;background:#103c39;border:1px solid var(--line);border-radius:13px;padding:12px}.candidate-heading{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:9px}.candidate-list{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:3px 2px}.candidate-tile{position:relative;width:48px;height:54px;min-width:48px;padding:3px 0 8px;display:flex;align-items:center;justify-content:center;background:#e9e5d5;color:#183e39;border:2px solid #c5d9c7;border-radius:10px;font-size:23px;font-weight:850;box-shadow:0 2px 0 #0a302d;touch-action:none;user-select:none;-webkit-user-select:none}.candidate-character{font-size:23px;line-height:1}.stroke-count{position:absolute;right:3px;bottom:1px;color:#4c6b63;font-size:9px;line-height:1;font-weight:650}.candidate-tile:active{background:var(--mint)}.candidate-empty{color:var(--muted);font-size:.9rem;padding:8px 2px}.cell.drop-target{outline:4px solid var(--gold);outline-offset:2px;background:var(--mint);transform:scale(1.06);z-index:2}.cell.locked{box-shadow:inset 0 0 0 2px #a9d9bd}.drag-ghost{position:fixed;z-index:99999;width:66px;height:70px;display:flex;align-items:center;justify-content:center;border-radius:16px;background:var(--mint);color:#0b3433;border:3px solid #f4d99c;font-size:36px;font-weight:900;box-shadow:0 10px 28px #0009;pointer-events:none;transform:translate(-50%,-50%) scale(1.12);transition:transform .06s linear;will-change:left,top}.foot{font-size:.82rem;line-height:1.6}.modalback{display:none;position:fixed;inset:0;background:#001a19cc;z-index:5;align-items:center;justify-content:center;padding:18px}.modalback.show{display:flex}.modal{max-width:430px;width:100%;background:var(--p);border:1px solid #7aab96;border-radius:18px;padding:22px}@media(max-width:800px){:root{--cell:35px}header,main{padding:12px}.layout{grid-template-columns:1fr}.boardwrap{max-height:48vh}.wordlist{max-height:210px}}@media(max-width:390px){:root{--cell:30px}}
@@ -522,6 +533,32 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 .opening-dot{width:7px;height:7px;padding:0;min-width:0;min-height:0;border:0;border-radius:99px;background:#d0e4f755;transition:width .25s,background .25s}
 .opening-dot.is-active{width:26px;background:#ffd34d;box-shadow:0 0 12px #ffd34d55}
 .opening-footer-note{position:absolute;right:clamp(14px,3vw,32px);bottom:calc(13px + env(safe-area-inset-bottom));font-size:10px;font-weight:850;letter-spacing:.12em;color:#8daecc}
+/* Post-opening home hub: keep the opening as an intentional launch sequence. */
+#homeScreen[hidden]{display:none!important}
+#homeScreen{
+ position:fixed;inset:0;z-index:99989;display:flex;align-items:center;justify-content:center;
+ padding:calc(22px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom));
+ overflow:auto;color:#f8fbff;
+ background:
+  linear-gradient(145deg,rgba(4,13,28,.88),rgba(7,29,51,.83) 55%,rgba(5,12,25,.93)),
+  url('./assets/opening-comic-bg.svg') center/cover no-repeat,
+  radial-gradient(ellipse at 50% 25%,#1c5a89,#071321 78%);
+}
+.home-hub{position:relative;width:min(560px,100%);padding:clamp(24px,5vw,48px) clamp(20px,5vw,46px);border:1px solid #83ceff70;border-radius:26px;background:linear-gradient(145deg,rgba(14,40,69,.94),rgba(5,17,34,.94));box-shadow:0 24px 80px #0009,0 0 0 5px #ffffff08;overflow:hidden;text-align:center}
+.home-hub:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#31d3ff,#ffd34d,#ff5368,#8ce7c7)}
+.home-logo{font-size:clamp(44px,10vw,78px);font-style:italic;letter-spacing:-.09em;line-height:1;font-weight:1000;color:#fff;text-shadow:3px 4px 0 #067ec6,6px 8px 0 #f04057,9px 12px 0 #061126}
+.home-logo b{color:#ffda45;-webkit-text-stroke:1px #fff4b6}
+.home-kicker{margin-top:22px;color:#8bdfff;font-size:11px;letter-spacing:.2em;font-weight:950}
+.home-title{margin:10px 0 0;font-size:clamp(28px,6.4vw,44px);line-height:1.2;letter-spacing:-.04em;font-weight:1000;color:#fff}
+.home-description{max-width:390px;margin:13px auto 0;color:#c9def6;font-size:14px;line-height:1.75}
+.home-actions{display:grid;gap:12px;margin-top:28px}
+.home-start,.home-replay{min-height:54px;border-radius:13px;font-size:17px;font-weight:1000;letter-spacing:.04em}
+.home-start{background:linear-gradient(180deg,#ffe17a,#ffb91e);color:#122039;border:2px solid #fff7d4;box-shadow:0 4px 0 #b95f2d,0 10px 25px #0005}
+.home-replay{background:rgba(14,38,61,.88);color:#e7f5ff;border:1px solid #79bce4}
+.home-start:hover,.home-replay:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.home-version{display:block;margin-top:18px;color:#8eaec9;font-size:10px;letter-spacing:.07em;overflow-wrap:anywhere}
+@media(max-width:430px){.home-hub{padding:28px 20px;border-radius:20px}.home-kicker{margin-top:17px;font-size:9px}.home-description{font-size:13px}.home-actions{margin-top:22px}.home-start,.home-replay{min-height:50px;font-size:15px}}
+
 #tutorialShade{position:fixed;inset:0;z-index:99991;background:rgba(2,9,19,.68);pointer-events:none}
 #tutorialCard{position:fixed;z-index:99993;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100vw - 28px));padding:19px 20px 16px;border:1px solid #7fcfff;border-radius:18px;background:linear-gradient(145deg,#142d4a,#08182c);color:#f8fbff;box-shadow:0 16px 50px #0009,0 0 0 4px #69bfff16}
 .tutorial-kicker{display:flex;align-items:center;gap:8px;color:#ffd34d;font-size:10px;letter-spacing:.16em;font-weight:1000;text-transform:uppercase}
@@ -734,7 +771,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
     <div class="opening-eyebrow">YOUR ADVENTURE STARTS HERE</div>
     <h2>準備好了嗎？<br><em>開始挑戰</em></h2>
     <p class="opening-subtitle">觀察每一格，找出四字成語。你的第一個發現，就從現在開始。</p>
-    <button id="openingPlay" class="opening-play" type="button" hidden>開始遊戲 <span aria-hidden="true">➜</span></button>
+    <button id="openingPlay" class="opening-play" type="button" hidden>進入首頁 <span aria-hidden="true">➜</span></button>
    </div>
    <div class="opening-visual opening-invitation-visual"><div class="opening-comic-rays"></div><div class="opening-invite-logo"><span class="opening-invite-four">4</span><span>LETTERS</span></div><div class="opening-invite-caption">FOUR LETTERS. ONE DISCOVERY.</div><div class="opening-invite-tiles" aria-hidden="true"><span>一</span><span>鼓</span><span>作</span><span>氣</span></div></div>
   </section>
@@ -743,6 +780,19 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
   </section>
  </div>
  <div class="opening-footer"><div id="openingDots" style="display:flex;gap:8px;align-items:center" aria-label="開場進度"></div><span class="opening-footer-note">CINEMATIC INTRO · CSS MOTION</span></div>
+</div>
+<div id="homeScreen" hidden aria-label="4Letters 遊戲主頁">
+ <div class="home-hub">
+  <div class="home-logo"><b>4</b>LETTERS</div>
+  <div class="home-kicker">YOUR WORD PUZZLE ADVENTURE</div>
+  <h1 class="home-title">成語圖譜<br>縱橫解字</h1>
+  <p class="home-description">每一次啟動，先看最新版本，再進入四字成語的推理挑戰。</p>
+  <div class="home-actions">
+   <button id="homeStartBtn" class="home-start" type="button">開始遊戲　➜</button>
+   <button id="homeReplayBtn" class="home-replay" type="button">重播片頭　↻</button>
+  </div>
+  <span id="homeVersionLabel" class="home-version">啟動時會先檢查版本</span>
+ </div>
 </div>
 <div id="tutorialShade" hidden aria-hidden="true"></div>
 <aside id="tutorialCard" hidden role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
@@ -1060,6 +1110,7 @@ function switchLevel(i){
  pendingBoardFocus=clue||(()=>{const p=g.ps.find((x,j)=>!s.completed[j]);if(!p)return null;const x=cells(p)[0];return x.r+','+x.c})();
  render();
 }
+window.start4LettersLevelOne=function(){switchLevel(0);};
 function say(t){$('toast').textContent=t}
 function beginDrag(e,tile){
  if(e.pointerType==='mouse'&&e.button!==0)return;
@@ -1310,8 +1361,8 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
 /* Opening storyboard controller. It runs after the core crossword app and uses its live board as a visual source. */
 (()=>{'use strict';
  const $=id=>document.getElementById(id);
- const OPENING_SEEN='4letters-opening-seen-v1',TUTORIAL_SEEN='4letters-tutorial-seen-v1';
- const overlay=$('openingOverlay'),card=$('tutorialCard'),shade=$('tutorialShade');
+ const TUTORIAL_SEEN='4letters-tutorial-seen-v1';
+ const overlay=$('openingOverlay'),home=$('homeScreen'),card=$('tutorialCard'),shade=$('tutorialShade');
  const scenes=[...document.querySelectorAll('.opening-scene')],dotsBox=$('openingDots');
  const sceneDurations=[2000,2000,2000,3800,3800,2000,2000,1800];
  let sceneIndex=0,sceneTimer=null,tutorialIndex=0,hasStarted=false;
@@ -1422,18 +1473,24 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   if(safeGet(TUTORIAL_SEEN)){window.__4lettersOpeningActive=false;return}
   window.__4lettersOpeningActive=true;showTutorialStep(0);
  }
+ function showHome(){
+  if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
+  clearTutorialHighlight();card.hidden=true;shade.hidden=true;
+  overlay.hidden=true;home.hidden=false;
+  window.__4lettersOpeningActive=true;
+ }
  function dismissOpening(withTransition){
   if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
-  safeSet(OPENING_SEEN,'1');window.__4lettersOpeningActive=true;
+  window.__4lettersOpeningActive=true;home.hidden=true;
   if(withTransition){
    sceneIndex=scenes.length-1;
    scenes.forEach((scene,i)=>{scene.classList.toggle('is-active',i===sceneIndex);scene.setAttribute('aria-hidden',i===sceneIndex?'false':'true')});
    [...dotsBox.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===sceneIndex));
    $('openingProgressFill').style.width='100%';$('openingSceneCount').textContent='GO';
-   window.setTimeout(()=>{overlay.hidden=true;openTutorial()},590);
+   window.setTimeout(showHome,590);
    return;
   }
-  overlay.hidden=true;openTutorial();
+  showHome();
  }
  window.start4LettersOpening=function(payload){
   if(hasStarted)return;hasStarted=true;
@@ -1441,12 +1498,17 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   const wordList=Array.isArray(payload.words)?payload.words:[];
   populateMeaning(wordList);
   mountActualBoard(payload.board||$('board'));
-  if(safeGet(OPENING_SEEN)){
-   if(!safeGet(TUTORIAL_SEEN))openTutorial();
-   return;
-  }
-  window.__4lettersOpeningActive=true;overlay.hidden=false;
-  showScene(0);
+  // Play the opening on every fresh app launch, but only after the latest deployed
+  // version has been checked. Progress remains stored in localStorage as before.
+  Promise.resolve(window.__4lettersVersionReady).then(canLaunch=>{
+   if(canLaunch===false)return;
+   home.hidden=true;window.__4lettersOpeningActive=true;overlay.hidden=false;
+   showScene(0);
+   const v=document.querySelector('meta[name="app-version"]')?.content||'';
+   const label=$('homeVersionLabel');if(label)label.textContent='版本 '+(v.length>12?v.slice(-8):v)+' · 啟動時檢查更新';
+  }).catch(()=>{
+   home.hidden=true;window.__4lettersOpeningActive=true;overlay.hidden=false;showScene(0);
+  });
  };
  // Bind the opening actions once at controller initialization. The same overlay
  // is used for first-run playback and replay, so these handlers must not depend
@@ -1456,7 +1518,7 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
  window.replay4LettersOpening=function(){
   if(!hasStarted||!lastOpeningPayload){return}
   if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
-  clearTutorialHighlight();card.hidden=true;shade.hidden=true;
+  clearTutorialHighlight();card.hidden=true;shade.hidden=true;home.hidden=true;
   populateMeaning(Array.isArray(lastOpeningPayload.words)?lastOpeningPayload.words:[]);
   mountActualBoard($('board'));
   window.__4lettersOpeningActive=true;
@@ -1467,11 +1529,21 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
  $('replayOpeningBtn').addEventListener('click',()=>{
   if(window.replay4LettersOpening)window.replay4LettersOpening();
  });
+ $('homeReplayBtn').addEventListener('click',()=>{
+  if(window.replay4LettersOpening)window.replay4LettersOpening();
+ });
+ $('homeStartBtn').addEventListener('click',()=>{
+  home.hidden=true;
+  window.__4lettersOpeningActive=true;
+  if(window.start4LettersLevelOne)window.start4LettersLevelOne();
+  else say('棋盤仍在載入，請稍候再試。');
+  openTutorial();
+ });
  $('tutorialNext').addEventListener('click',()=>showTutorialStep(tutorialIndex+1));
  $('tutorialSkip').addEventListener('click',finishTutorial);
  document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&!overlay.hidden){event.preventDefault();dismissOpening()}
-  else if(event.key==='Enter'&&!overlay.hidden&&sceneIndex===scenes.length-1&&document.activeElement!==$('openingSkip')){dismissOpening()}
+  else if(event.key==='Enter'&&!overlay.hidden&&sceneIndex===7&&document.activeElement!==$('openingSkip')&&!$('openingPlay').hidden){dismissOpening(true)}
  });
 })();
 </script>
