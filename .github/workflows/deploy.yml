@@ -58,7 +58,7 @@ jobs:
           python - <<'PY'
           import re, subprocess
           html = open("public/index.html", encoding="utf-8").read()
-          scripts = re.findall(r'<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>', html)
+          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html)
           if not scripts:
               raise SystemExit("No inline JavaScript found")
           for i, script in enumerate(scripts):
