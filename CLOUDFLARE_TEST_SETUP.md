@@ -1,40 +1,33 @@
-# Cloudflare Pages test site — browser-version-refresh
+# Cloudflare Pages deployment — 4letters-s
 
-This configuration is intended for the isolated Git branch:
+The Cloudflare Pages project for this game is **4letters-s**, served at:
 
-`feature/browser-version-refresh`
+https://4letters-s.pages.dev/
 
-It does not change the production `main` branch or the existing GitHub Pages site.
+Its connected Git branch is:
 
-## Create the separate Cloudflare Pages project
+`feature/kinetic-comic-opening`
 
-1. Open the [Cloudflare dashboard](https://dash.cloudflare.com/) and choose **Workers & Pages**.
-2. Choose **Create application** → **Pages** → **Connect to Git** (wording may differ slightly in the dashboard).
-3. Authorize the Cloudflare GitHub integration if prompted, and select repository **harfock/4letters**.
-4. Name the new project something separate, for example **chengyu-browser-test**.
-5. In build settings, use these exact values:
+## Required Cloudflare Pages build settings
 
-   | Setting | Value |
-   | --- | --- |
-   | Production branch | `feature/browser-version-refresh` |
-   | Framework preset | None / None preset |
-   | Build command | `python -m pip install cairosvg && python tools/build_cloudflare_pages.py` |
-   | Build output directory | `dist` |
-   | Root directory | repository root (leave blank/default) |
+In Cloudflare Dashboard → Workers & Pages → **4letters-s** → Settings → Builds & deployments, use:
 
-6. Save and start the first deployment. The test site will receive its own `*.pages.dev` URL. Use that test URL while evaluating the version-refresh feature.
+| Setting | Value |
+| --- | --- |
+| Production branch | `feature/kinetic-comic-opening` |
+| Framework preset | None |
+| Build command | `python -m pip install cairosvg && python tools/build_cloudflare_pages.py` |
+| Build output directory | `dist` |
+| Root directory | repository root (default / blank) |
 
-## What the branch build does
+Keep these settings in place so Cloudflare publishes a complete built site, including the local comic background and a version marker that is generated from `CF_PAGES_COMMIT_SHA`.
 
-- Stamps `index.html` with the current Cloudflare commit SHA.
-- Publishes `version.json` with the same version ID for browser checks.
-- Copies the game datasets, manifest and SVG artwork to the Pages output.
-- Generates the referenced 180/192/512 PNG icon sizes.
-- Adds `_headers` rules to prevent the HTML and `version.json` freshness pointer from being held in stale browser/edge caches.
-- Validates that the dataset contains 21 levels and 420 placements.
+## Version refresh
 
-The build script uses `CF_PAGES_COMMIT_SHA`, provided by Cloudflare Pages, as the version ID. If its deployment changes the version, an already-open game should detect the mismatch and reload. After two unsuccessful automatic retries, it shows a manual refresh notice instead of refreshing indefinitely.
+The build script stamps both the app's `app-version` meta tag and `version.json` with the same deployment commit SHA. At each fresh page launch, the browser requests `version.json` without using the cache. If the loaded page is older than the deployed version, it automatically reloads with a cache-busting query. After repeated failed refreshes, it displays a manual reload notice rather than looping forever.
 
-## Keeping it isolated
+The build output also includes `_headers` rules for `index.html` and `version.json` so stale client-side copies are less likely to be reused.
 
-Do not change the production branch setting of any existing Cloudflare Pages project. Create a **new** Pages project with the feature branch set as that new project's production branch. The Pages subdomain and its deployments will then be separate from the existing production site.
+## Output validation
+
+The build script checks the included dataset for 21 levels and 420 placements. It also copies `assets/opening-comic-bg.svg`, the data files, the manifest, and generated icons into `dist`. The GitHub Pages workflow for `main` remains separate; Cloudflare deployments use this Pages build script on the connected feature branch.
