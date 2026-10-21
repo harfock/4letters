@@ -63,6 +63,7 @@ def main() -> None:
         "manifest.webmanifest",
         "data/levels.json",
         "data/strokes.json",
+        "data/reference/hk_written_chinese_idioms.json",
     ):
         copy_file(relative)
 
