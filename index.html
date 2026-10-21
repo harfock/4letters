@@ -1119,8 +1119,8 @@ function render(){
  $('boardRow').classList.toggle('has-next',levelFinished);
  if(levelFinished){
   const completed=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
-  $('completionTitle').textContent=L===20?'全部 40 關完成！':'第 '+(L+1)+' 關完成';
-  $('completionDetail').textContent=L===20?'總用時 '+fmt(S.total)+' · '+completed+' / '+D.levels.reduce((n,x)=>n+x.placements.length,0):'本關用時 '+fmt(s.seconds);
+  $('completionTitle').textContent=L===D.levels.length-1?'全部 40 關完成！':'第 '+(L+1)+' 關完成';
+  $('completionDetail').textContent=L===D.levels.length-1?'總用時 '+fmt(S.total)+' · '+completed+'/'+D.levels.reduce((n,x)=>n+x.placements.length,0):'本關用時 '+fmt(s.seconds);
  }
  const words=$('words');
  if(words){
@@ -1360,7 +1360,7 @@ function clearSelected(){
 let levelTimePopupTimer=null;
 function showLevelTimePopup(){
  const popup=$('levelTimePopup');
- $('levelTimePopupTitle').textContent=L===20?'全部 21 關完成！':'第 '+(L+1)+' 關完成';
+ $('levelTimePopupTitle').textContent=L===D.levels.length-1?'全部 21 關完成！':'第 '+(L+1)+' 關完成';
  $('levelTimePopupValue').textContent=fmt(state().seconds);
  popup.hidden=false;
  if(levelTimePopupTimer)clearTimeout(levelTimePopupTimer);
