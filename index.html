@@ -1452,7 +1452,7 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   window.__4lettersOpeningActive=true;
   overlay.hidden=false;
   showScene(0);
-  say('正在重播片頭；你的關卡進度不會受到影響。');
+  const status=$('toast');if(status)status.textContent='正在重播片頭；你的關卡進度不會受到影響。';
  };
  $('replayOpeningBtn').addEventListener('click',()=>{
   if(window.replay4LettersOpening)window.replay4LettersOpening();
