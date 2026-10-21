@@ -485,12 +485,7 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 .opening-board-note{margin-top:10px;display:flex;align-items:center;gap:8px;color:#d1e6fa;font-size:11px;line-height:1.5;font-weight:650}
 .opening-board-note:before{content:"";width:8px;height:8px;border-radius:50%;background:#ffcc39;box-shadow:0 0 12px #ffcc39}
 .opening-scene-3 .opening-visual{overflow:visible}
-.opening-scene-3 .opening-word-tile{box-shadow:0 7px 0 #17385c,0 18px 28px #0008,inset 0 2px 0 #fff}
-.opening-scene-3.is-active .opening-word-tile{animation:opening-combo-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both}
-.opening-scene-3 .opening-word-tile:nth-child(1){--tile-order:0;animation-delay:0s}
-.opening-scene-3 .opening-word-tile:nth-child(2){--tile-order:1;animation-delay:.13s}
-.opening-scene-3 .opening-word-tile:nth-child(3){--tile-order:2;animation-delay:.26s}
-.opening-scene-3 .opening-word-tile:nth-child(4){--tile-order:3;animation-delay:.39s}
+.opening-scene-4 .opening-word-tile{box-shadow:0 7px 0 #17385c,0 18px 28px #0008,inset 0 2px 0 #fff}
 .opening-hit-word{position:absolute;left:50%;bottom:-39px;transform:translateX(-50%) rotate(-2deg);white-space:nowrap;background:#ffcf40;color:#122039;padding:7px 14px;font-size:clamp(12px,1.4vw,16px);font-weight:1000;letter-spacing:.15em;box-shadow:4px 4px 0 #ec455a}
 .opening-meaning-card{width:100%;max-width:540px;background:linear-gradient(145deg,#fffdf2,#dceef4);color:#102c43;border-radius:17px;padding:clamp(16px,3vw,27px);box-shadow:0 18px 38px #0007,0 0 0 5px #ffffff14;position:relative;transform:rotate(1.3deg);border:2px solid #fff}
 .opening-meaning-card:after{content:"";position:absolute;left:12px;right:12px;top:12px;bottom:12px;border:1px solid #3b75942e;border-radius:9px;pointer-events:none}
@@ -500,7 +495,6 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 .opening-meaning-rule{height:4px;width:52px;background:#f14b67;margin:15px 0}
 .opening-meaning-text{position:relative;z-index:1;margin:0;font-size:clamp(15px,1.8vw,20px);line-height:1.75;font-weight:750}
 .opening-meaning-foot{margin-top:15px;font-size:10px;letter-spacing:.13em;font-weight:1000;color:#2675a0}
-.opening-scene-4.is-active .opening-meaning-card{animation:opening-card-hit .42s .12s cubic-bezier(.18,.9,.25,1.35) both}
 .opening-path{width:100%;max-width:520px;min-height:270px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .opening-path:before{content:"";position:absolute;width:125%;height:90px;left:-12%;top:48%;transform:rotate(-20deg);background:linear-gradient(90deg,transparent,#1c9df466,#ffd34d99,#f34e6b66,transparent);filter:blur(12px)}
 .opening-path-line{position:absolute;width:75%;height:8px;border-radius:20px;left:12%;top:50%;transform:rotate(-19deg);background:linear-gradient(90deg,#43a5ff,#ffd34d,#fc5368);box-shadow:0 0 20px #3ca6ff77}
@@ -513,7 +507,7 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 .opening-play{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:210px;padding:16px 24px;border:3px solid #fff7d4;border-radius:13px;background:linear-gradient(180deg,#ffe17a,#ffb91e);color:#122039;font-size:18px;font-weight:1000;letter-spacing:.07em;box-shadow:0 5px 0 #b95f2d,0 12px 25px #0007,inset 0 2px 0 #fff;transform:skew(-3deg);animation:opening-play-pulse 1.3s ease-in-out infinite}
 .opening-play:hover{filter:brightness(1.08);transform:skew(-3deg) translateY(-2px)}
 .opening-play:active{transform:skew(-3deg) translateY(3px);box-shadow:0 2px 0 #b95f2d,0 6px 12px #0006}
-.opening-scene-5 .opening-copy .opening-play{margin-top:23px}
+.opening-scene-8 .opening-copy .opening-play{margin-top:23px}
 .opening-footer{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:5px 14px calc(12px + env(safe-area-inset-bottom))}
 .opening-dot{width:7px;height:7px;padding:0;min-width:0;min-height:0;border:0;border-radius:99px;background:#d0e4f755;transition:width .25s,background .25s}
 .opening-dot.is-active{width:26px;background:#ffd34d;box-shadow:0 0 12px #ffd34d55}
@@ -568,7 +562,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
  .opening-path{min-height:170px}
  .opening-level-node{width:clamp(41px,12vw,58px);border-radius:12px}
  .opening-key{font-size:53px}
- .opening-scene-5 .opening-copy .opening-play{margin-top:12px}
+ .opening-scene-8 .opening-copy .opening-play{margin-top:12px}
  .opening-play{min-width:170px;padding:12px 20px;font-size:16px}
  .opening-footer{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
  .opening-footer-note{display:none}
@@ -601,11 +595,57 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 }
 @media(prefers-reduced-motion:reduce){
  .opening-overlay:before,.opening-comic-rays,.opening-board-tilt,.opening-key,.opening-play,
- .opening-scene-1 .opening-word-tile,.opening-scene-3.is-active .opening-word-tile,
- .opening-scene-4.is-active .opening-meaning-card,body.tutorial-highlight-hint #hintFloat{animation:none!important}
+ .opening-scene-1 .opening-word-tile,.opening-scene-4.is-active .opening-word-tile,
+ .opening-scene-5.is-active .opening-meaning-card,body.tutorial-highlight-hint #hintFloat{animation:none!important}
  .opening-scene.is-active{animation:none!important;transition:none!important}
  .opening-progress-fill,.opening-dot{transition:none!important}
 }
+
+
+/* Static comic-action art is reused with different crops: cinematic stills, never video. */
+.opening-scene-1,.opening-scene-7,.opening-scene-8,.opening-scene-9{
+ background-image:linear-gradient(105deg,rgba(4,12,26,.76) 0%,rgba(4,12,26,.34) 52%,rgba(4,12,26,.28) 100%),url('./assets/opening-comic-bg.svg');
+ background-size:cover;background-position:center;background-repeat:no-repeat;
+}
+.opening-scene-1 .opening-visual,.opening-scene-7 .opening-visual,.opening-scene-8 .opening-visual{filter:drop-shadow(0 14px 24px rgba(0,0,0,.22))}
+.opening-scene-8 .opening-invite-logo{filter:drop-shadow(0 0 14px rgba(43,191,255,.3))}
+.opening-scene-9{background-image:linear-gradient(105deg,rgba(4,12,26,.1),rgba(4,12,26,.25)),url('./assets/opening-comic-bg.svg')}
+/* Extra storyboard beats: the target lock, centred hint, title invitation and transition cut. */
+.opening-scene-3.is-active #openingChallengeTiles .opening-word-tile{animation:opening-target-hit .42s cubic-bezier(.18,.9,.25,1.25) both}
+.opening-scene-3.is-active #openingChallengeTiles .opening-word-tile:nth-child(2){animation-delay:.06s}
+.opening-scene-3.is-active #openingChallengeTiles .opening-word-tile:nth-child(3){animation-delay:.12s}
+.opening-scene-3.is-active #openingChallengeTiles .opening-word-tile:nth-child(4){animation-delay:.18s}
+.opening-scene-4.is-active .opening-word-tile{animation:opening-combo-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both}
+.opening-scene-4 .opening-word-tile:nth-child(1){--tile-order:0;animation-delay:0s}
+.opening-scene-4 .opening-word-tile:nth-child(2){--tile-order:1;animation-delay:.13s}
+.opening-scene-4 .opening-word-tile:nth-child(3){--tile-order:2;animation-delay:.26s}
+.opening-scene-4 .opening-word-tile:nth-child(4){--tile-order:3;animation-delay:.39s}
+.opening-scene-5.is-active .opening-meaning-card{animation:opening-card-hit .42s .12s cubic-bezier(.18,.9,.25,1.35) both}
+.opening-scene-6.is-active .opening-hint-viewport .opening-board-tilt.focus-ready{animation:opening-hint-centre 1.2s .15s cubic-bezier(.18,.8,.25,1.15) both}
+.opening-board-copy .cell.opening-hint-sample{position:relative;z-index:8!important;outline:3px solid #ffe16a!important;outline-offset:2px;background:#ffda47!important;color:#15243b!important;box-shadow:0 0 0 5px #ffd34d55,0 0 22px 8px #ffd34d99!important;animation:opening-hint-pulse .8s steps(1,end) 3 both}
+.opening-invitation-visual{flex-direction:column;gap:18px}
+.opening-invite-logo{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;font-size:clamp(57px,10vw,112px);font-weight:1000;font-style:italic;letter-spacing:-.085em;line-height:.95;color:#fff;text-shadow:3px 4px 0 #067ec6,6px 8px 0 #f04057,9px 12px 0 #061126;transform:rotate(-4deg);animation:opening-logo-hit .6s cubic-bezier(.16,.95,.26,1.2) both}
+.opening-invite-four{color:#ffda45;-webkit-text-stroke:1.4px #fff4b6;margin-right:3px}
+.opening-invite-caption{z-index:2;letter-spacing:.16em;color:#c8e6ff;font-size:clamp(9px,1.3vw,13px);font-weight:950}
+.opening-invite-tiles{display:flex;gap:8px;position:relative;z-index:2}
+.opening-invite-tiles span{display:flex;align-items:center;justify-content:center;width:clamp(34px,5vw,50px);aspect-ratio:1;border:2px solid #fff;border-radius:8px;background:#ffce3f;color:#15223b;font-size:clamp(18px,3vw,28px);font-weight:1000;box-shadow:0 4px 0 #a24c37;transform:rotate(-6deg)}
+.opening-invite-tiles span:nth-child(2){background:#5bc7ff;transform:rotate(4deg) translateY(-5px)}
+.opening-invite-tiles span:nth-child(3){background:#fb7081;transform:rotate(-3deg)}
+.opening-invite-tiles span:nth-child(4){background:#8be8b0;transform:rotate(7deg) translateY(-3px)}
+.opening-play[hidden]{display:none!important}
+.opening-play{opacity:0;pointer-events:none;transform:skew(-3deg) translateY(12px);transition:opacity .25s ease,transform .25s ease}
+.opening-play.is-ready{opacity:1;pointer-events:auto;transform:skew(-3deg);animation:opening-play-pulse 1.3s ease-in-out infinite}
+.opening-scene-9{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,#275d96 0%,#0a1c36 58%,#050a14 100%);overflow:hidden}
+.opening-transition-swipe{position:absolute;inset:-35%;background:repeating-linear-gradient(116deg,transparent 0 11%,#e9f8ff 11.3% 13%,#49c5ff 13.3% 15%,#f54863 15.3% 16.5%,transparent 16.8% 27%);transform:translateX(-125%) skewX(-12deg);animation:opening-transition-swipe .58s cubic-bezier(.4,0,.2,1) both}
+.opening-transition-title{position:relative;z-index:2;font-size:clamp(44px,12vw,120px);font-style:italic;font-weight:1000;letter-spacing:-.065em;color:#fff;text-shadow:3px 4px 0 #1276c8,7px 8px 0 #f03e5a,10px 12px 0 #030813;transform:rotate(-5deg);animation:opening-transition-title .5s .05s cubic-bezier(.16,.85,.28,1.25) both}
+.opening-transition-subtitle{position:relative;z-index:2;margin-top:20px;background:#ffd34d;color:#101c2d;padding:7px 12px;font-size:11px;font-weight:1000;letter-spacing:.18em;transform:skew(-8deg)}
+.opening-hint-viewport .opening-board-tilt{--focus-x:0px;--focus-y:0px}
+@keyframes opening-target-hit{0%{opacity:0;transform:translate(45px,-35px) rotate(12deg) scale(.7)}72%{opacity:1;transform:translate(-3px,3px) rotate(-2deg) scale(1.08)}100%{opacity:1;transform:rotate(var(--tilt)) scale(1)}}
+@keyframes opening-hint-pulse{0%,100%{background:#ffda47;color:#15243b;transform:scale(1)}20%,60%{background:#132a47;color:#fff;transform:scale(1.22)}40%,80%{background:#ffda47;color:#15243b;transform:scale(1.1)}}
+@keyframes opening-hint-centre{0%{transform:rotateX(10deg) rotateZ(-2deg) scale(1.06)}70%{transform:translate(var(--focus-x),var(--focus-y)) rotateX(3deg) rotateZ(0) scale(1.26)}100%{transform:translate(var(--focus-x),var(--focus-y)) rotateX(0) rotateZ(0) scale(1.22)}}
+@keyframes opening-logo-hit{0%{opacity:0;transform:translateY(35px) rotate(-9deg) scale(.72)}72%{opacity:1;transform:translateY(-4px) rotate(-2deg) scale(1.05)}100%{opacity:1;transform:rotate(-4deg) scale(1)}}
+@keyframes opening-transition-swipe{0%{transform:translateX(-125%) skewX(-12deg)}100%{transform:translateX(0) skewX(-12deg)}}
+@keyframes opening-transition-title{0%{opacity:0;transform:translateY(20px) scale(.8) rotate(-9deg)}100%{opacity:1;transform:rotate(-5deg) scale(1)}}
 
 </style></head><body>
 <div id="openingOverlay" class="opening-overlay" hidden role="dialog" aria-modal="true" aria-label="4Letters 遊戲開場">
@@ -633,16 +673,26 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
    </div>
    <div class="opening-visual"><div class="opening-visual-card"><div class="opening-screen-label"><span>真實棋盤局部</span><span>LEVEL 01 · LIVE DATA</span></div><div class="opening-board-viewport"><div class="opening-board-tilt"><div id="openingBoardCopy" class="opening-board-copy" aria-hidden="true"></div></div></div><div class="opening-board-note">這裡展示的是遊戲實際載入的棋盤字格。</div></div></div>
   </section>
-  <section class="opening-scene opening-scene-3" data-scene="2" aria-label="解開成語，打出連擊">
+  
+  <section class="opening-scene opening-scene-3" data-scene="2" aria-label="快速切入，找到四字組合">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">TARGET LOCKED</div>
+    <h2>眼明手快<br><em>鎖定四字</em></h2>
+    <p class="opening-subtitle">放大看字、快速辨認。四個字組成一個意思，也打開整盤謎題。</p>
+    <div class="opening-tagline">FIND THE FOUR.</div>
+   </div>
+   <div class="opening-visual"><div class="opening-comic-rays"></div><div class="opening-hero-stamp">TARGET LOCKED</div><div id="openingChallengeTiles" class="opening-combo" aria-label="有效成語：一鼓作氣"></div></div>
+  </section>
+  <section class="opening-scene opening-scene-4" data-scene="3" aria-label="解開成語，打出連擊">
    <div class="opening-copy">
     <div class="opening-eyebrow">COMBO CONFIRMED</div>
     <h2>解開成語<br><em>打出連擊</em></h2>
     <p class="opening-subtitle">答對一組成語，四個字磚按次序彈跳。準確的每一步，都會帶來回饋。</p>
     <div class="opening-tagline">SOLVE. SNAP. MASTER.</div>
    </div>
-   <div class="opening-visual"><div class="opening-comic-rays"></div><div id="openingWordTiles" class="opening-combo" aria-label="示範成語"></div><div id="openingHitWord" class="opening-hit-word">成語破解！</div></div>
+   <div class="opening-visual"><div class="opening-comic-rays"></div><div id="openingWordTiles" class="opening-combo" aria-label="有效成語：一鼓作氣"></div><div id="openingHitWord" class="opening-hit-word">成語破解！</div></div>
   </section>
-  <section class="opening-scene opening-scene-4" data-scene="3" aria-label="不只解字，更要懂義">
+  <section class="opening-scene opening-scene-5" data-scene="4" aria-label="不只解字，更要懂義">
    <div class="opening-copy">
     <div class="opening-eyebrow">KNOW WHAT YOU SOLVE</div>
     <h2>不只解字<br><em>更要懂義</em></h2>
@@ -651,14 +701,35 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
    </div>
    <div class="opening-visual"><div class="opening-meaning-card"><div class="opening-meaning-kicker">IDIOM UNLOCKED · 成語釋義</div><div id="openingMeaningWord" class="opening-meaning-word">一鼓作氣</div><div id="openingMeaningPinyin" class="opening-meaning-pinyin">yī gǔ zuò qì</div><div class="opening-meaning-rule"></div><p id="openingMeaningText" class="opening-meaning-text">比喻趁著士氣旺盛時，一口氣完成事情。</p><div class="opening-meaning-foot">READ IT · UNDERSTAND IT · REMEMBER IT</div></div></div>
   </section>
-  <section class="opening-scene opening-scene-5" data-scene="4" aria-label="下一關等你來戰">
+  <section class="opening-scene opening-scene-6" data-scene="5" aria-label="提示閃亮，移到視野中央">
    <div class="opening-copy">
-    <div class="opening-eyebrow">THE NEXT CHALLENGE</div>
-    <h2>下一關<br><em>等你來戰</em></h2>
-    <p class="opening-subtitle">完成挑戰，累積實力。下一個發現，由你解鎖。</p>
-    <button id="openingPlay" class="opening-play" type="button">開始遊戲 <span aria-hidden="true">➜</span></button>
+    <div class="opening-eyebrow">NEED A CLUE?</div>
+    <h2>提示亮起<br><em>鎖定焦點</em></h2>
+    <p class="opening-subtitle">提示字閃亮，再移到視野中央。下一步更清楚，解謎節奏不中斷。</p>
+    <div class="opening-tagline">FOLLOW THE CLUE.</div>
+   </div>
+   <div class="opening-visual"><div class="opening-visual-card"><div class="opening-screen-label"><span>提示示範</span><span>FLASH · FOCUS</span></div><div id="openingHintViewport" class="opening-board-viewport opening-hint-viewport"><div id="openingHintBoardTilt" class="opening-board-tilt"><div id="openingHintBoardCopy" class="opening-board-copy" aria-hidden="true"></div></div></div><div class="opening-board-note">亮起提示字，棋盤平滑移動至焦點。</div></div></div>
+  </section>
+  <section class="opening-scene opening-scene-7" data-scene="6" aria-label="逐關解鎖新挑戰">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">LEVEL UP</div>
+    <h2>逐關解鎖<br><em>新的挑戰</em></h2>
+    <p class="opening-subtitle">完成眼前的關卡，累積解謎實力。每一步都帶你走得更遠。</p>
+    <div class="opening-tagline">ONE WIN AT A TIME.</div>
    </div>
    <div class="opening-visual"><div class="opening-comic-rays"></div><div class="opening-path"><div class="opening-path-line"></div><div class="opening-level-node">1</div><div class="opening-level-node">2</div><div class="opening-level-node">3</div><div class="opening-level-node">4</div><div class="opening-key" aria-hidden="true">⚿</div></div></div>
+  </section>
+  <section class="opening-scene opening-scene-8" data-scene="7" aria-label="4Letters，開始遊戲">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">YOUR ADVENTURE STARTS HERE</div>
+    <h2>準備好了嗎？<br><em>開始挑戰</em></h2>
+    <p class="opening-subtitle">觀察每一格，找出四字成語。你的第一個發現，就從現在開始。</p>
+    <button id="openingPlay" class="opening-play" type="button" hidden>開始遊戲 <span aria-hidden="true">➜</span></button>
+   </div>
+   <div class="opening-visual opening-invitation-visual"><div class="opening-comic-rays"></div><div class="opening-invite-logo"><span class="opening-invite-four">4</span><span>LETTERS</span></div><div class="opening-invite-caption">FOUR LETTERS. ONE DISCOVERY.</div><div class="opening-invite-tiles" aria-hidden="true"><span>一</span><span>鼓</span><span>作</span><span>氣</span></div></div>
+  </section>
+  <section class="opening-scene opening-scene-9" data-scene="8" aria-label="準備開始，進入遊戲">
+   <div class="opening-transition-swipe" aria-hidden="true"></div><div class="opening-transition-title">LET'S PLAY!</div><div class="opening-transition-subtitle">4LETTERS · YOUR MOVE</div>
   </section>
  </div>
  <div class="opening-footer"><div id="openingDots" style="display:flex;gap:8px;align-items:center" aria-label="開場進度"></div><span class="opening-footer-note">CINEMATIC INTRO · CSS MOTION</span></div>
@@ -1232,7 +1303,7 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
  const OPENING_SEEN='4letters-opening-seen-v1',TUTORIAL_SEEN='4letters-tutorial-seen-v1';
  const overlay=$('openingOverlay'),card=$('tutorialCard'),shade=$('tutorialShade');
  const scenes=[...document.querySelectorAll('.opening-scene')],dotsBox=$('openingDots');
- const sceneDurations=[2500,2800,3700,3900,4000];
+ const sceneDurations=[2000,2000,2000,3800,3800,2000,2000,1800];
  let sceneIndex=0,sceneTimer=null,tutorialIndex=0,hasStarted=false;
  const definitions={
   '一鼓作氣':{pinyin:'yī gǔ zuò qì',meaning:'比喻趁著士氣旺盛時，一口氣完成事情。'},
@@ -1250,15 +1321,14 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
    const tile=document.createElement('span');tile.className='opening-word-tile';tile.textContent=char;tile.style.setProperty('--tile-order',String(index));target.append(tile);
   });
  }
- function mountActualBoard(board){
-  const target=$('openingBoardCopy');if(!target||!board)return;
+ function mountOneBoard(board,targetId,highlight){
+  const target=$(targetId);if(!target||!board)return;
   const clone=board.cloneNode(true);clone.removeAttribute('id');clone.className='opening-board-copy';
   const cells=[...clone.querySelectorAll('.cell')];
   let columns=1;
   cells.forEach(cell=>{
    columns=Math.max(columns,parseInt(cell.style.gridColumn,10)||1);
    cell.classList.remove('active','correct-double-bounce','hint-flash-effect','drop-target');
-   cell.removeAttribute('data-key');
   });
   const tileSize=window.innerWidth<=680&&window.matchMedia('(orientation:portrait)').matches?28:(window.innerWidth<=900?32:40);
   clone.style.setProperty('--cell',tileSize+'px');
@@ -1266,7 +1336,23 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   clone.style.gridTemplateColumns='repeat('+columns+','+tileSize+'px)';
   clone.style.gap='2px';
   cells.forEach(cell=>{cell.style.width=tileSize+'px';cell.style.height=tileSize+'px';cell.style.fontSize=Math.round(tileSize*.55)+'px';cell.disabled=true;});
+  if(highlight){
+   const focus=cells.find(cell=>cell.classList.contains('revealed'))||cells.find(cell=>cell.textContent.trim()&&!cell.classList.contains('block'))||cells.find(cell=>!cell.classList.contains('block'));
+   if(focus)focus.classList.add('opening-hint-sample');
+  }
   target.replaceChildren(clone);
+ }
+ function mountActualBoard(board){
+  mountOneBoard(board,'openingBoardCopy',false);
+  mountOneBoard(board,'openingHintBoardCopy',true);
+ }
+ function centerHintPreview(){
+  const viewport=$('openingHintViewport'),tilt=$('openingHintBoardTilt'),focus=$('openingHintBoardCopy')?.querySelector('.opening-hint-sample');
+  if(!viewport||!tilt||!focus)return;
+  const vr=viewport.getBoundingClientRect(),fr=focus.getBoundingClientRect();
+  tilt.style.setProperty('--focus-x',(vr.left+vr.width/2-fr.left-fr.width/2)+'px');
+  tilt.style.setProperty('--focus-y',(vr.top+vr.height/2-fr.top-fr.height/2)+'px');
+  tilt.classList.add('focus-ready');
  }
  function populateMeaning(words){
   const preferred=['一鼓作氣','東山再起','一字千金','斷章取義','不遺餘力'];
@@ -1282,13 +1368,19 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   const dot=document.createElement('span');dot.className='opening-dot'+(index===0?' is-active':'');dot.setAttribute('aria-hidden','true');dotsBox.append(dot);
  });
  function showScene(index){
-  if(sceneTimer)clearTimeout(sceneTimer);
+  if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
   sceneIndex=Math.max(0,Math.min(scenes.length-1,index));
   scenes.forEach((scene,i)=>{scene.classList.toggle('is-active',i===sceneIndex);scene.setAttribute('aria-hidden',i===sceneIndex?'false':'true')});
   [...dotsBox.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===sceneIndex));
   $('openingProgressFill').style.width=((sceneIndex+1)/scenes.length*100)+'%';
-  $('openingSceneCount').textContent=String(sceneIndex+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0');
-  if(sceneIndex<scenes.length-1)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
+  $('openingSceneCount').textContent=sceneIndex===scenes.length-1?'GO':String(sceneIndex+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0');
+  const play=$('openingPlay');
+  if(sceneIndex===7){
+   play.hidden=false;play.classList.remove('is-ready');
+   sceneTimer=setTimeout(()=>{if(sceneIndex===7)play.classList.add('is-ready')},sceneDurations[7]);
+  }else{play.hidden=true;play.classList.remove('is-ready')}
+  if(sceneIndex<7)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
+  if(sceneIndex===5)requestAnimationFrame(centerHintPreview);
  }
  const tutorialSteps=[
   {target:'#boardArea',cls:'tutorial-highlight-board',title:'先看棋盤',body:'每組成語沿橫向或直向排列。觀察已顯示的字，再推理空格。'},
@@ -1319,9 +1411,18 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   if(safeGet(TUTORIAL_SEEN)){window.__4lettersOpeningActive=false;return}
   window.__4lettersOpeningActive=true;showTutorialStep(0);
  }
- function dismissOpening(){
+ function dismissOpening(withTransition){
   if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
-  overlay.hidden=true;safeSet(OPENING_SEEN,'1');openTutorial();
+  safeSet(OPENING_SEEN,'1');window.__4lettersOpeningActive=true;
+  if(withTransition){
+   sceneIndex=scenes.length-1;
+   scenes.forEach((scene,i)=>{scene.classList.toggle('is-active',i===sceneIndex);scene.setAttribute('aria-hidden',i===sceneIndex?'false':'true')});
+   [...dotsBox.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===sceneIndex));
+   $('openingProgressFill').style.width='100%';$('openingSceneCount').textContent='GO';
+   window.setTimeout(()=>{overlay.hidden=true;openTutorial()},590);
+   return;
+  }
+  overlay.hidden=true;openTutorial();
  }
  window.start4LettersOpening=function(payload){
   if(hasStarted)return;hasStarted=true;
@@ -1335,8 +1436,8 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   }
   window.__4lettersOpeningActive=true;overlay.hidden=false;
   showScene(0);
-  $('openingSkip').addEventListener('click',dismissOpening);
-  $('openingPlay').addEventListener('click',dismissOpening);
+  $('openingSkip').addEventListener('click',()=>dismissOpening(false));
+  $('openingPlay').addEventListener('click',()=>dismissOpening(true));
  };
  $('tutorialNext').addEventListener('click',()=>showTutorialStep(tutorialIndex+1));
  $('tutorialSkip').addEventListener('click',finishTutorial);
