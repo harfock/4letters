@@ -413,7 +413,264 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 }
 @media(prefers-reduced-motion:reduce){.cell.hint-flash-effect,.cell.correct-double-bounce{animation-duration:.01ms!important;animation-iteration-count:1!important;will-change:auto}}
 
-</style></head><body><div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
+
+
+/* 4Letters kinetic comic opening — static compositions animated in CSS, never video. */
+.opening-overlay[hidden],#tutorialShade[hidden],#tutorialCard[hidden]{display:none!important}
+.opening-overlay{
+ position:fixed;inset:0;z-index:99990;isolation:isolate;overflow:hidden;
+ display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;
+ color:#f8fbff;background:
+ radial-gradient(ellipse at 72% 35%,rgba(37,102,255,.28),transparent 37%),
+ radial-gradient(ellipse at 15% 80%,rgba(247,61,79,.24),transparent 42%),
+ linear-gradient(150deg,#071321 0%,#102642 52%,#090f1d 100%);
+}
+.opening-overlay:before{
+ content:"";position:absolute;inset:-45%;z-index:-1;pointer-events:none;opacity:.25;
+ background:repeating-conic-gradient(from 4deg at 50% 50%,transparent 0deg 5deg,rgba(111,195,255,.25) 5.1deg 5.45deg,transparent 5.6deg 10deg);
+ animation:opening-ray-drift 18s linear infinite;
+}
+.opening-overlay:after{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.12;
+ background-image:radial-gradient(rgba(255,255,255,.9) .7px,transparent .8px);
+ background-size:5px 5px;mask-image:linear-gradient(90deg,#000,transparent 82%);
+}
+.opening-topbar{width:min(1200px,100%);margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) clamp(14px,3vw,32px) 7px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.opening-brand{font-weight:1000;letter-spacing:-.055em;font-size:clamp(23px,4vw,36px);font-style:italic;line-height:1;color:#fff;text-shadow:2px 3px 0 #0b4774,4px 5px 0 #040812}
+.opening-brand b{color:#ffd34d;font-size:1.17em;-webkit-text-stroke:1px #fff2b0;margin-right:1px}
+.opening-brand small{display:block;margin-top:6px;font-size:10px;letter-spacing:.16em;font-style:normal;font-weight:850;color:#9dc7ed;text-shadow:none}
+.opening-skip{border:1px solid rgba(255,255,255,.38);background:rgba(8,20,39,.62);color:#fff;font-weight:850;font-size:12px;letter-spacing:.08em;padding:10px 13px;border-radius:999px;white-space:nowrap}
+.opening-skip:hover{background:#fff;color:#0b1c31;border-color:#fff}
+.opening-progress{width:min(1200px,100%);margin:0 auto;padding:0 clamp(14px,3vw,32px);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.opening-progress-track{height:3px;flex:1;background:#ffffff24;overflow:hidden;border-radius:99px}
+.opening-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#26d7ff,#ffd34d,#ff5368);transition:width .35s ease}
+.opening-scene-count{font-size:10px;font-weight:900;color:#cfe7ff;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+.opening-scenes{position:relative;width:min(1200px,100%);margin:0 auto;flex:1;min-height:0;padding:clamp(16px,3vw,34px) clamp(14px,3vw,32px) 14px}
+.opening-scene{position:absolute;inset:clamp(16px,3vw,34px) clamp(14px,3vw,32px) 14px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(18px,4vw,54px);visibility:hidden;opacity:0;pointer-events:none;transform:translateX(28px) scale(.985)}
+.opening-scene.is-active{visibility:visible;opacity:1;pointer-events:auto;transform:none;animation:opening-scene-hit .42s cubic-bezier(.16,.82,.24,1) both}
+.opening-copy{position:relative;z-index:2;min-width:0}
+.opening-eyebrow{display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.17em;font-size:clamp(9px,1vw,12px);font-weight:950;color:#86dcff;margin-bottom:15px}
+.opening-eyebrow:before{content:"";width:23px;height:4px;border-radius:9px;background:#ffcc39;box-shadow:0 0 14px #ffcc3975}
+.opening-copy h2{font-size:clamp(36px,6.4vw,80px);line-height:.99;letter-spacing:-.07em;margin:0;font-weight:1000;text-transform:uppercase;color:#fff;text-wrap:balance;text-shadow:0 4px 0 #101a2c,3px 6px 0 #174f91,5px 9px 0 #050914}
+.opening-copy h2 em{font-style:normal;color:#ffd34d;-webkit-text-stroke:.5px #fff2b0}
+.opening-copy .opening-subtitle{max-width:430px;margin:19px 0 0;color:#c9def6;font-size:clamp(13px,1.5vw,17px);line-height:1.65;font-weight:650}
+.opening-tagline{display:inline-block;margin-top:20px;padding:8px 11px;background:#ffcc39;color:#111b2a;font-size:11px;font-weight:1000;letter-spacing:.09em;transform:skew(-7deg);box-shadow:4px 4px 0 #e94252}
+.opening-visual{position:relative;min-width:0;min-height:300px;display:flex;align-items:center;justify-content:center}
+.opening-combo{display:flex;align-items:center;justify-content:center;gap:clamp(5px,1.5vw,14px);width:100%;max-width:620px;position:relative;perspective:900px}
+.opening-word-tile{--tilt:0deg;position:relative;display:flex;align-items:center;justify-content:center;flex:1;min-width:0;max-width:130px;aspect-ratio:1;border-radius:clamp(9px,1.7vw,20px);background:linear-gradient(145deg,#fffef7 0%,#dcebf5 100%);color:#10253d;border:2px solid #ffffff;box-shadow:0 7px 0 #15385d,0 15px 30px #0007,inset 0 2px 0 #fff;transform:rotate(var(--tilt)) skew(-1deg);font-size:clamp(34px,7vw,78px);font-weight:1000;line-height:1;text-shadow:0 1px 0 #fff;padding:0}
+.opening-word-tile:nth-child(1){--tilt:-7deg;background:linear-gradient(145deg,#fff4a5,#f5b82e)}
+.opening-word-tile:nth-child(2){--tilt:4deg;background:linear-gradient(145deg,#9defff,#339cf2)}
+.opening-word-tile:nth-child(3){--tilt:-3deg;background:linear-gradient(145deg,#ffabb2,#f54b66)}
+.opening-word-tile:nth-child(4){--tilt:7deg;background:linear-gradient(145deg,#c5ffad,#58d79c)}
+.opening-word-tile:after{content:"";position:absolute;inset:4px;border-radius:7px;border:1px solid #122e5018;pointer-events:none}
+.opening-scene-1 .opening-word-tile{animation:opening-fly-in .54s cubic-bezier(.18,.9,.28,1.4) both}
+.opening-scene-1 .opening-word-tile:nth-child(2){animation-delay:.08s}
+.opening-scene-1 .opening-word-tile:nth-child(3){animation-delay:.16s}
+.opening-scene-1 .opening-word-tile:nth-child(4){animation-delay:.24s}
+.opening-hero-stamp{position:absolute;right:1%;top:7%;z-index:3;padding:8px 12px;background:#ef405b;color:white;font-size:13px;font-weight:1000;letter-spacing:.12em;transform:rotate(8deg);box-shadow:4px 4px 0 #071426}
+.opening-comic-rays{position:absolute;inset:-15%;pointer-events:none;background:repeating-conic-gradient(from 8deg at 50% 50%,transparent 0deg 12deg,rgba(255,211,77,.26) 12.2deg 13.2deg,transparent 13.4deg 25deg);mask-image:radial-gradient(ellipse,#000 5%,transparent 68%);animation:opening-ray-pulse 2.8s ease-in-out infinite}
+.opening-visual-card{position:relative;width:100%;padding:clamp(10px,2vw,19px);background:linear-gradient(145deg,#0e2847dd,#071425ee);border:1px solid #83ceff75;border-radius:clamp(12px,2vw,22px);box-shadow:0 20px 55px #0007,0 0 0 5px #ffffff07;transform:rotate(-1.6deg);overflow:hidden}
+.opening-visual-card:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 20%,#fff1 37%,transparent 54%);transform:translateX(-120%);pointer-events:none}
+.opening-scene-2.is-active .opening-visual-card:before{animation:opening-light-sweep 1.15s .18s ease-out both}
+.opening-screen-label{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:1px 2px 10px;color:#d8edff;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
+.opening-screen-label span:last-child{color:#ffd34d}
+.opening-board-viewport{height:clamp(225px,43vh,390px);min-height:0;overflow:hidden;border-radius:11px;background:radial-gradient(ellipse at 50% 30%,#315f8c,#0a1e34 70%);border:1px solid #6fa6dd70;display:flex;align-items:center;justify-content:center;perspective:900px}
+.opening-board-tilt{display:flex;align-items:center;justify-content:center;transform:rotateX(10deg) rotateZ(-2deg) scale(1.1);transform-origin:center center;filter:drop-shadow(0 10px 15px #0007);animation:opening-board-float 3.2s ease-in-out infinite}
+.opening-board-copy{display:grid;width:max-content;margin:0 auto;gap:2px;flex:none}
+.opening-board-copy .cell{width:var(--cell)!important;height:var(--cell)!important;min-width:0!important;min-height:0!important;border-radius:5px!important;font-size:var(--cell-font)!important;line-height:1!important;padding:0!important;box-shadow:0 2px 0 #031426!important}
+.opening-board-copy .cell.block{background:#071b2e!important;border:1px solid #1d4360!important}
+.opening-board-copy .cell.revealed{background:#ffd166!important;color:#15273e!important}
+.opening-board-copy .cell.filled{background:#8ce7c7!important;color:#103b49!important}
+.opening-board-copy .cell .num{font-size:7px!important;top:0!important;left:1px!important;color:#506c73!important}
+.opening-board-note{margin-top:10px;display:flex;align-items:center;gap:8px;color:#d1e6fa;font-size:11px;line-height:1.5;font-weight:650}
+.opening-board-note:before{content:"";width:8px;height:8px;border-radius:50%;background:#ffcc39;box-shadow:0 0 12px #ffcc39}
+.opening-scene-3 .opening-visual{overflow:visible}
+.opening-scene-3 .opening-word-tile{box-shadow:0 7px 0 #17385c,0 18px 28px #0008,inset 0 2px 0 #fff}
+.opening-scene-3.is-active .opening-word-tile{animation:opening-combo-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both;animation-delay:calc(var(--tile-order,0)*.13s)}
+.opening-scene-3 .opening-word-tile:nth-child(1){--tile-order:0}
+.opening-scene-3 .opening-word-tile:nth-child(2){--tile-order:1}
+.opening-scene-3 .opening-word-tile:nth-child(3){--tile-order:2}
+.opening-scene-3 .opening-word-tile:nth-child(4){--tile-order:3}
+.opening-hit-word{position:absolute;left:50%;bottom:-39px;transform:translateX(-50%) rotate(-2deg);white-space:nowrap;background:#ffcf40;color:#122039;padding:7px 14px;font-size:clamp(12px,1.4vw,16px);font-weight:1000;letter-spacing:.15em;box-shadow:4px 4px 0 #ec455a}
+.opening-meaning-card{width:100%;max-width:540px;background:linear-gradient(145deg,#fffdf2,#dceef4);color:#102c43;border-radius:17px;padding:clamp(16px,3vw,27px);box-shadow:0 18px 38px #0007,0 0 0 5px #ffffff14;position:relative;transform:rotate(1.3deg);border:2px solid #fff}
+.opening-meaning-card:after{content:"";position:absolute;left:12px;right:12px;top:12px;bottom:12px;border:1px solid #3b75942e;border-radius:9px;pointer-events:none}
+.opening-meaning-kicker{font-size:10px;letter-spacing:.15em;font-weight:1000;color:#1d7bb4;text-transform:uppercase}
+.opening-meaning-word{margin:10px 0 2px;font-size:clamp(28px,5vw,48px);line-height:1.05;font-weight:1000;color:#122e4a}
+.opening-meaning-pinyin{font-size:12px;letter-spacing:.05em;color:#517288;font-weight:800}
+.opening-meaning-rule{height:4px;width:52px;background:#f14b67;margin:15px 0}
+.opening-meaning-text{position:relative;z-index:1;margin:0;font-size:clamp(15px,1.8vw,20px);line-height:1.75;font-weight:750}
+.opening-meaning-foot{margin-top:15px;font-size:10px;letter-spacing:.13em;font-weight:1000;color:#2675a0}
+.opening-scene-4.is-active .opening-meaning-card{animation:opening-card-hit .42s .12s cubic-bezier(.18,.9,.25,1.35) both}
+.opening-path{width:100%;max-width:520px;min-height:270px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.opening-path:before{content:"";position:absolute;width:125%;height:90px;left:-12%;top:48%;transform:rotate(-20deg);background:linear-gradient(90deg,transparent,#1c9df466,#ffd34d99,#f34e6b66,transparent);filter:blur(12px)}
+.opening-path-line{position:absolute;width:75%;height:8px;border-radius:20px;left:12%;top:50%;transform:rotate(-19deg);background:linear-gradient(90deg,#43a5ff,#ffd34d,#fc5368);box-shadow:0 0 20px #3ca6ff77}
+.opening-level-node{position:absolute;display:flex;align-items:center;justify-content:center;width:clamp(45px,7vw,76px);aspect-ratio:1;border-radius:16px;border:3px solid #fff;background:linear-gradient(150deg,#ffeb95,#ffbf29);color:#10223c;font-size:clamp(19px,3vw,31px);font-weight:1000;box-shadow:0 5px 0 #aa6328,0 10px 25px #0008;transform:rotate(-6deg)}
+.opening-level-node:nth-of-type(2){left:9%;top:50%;transform:translateY(-50%) rotate(-10deg)}
+.opening-level-node:nth-of-type(3){left:35%;top:31%;background:linear-gradient(150deg,#b8efff,#3fa8f6);transform:rotate(8deg)}
+.opening-level-node:nth-of-type(4){right:18%;top:16%;background:linear-gradient(150deg,#ffc2cc,#f45270);transform:rotate(-8deg)}
+.opening-level-node:nth-of-type(5){right:1%;top:4%;background:#12243a;color:#ffd34d;border-color:#ffd34d;transform:rotate(9deg)}
+.opening-key{position:absolute;right:24%;bottom:6%;font-size:clamp(47px,7vw,75px);line-height:1;color:#ffdb57;text-shadow:0 0 10px #ffd34d,0 0 30px #ffd34d,4px 5px 0 #9b4f24;transform:rotate(-28deg);animation:opening-key-float 1.7s ease-in-out infinite}
+.opening-play{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-width:210px;padding:16px 24px;border:3px solid #fff7d4;border-radius:13px;background:linear-gradient(180deg,#ffe17a,#ffb91e);color:#122039;font-size:18px;font-weight:1000;letter-spacing:.07em;box-shadow:0 5px 0 #b95f2d,0 12px 25px #0007,inset 0 2px 0 #fff;transform:skew(-3deg);animation:opening-play-pulse 1.3s ease-in-out infinite}
+.opening-play:hover{filter:brightness(1.08);transform:skew(-3deg) translateY(-2px)}
+.opening-play:active{transform:skew(-3deg) translateY(3px);box-shadow:0 2px 0 #b95f2d,0 6px 12px #0006}
+.opening-scene-5 .opening-copy .opening-play{margin-top:23px}
+.opening-footer{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:8px;padding:5px 14px calc(12px + env(safe-area-inset-bottom))}
+.opening-dot{width:7px;height:7px;padding:0;min-width:0;min-height:0;border:0;border-radius:99px;background:#d0e4f755;transition:width .25s,background .25s}
+.opening-dot.is-active{width:26px;background:#ffd34d;box-shadow:0 0 12px #ffd34d55}
+.opening-footer-note{position:absolute;right:clamp(14px,3vw,32px);bottom:calc(13px + env(safe-area-inset-bottom));font-size:10px;font-weight:850;letter-spacing:.12em;color:#8daecc}
+#tutorialShade{position:fixed;inset:0;z-index:99991;background:rgba(2,9,19,.68);pointer-events:none}
+#tutorialCard{position:fixed;z-index:99993;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100vw - 28px));padding:19px 20px 16px;border:1px solid #7fcfff;border-radius:18px;background:linear-gradient(145deg,#142d4a,#08182c);color:#f8fbff;box-shadow:0 16px 50px #0009,0 0 0 4px #69bfff16}
+.tutorial-kicker{display:flex;align-items:center;gap:8px;color:#ffd34d;font-size:10px;letter-spacing:.16em;font-weight:1000;text-transform:uppercase}
+.tutorial-kicker:before{content:"";width:20px;height:3px;background:#ef4d67;border-radius:4px}
+#tutorialTitle{font-size:clamp(21px,4vw,30px);line-height:1.2;margin:9px 0 6px;font-weight:1000;letter-spacing:-.03em}
+#tutorialBody{font-size:15px;line-height:1.75;margin:0;color:#d6e7f7}
+.tutorial-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:15px}
+.tutorial-skip{background:transparent;border-color:#ffffff40;color:#c5daed}
+.tutorial-next{background:linear-gradient(180deg,#ffe17a,#ffbd26);color:#13223a;border:1px solid #fff0af;font-weight:1000}
+body.tutorial-highlight-board #boardArea,body.tutorial-highlight-candidates .candidate-panel,body.tutorial-highlight-hint #hintFloat{
+ position:relative;z-index:99992;outline:3px solid #ffd34d;outline-offset:4px;box-shadow:0 0 0 9px #ffd34d32,0 0 26px 8px #49baff55!important;
+}
+body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-out infinite}
+@keyframes opening-ray-drift{to{transform:rotate(360deg)}}
+@keyframes opening-ray-pulse{0%,100%{opacity:.48;transform:scale(.94)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes opening-scene-hit{0%{opacity:0;transform:translateX(28px) scale(.985)}62%{opacity:1;transform:translateX(-4px) scale(1.006)}100%{opacity:1;transform:none}}
+@keyframes opening-fly-in{0%{opacity:0;transform:translate3d(70px,-40px,0) rotate(18deg) scale(.65)}70%{opacity:1;transform:translate3d(-5px,3px,0) rotate(-4deg) scale(1.08)}100%{opacity:1;transform:rotate(var(--tilt)) scale(1)}}
+@keyframes opening-combo-bounce{0%,100%{transform:translateY(0) rotate(var(--tilt)) scale(1)}22%{transform:translateY(-18px) rotate(var(--tilt)) scale(1.09);filter:brightness(1.2)}45%{transform:translateY(0) rotate(var(--tilt)) scale(.98)}68%{transform:translateY(-10px) rotate(var(--tilt)) scale(1.045);filter:brightness(1.12)}84%{transform:translateY(0) rotate(var(--tilt)) scale(1)}}
+@keyframes opening-light-sweep{to{transform:translateX(120%)}}
+@keyframes opening-board-float{0%,100%{transform:rotateX(10deg) rotateZ(-2deg) scale(1.06)}50%{transform:rotateX(14deg) rotateZ(-1deg) scale(1.1)}}
+@keyframes opening-card-hit{0%{opacity:0;transform:translateX(40px) rotate(5deg) scale(.94)}70%{opacity:1;transform:translateX(-4px) rotate(-1deg) scale(1.015)}100%{opacity:1;transform:rotate(1.3deg) scale(1)}}
+@keyframes opening-key-float{0%,100%{transform:translateY(0) rotate(-28deg)}50%{transform:translateY(-10px) rotate(-20deg)}}
+@keyframes opening-play-pulse{0%,100%{box-shadow:0 5px 0 #b95f2d,0 12px 25px #0007,0 0 0 0 #ffd34d00,inset 0 2px 0 #fff}50%{box-shadow:0 5px 0 #b95f2d,0 12px 25px #0007,0 0 0 7px #ffd34d2e,inset 0 2px 0 #fff}}
+@media(max-width:680px) and (orientation:portrait){
+ .opening-topbar{padding-top:calc(9px + env(safe-area-inset-top));padding-bottom:5px}
+ .opening-brand{font-size:25px}.opening-brand small{font-size:8px;margin-top:4px}
+ .opening-skip{font-size:10px;padding:8px 10px}
+ .opening-scenes{padding:9px 14px 5px}
+ .opening-scene{inset:9px 14px 5px;display:flex;flex-direction:column;justify-content:center;gap:clamp(14px,3vh,25px);overflow-y:auto}
+ .opening-copy{width:100%;flex:0 0 auto}
+ .opening-eyebrow{margin-bottom:9px;font-size:9px}
+ .opening-copy h2{font-size:clamp(33px,9vw,48px);line-height:1.02}
+ .opening-copy .opening-subtitle{font-size:13px;margin-top:8px;line-height:1.45}
+ .opening-tagline{margin-top:10px;font-size:9px;padding:6px 9px}
+ .opening-visual{width:100%;min-height:0;flex:0 1 auto;max-height:42vh}
+ .opening-combo{gap:6px}
+ .opening-word-tile{font-size:clamp(35px,10vw,56px);border-radius:11px;box-shadow:0 5px 0 #15385d,0 10px 17px #0007,inset 0 2px 0 #fff}
+ .opening-visual-card{padding:10px}
+ .opening-screen-label{font-size:9px;padding-bottom:7px}
+ .opening-board-viewport{height:clamp(170px,27vh,250px)}
+ .opening-board-note{font-size:10px;margin-top:7px}
+ .opening-hit-word{bottom:-31px;font-size:11px;padding:6px 10px}
+ .opening-meaning-card{padding:17px}
+ .opening-meaning-word{font-size:32px;margin-top:7px}
+ .opening-meaning-rule{margin:10px 0}
+ .opening-meaning-text{font-size:14px;line-height:1.65}
+ .opening-meaning-foot{margin-top:9px;font-size:9px}
+ .opening-path{min-height:170px}
+ .opening-level-node{width:clamp(41px,12vw,58px);border-radius:12px}
+ .opening-key{font-size:53px}
+ .opening-scene-5 .opening-copy .opening-play{margin-top:12px}
+ .opening-play{min-width:170px;padding:12px 20px;font-size:16px}
+ .opening-footer{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+ .opening-footer-note{display:none}
+}
+@media(max-width:390px) and (orientation:portrait){
+ .opening-topbar{padding-left:10px;padding-right:10px}
+ .opening-scenes{padding-left:10px;padding-right:10px}
+ .opening-scene{inset:9px 10px 5px}
+ .opening-copy h2{font-size:33px}
+ .opening-visual{max-height:39vh}
+ .opening-board-viewport{height:190px}
+ .opening-word-tile{font-size:34px}
+}
+@media(orientation:landscape) and (max-height:520px){
+ .opening-topbar{padding-top:calc(5px + env(safe-area-inset-top));padding-bottom:3px}
+ .opening-brand{font-size:21px}.opening-brand small{display:none}
+ .opening-skip{padding:6px 10px}
+ .opening-scenes{padding:4px 22px 2px}
+ .opening-scene{inset:4px 22px 2px;gap:20px}
+ .opening-copy h2{font-size:clamp(30px,6vh,48px)}
+ .opening-copy .opening-subtitle{margin-top:7px;font-size:12px}
+ .opening-tagline{margin-top:8px}
+ .opening-visual{min-height:0;max-height:calc(100dvh - 95px)}
+ .opening-board-viewport{height:calc(100dvh - 155px);min-height:125px}
+ .opening-path{min-height:190px}
+ .opening-level-node{width:46px}
+ .opening-key{font-size:48px}
+ .opening-play{padding:10px 18px;min-width:165px;font-size:15px}
+ .opening-footer{padding-bottom:calc(4px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){
+ .opening-overlay:before,.opening-comic-rays,.opening-board-tilt,.opening-key,.opening-play,
+ .opening-scene-1 .opening-word-tile,.opening-scene-3.is-active .opening-word-tile,
+ .opening-scene-4.is-active .opening-meaning-card,body.tutorial-highlight-hint #hintFloat{animation:none!important}
+ .opening-scene.is-active{animation:none!important;transition:none!important}
+ .opening-progress-fill,.opening-dot{transition:none!important}
+}
+
+</style></head><body>
+<div id="openingOverlay" class="opening-overlay" hidden role="dialog" aria-modal="true" aria-label="4Letters 遊戲開場">
+ <div class="opening-topbar">
+  <div class="opening-brand"><b>4</b>LETTERS<small>成語 × 節奏 × 解謎</small></div>
+  <button id="openingSkip" class="opening-skip" type="button">略過片頭 <span aria-hidden="true">↗</span></button>
+ </div>
+ <div class="opening-progress"><div class="opening-progress-track"><div id="openingProgressFill" class="opening-progress-fill"></div></div><span id="openingSceneCount" class="opening-scene-count">01 / 05</span></div>
+ <div class="opening-scenes">
+  <section class="opening-scene opening-scene-1 is-active" data-scene="0" aria-label="四字成語，等你破解">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">A WORD PUZZLE ADVENTURE</div>
+    <h2>四字成語<br><em>等你破解</em></h2>
+    <p class="opening-subtitle">觀察、推理、組合。每一格都可能是破解整盤的關鍵。</p>
+    <div class="opening-tagline">FOUR LETTERS. ONE DISCOVERY.</div>
+   </div>
+   <div class="opening-visual opening-hero-stage"><div class="opening-comic-rays"></div><div class="opening-hero-stamp">MAKE YOUR MOVE!</div><div id="openingHeroTiles" class="opening-combo" aria-hidden="true"></div></div>
+  </section>
+  <section class="opening-scene opening-scene-2" data-scene="1" aria-label="看清棋盤，找出線索">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">LOOK CLOSER</div>
+    <h2>每一格<br><em>都是關鍵</em></h2>
+    <p class="opening-subtitle">橫向、直向，成語彼此交錯。找到一個字，就可能打開下一條線索。</p>
+    <div class="opening-tagline">SPOT THE PATTERN.</div>
+   </div>
+   <div class="opening-visual"><div class="opening-visual-card"><div class="opening-screen-label"><span>真實棋盤局部</span><span>LEVEL 01 · LIVE DATA</span></div><div class="opening-board-viewport"><div class="opening-board-tilt"><div id="openingBoardCopy" class="opening-board-copy" aria-hidden="true"></div></div></div><div class="opening-board-note">這裡展示的是遊戲實際載入的棋盤字格。</div></div></div>
+  </section>
+  <section class="opening-scene opening-scene-3" data-scene="2" aria-label="解開成語，打出連擊">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">COMBO CONFIRMED</div>
+    <h2>解開成語<br><em>打出連擊</em></h2>
+    <p class="opening-subtitle">答對一組成語，四個字磚按次序彈跳。準確的每一步，都會帶來回饋。</p>
+    <div class="opening-tagline">SOLVE. SNAP. MASTER.</div>
+   </div>
+   <div class="opening-visual"><div class="opening-comic-rays"></div><div id="openingWordTiles" class="opening-combo" aria-label="示範成語"></div><div id="openingHitWord" class="opening-hit-word">成語破解！</div></div>
+  </section>
+  <section class="opening-scene opening-scene-4" data-scene="3" aria-label="不只解字，更要懂義">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">KNOW WHAT YOU SOLVE</div>
+    <h2>不只解字<br><em>更要懂義</em></h2>
+    <p class="opening-subtitle">把答對的一刻，變成真正記得住的中文知識。</p>
+    <div class="opening-tagline">EVERY ANSWER TEACHES YOU.</div>
+   </div>
+   <div class="opening-visual"><div class="opening-meaning-card"><div class="opening-meaning-kicker">IDIOM UNLOCKED · 成語釋義</div><div id="openingMeaningWord" class="opening-meaning-word">一鼓作氣</div><div id="openingMeaningPinyin" class="opening-meaning-pinyin">yī gǔ zuò qì</div><div class="opening-meaning-rule"></div><p id="openingMeaningText" class="opening-meaning-text">比喻趁著士氣旺盛時，一口氣完成事情。</p><div class="opening-meaning-foot">READ IT · UNDERSTAND IT · REMEMBER IT</div></div></div>
+  </section>
+  <section class="opening-scene opening-scene-5" data-scene="4" aria-label="下一關等你來戰">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">THE NEXT CHALLENGE</div>
+    <h2>下一關<br><em>等你來戰</em></h2>
+    <p class="opening-subtitle">完成挑戰，累積實力。下一個發現，由你解鎖。</p>
+    <button id="openingPlay" class="opening-play" type="button">開始遊戲 <span aria-hidden="true">➜</span></button>
+   </div>
+   <div class="opening-visual"><div class="opening-comic-rays"></div><div class="opening-path"><div class="opening-path-line"></div><div class="opening-level-node">1</div><div class="opening-level-node">2</div><div class="opening-level-node">3</div><div class="opening-level-node">4</div><div class="opening-key" aria-hidden="true">⚿</div></div></div>
+  </section>
+ </div>
+ <div class="opening-footer"><div id="openingDots" style="display:flex;gap:8px;align-items:center" aria-label="開場進度"></div><span class="opening-footer-note">CINEMATIC INTRO · CSS MOTION</span></div>
+</div>
+<div id="tutorialShade" hidden aria-hidden="true"></div>
+<aside id="tutorialCard" hidden role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+ <div id="tutorialKicker" class="tutorial-kicker">QUICK START · 01 / 04</div>
+ <h2 id="tutorialTitle">先看棋盤</h2>
+ <p id="tutorialBody">每組成語沿橫向或直向排列。觀察已顯示的字，再推理空格。</p>
+ <div class="tutorial-actions"><button id="tutorialSkip" class="tutorial-skip" type="button">略過教學</button><button id="tutorialNext" class="tutorial-next" type="button">下一步 →</button></div>
+</aside>
+<div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div class="brand"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
 <div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
 <p class="foot">詞目以教育部《成語典》主條四字詞目為基礎；提示採遊戲內揭示字，不複製官方釋義。<a style="color:var(--mint)" href="https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html" target="_blank" rel="noopener">官方資料下載頁</a></p></main>
@@ -940,7 +1197,7 @@ $('review').onclick=close;$('advance').onclick=goNext;
 $('export').onclick=()=>{save();const a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({version:3,state:S},null,2)],{type:'application/json'}));a.href=u;a.download='idiom-progress.json';a.click();URL.revokeObjectURL(u)};
 $('import').onclick=()=>$('file').click();
 $('file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.state?.levels)throw Error('檔案格式不正確');S=d.state;for(const x of Object.values(S.levels)){if(!x.tileAssignment)x.tileAssignment={};if(!x.exhaustedTiles)x.exhaustedTiles=[]}L=0;render();say('進度已匯入。')}catch(x){alert('匯入失敗：'+x.message)}};r.readAsText(f)};
-setInterval(()=>{if(!D)return;const s=state();if(!s.finished){s.seconds++;S.total++;$('timer').textContent=fmt(s.seconds);$('total').textContent=fmt(S.total);save()}},1000);
+setInterval(()=>{if(!D||window.__4lettersOpeningActive)return;const s=state();if(!s.finished){s.seconds++;S.total++;$('timer').textContent=fmt(s.seconds);$('total').textContent=fmt(S.total);save()}},1000);
 let lastLayoutWidth=window.innerWidth,resizeRenderTimer=null;
 window.addEventListener('resize',()=>{
  const nextWidth=window.innerWidth;
@@ -963,7 +1220,130 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   if(initialClue)pendingBoardFocus=initialClue;
   render();
   say(Object.keys(STROKES).length?'棋盤已載入。候選字按筆畫由少至多排列；拖曳時會自動吸附到附近的正確空格。':'棋盤已載入；筆畫資料暫不可用，候選字已用備用排序。');
+  if(window.start4LettersOpening){window.start4LettersOpening({board:$('board'),words:D.levels[0].placements.map(p=>p.word)});}
  });
 }).catch(e=>{$('title').textContent='棋盤資料尚未載入';say(e.message+'；請確認 GitHub Pages 已更新，並重新整理頁面。')});
 })();
-</script></body></html>
+</script>
+<script>
+/* Opening storyboard controller. It runs after the core crossword app and uses its live board as a visual source. */
+(()=>{'use strict';
+ const $=id=>document.getElementById(id);
+ const OPENING_SEEN='4letters-opening-seen-v1',TUTORIAL_SEEN='4letters-tutorial-seen-v1';
+ const overlay=$('openingOverlay'),card=$('tutorialCard'),shade=$('tutorialShade');
+ const scenes=[...document.querySelectorAll('.opening-scene')],dotsBox=$('openingDots');
+ const sceneDurations=[2500,2800,3700,3900,4000];
+ let sceneIndex=0,sceneTimer=null,tutorialIndex=0,hasStarted=false;
+ const definitions={
+  '一鼓作氣':{pinyin:'yī gǔ zuò qì',meaning:'比喻趁著士氣旺盛時，一口氣完成事情。'},
+  '東山再起':{pinyin:'dōng shān zài qǐ',meaning:'比喻失勢後重新恢復地位或力量。'},
+  '一字千金':{pinyin:'yī zì qiān jīn',meaning:'形容文字極有價值，或文章寫得十分精妙。'},
+  '斷章取義':{pinyin:'duàn zhāng qǔ yì',meaning:'只取文章或言論的片段，忽略上下文而曲解原意。'},
+  '不遺餘力':{pinyin:'bù yí yú lì',meaning:'用盡全部力量，毫不保留。'}
+ };
+ const safeGet=key=>{try{return localStorage.getItem(key)}catch(_e){return null}};
+ const safeSet=(key,value)=>{try{localStorage.setItem(key,value)}catch(_e){}};
+ function makeTiles(word,target){
+  if(!target)return;
+  target.replaceChildren();
+  [...word].slice(0,4).forEach((char,index)=>{
+   const tile=document.createElement('span');tile.className='opening-word-tile';tile.textContent=char;tile.style.setProperty('--tile-order',String(index));target.append(tile);
+  });
+ }
+ function mountActualBoard(board){
+  const target=$('openingBoardCopy');if(!target||!board)return;
+  const clone=board.cloneNode(true);clone.removeAttribute('id');clone.className='opening-board-copy';
+  const cells=[...clone.querySelectorAll('.cell')];
+  let columns=1;
+  cells.forEach(cell=>{
+   columns=Math.max(columns,parseInt(cell.style.gridColumn,10)||1);
+   cell.classList.remove('active','correct-double-bounce','hint-flash-effect','drop-target');
+   cell.removeAttribute('data-key');
+  });
+  const tileSize=window.innerWidth<=680&&window.matchMedia('(orientation:portrait)').matches?28:(window.innerWidth<=900?32:40);
+  clone.style.setProperty('--cell',tileSize+'px');
+  clone.style.setProperty('--cell-font',Math.round(tileSize*.55)+'px');
+  clone.style.gridTemplateColumns='repeat('+columns+','+tileSize+'px)';
+  clone.style.gap='2px';
+  cells.forEach(cell=>{cell.style.width=tileSize+'px';cell.style.height=tileSize+'px';cell.style.fontSize=Math.round(tileSize*.55)+'px';cell.disabled=true;});
+  target.replaceChildren(clone);
+ }
+ function populateMeaning(words){
+  const preferred=['一鼓作氣','東山再起','一字千金','斷章取義','不遺餘力'];
+  const idiom=preferred.find(w=>words.includes(w))||words[0]||'一鼓作氣';
+  const def=definitions[idiom]||definitions['一鼓作氣'];
+  makeTiles(idiom,$('openingHeroTiles'));makeTiles(idiom,$('openingWordTiles'));
+  $('openingMeaningWord').textContent=idiom;
+  $('openingMeaningPinyin').textContent=def.pinyin;
+  $('openingMeaningText').textContent=def.meaning;
+  $('openingHitWord').textContent=idiom+' · 破解成功';
+ }
+ scenes.forEach((scene,index)=>{
+  const dot=document.createElement('span');dot.className='opening-dot'+(index===0?' is-active':'');dot.setAttribute('aria-hidden','true');dotsBox.append(dot);
+ });
+ function showScene(index){
+  if(sceneTimer)clearTimeout(sceneTimer);
+  sceneIndex=Math.max(0,Math.min(scenes.length-1,index));
+  scenes.forEach((scene,i)=>{scene.classList.toggle('is-active',i===sceneIndex);scene.setAttribute('aria-hidden',i===sceneIndex?'false':'true')});
+  [...dotsBox.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===sceneIndex));
+  $('openingProgressFill').style.width=((sceneIndex+1)/scenes.length*100)+'%';
+  $('openingSceneCount').textContent=String(sceneIndex+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0');
+  if(sceneIndex<scenes.length-1)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
+ }
+ const tutorialSteps=[
+  {target:'#boardArea',cls:'tutorial-highlight-board',title:'先看棋盤',body:'每組成語沿橫向或直向排列。觀察已顯示的字，再推理空格。'},
+  {target:'.candidate-panel',cls:'tutorial-highlight-candidates',title:'拖曳候選字',body:'按住候選字磚，拖到棋盤空格。放錯字時，可選取格子再清除。'},
+  {target:'#boardArea',cls:'tutorial-highlight-board',title:'答對會有回饋',body:'完成一組成語後，四個字磚依次彈跳兩次；稍後會揭示相交成語的新提示字。'},
+  {target:'#hintFloat',cls:'tutorial-highlight-hint',title:'善用提示',body:'遇到困難就按「提示」。新提示字會閃亮，棋盤也會平滑移到提示位置。'}
+ ];
+ function clearTutorialHighlight(){tutorialSteps.forEach(step=>document.body.classList.remove(step.cls))}
+ function finishTutorial(){
+  clearTutorialHighlight();card.hidden=true;shade.hidden=true;window.__4lettersOpeningActive=false;safeSet(TUTORIAL_SEEN,'1');
+ }
+ function showTutorialStep(index){
+  tutorialIndex=index;clearTutorialHighlight();
+  if(index>=tutorialSteps.length){finishTutorial();return}
+  const step=tutorialSteps[index],target=document.querySelector(step.target);
+  document.body.classList.add(step.cls);
+  $('tutorialKicker').textContent='快速上手 · '+String(index+1).padStart(2,'0')+' / '+String(tutorialSteps.length).padStart(2,'0');
+  $('tutorialTitle').textContent=step.title;$('tutorialBody').textContent=step.body;
+  $('tutorialNext').textContent=index===tutorialSteps.length-1?'開始解謎 →':'下一步 →';
+  card.hidden=false;shade.hidden=false;
+  if(target&&window.innerWidth<760){
+   const rect=target.getBoundingClientRect();
+   card.style.top=rect.top>window.innerHeight*.55?'12px':'auto';
+   card.style.bottom=rect.top>window.innerHeight*.55?'auto':'calc(14px + env(safe-area-inset-bottom))';
+  }else{card.style.top='auto';card.style.bottom='calc(14px + env(safe-area-inset-bottom))'}
+ }
+ function openTutorial(){
+  if(safeGet(TUTORIAL_SEEN)){window.__4lettersOpeningActive=false;return}
+  window.__4lettersOpeningActive=true;showTutorialStep(0);
+ }
+ function dismissOpening(){
+  if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
+  overlay.hidden=true;safeSet(OPENING_SEEN,'1');openTutorial();
+ }
+ window.start4LettersOpening=function(payload){
+  if(hasStarted)return;hasStarted=true;
+  payload=payload||{};
+  const wordList=Array.isArray(payload.words)?payload.words:[];
+  populateMeaning(wordList);
+  mountActualBoard(payload.board||$('board'));
+  if(safeGet(OPENING_SEEN)){
+   if(!safeGet(TUTORIAL_SEEN))openTutorial();
+   return;
+  }
+  window.__4lettersOpeningActive=true;overlay.hidden=false;
+  showScene(0);
+  $('openingSkip').addEventListener('click',dismissOpening);
+  $('openingPlay').addEventListener('click',dismissOpening);
+ };
+ $('tutorialNext').addEventListener('click',()=>showTutorialStep(tutorialIndex+1));
+ $('tutorialSkip').addEventListener('click',finishTutorial);
+ document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!overlay.hidden){event.preventDefault();dismissOpening()}
+  else if(event.key==='Enter'&&!overlay.hidden&&sceneIndex===scenes.length-1&&document.activeElement!==$('openingSkip')){dismissOpening()}
+ });
+})();
+</script>
+</body></html>
