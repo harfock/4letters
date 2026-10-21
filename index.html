@@ -1571,6 +1571,7 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
    return;
   }
   home.hidden=true;
+  window.scrollTo(0,0);
   window.start4LettersLevelOne();
   window.__4lettersOpeningActive=false;
  });
