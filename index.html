@@ -786,7 +786,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
   <div class="home-logo"><b>4</b>LETTERS</div>
   <div class="home-kicker">YOUR WORD PUZZLE ADVENTURE</div>
   <h1 class="home-title">成語圖譜<br>縱橫解字</h1>
-  <p class="home-description">每一次啟動，先看最新版本，再進入四字成語的推理挑戰。</p>
+  <p class="home-description">啟動時自動檢查版本，準備好後進入四字成語的推理挑戰。</p>
   <div class="home-actions">
    <button id="homeStartBtn" class="home-start" type="button">開始遊戲　➜</button>
    <button id="homeReplayBtn" class="home-replay" type="button">重播片頭　↻</button>
@@ -1532,11 +1532,14 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   if(window.replay4LettersOpening)window.replay4LettersOpening();
  });
  $('homeStartBtn').addEventListener('click',()=>{
+  if(!window.start4LettersLevelOne){
+   say('棋盤仍在載入，請稍候再試。');
+   return;
+  }
   home.hidden=true;
-  window.__4lettersOpeningActive=true;
-  if(window.start4LettersLevelOne)window.start4LettersLevelOne();
-  else say('棋盤仍在載入，請稍候再試。');
-  openTutorial();
+  window.start4LettersOpeningActive=false;
+  window.start4LettersLevelOne();
+  window.__4lettersOpeningActive=false;
  });
  $('tutorialNext').addEventListener('click',()=>showTutorialStep(tutorialIndex+1));
  $('tutorialSkip').addEventListener('click',finishTutorial);
