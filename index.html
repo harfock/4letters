@@ -1110,7 +1110,7 @@ function switchLevel(i){
  L=Math.max(0,Math.min(20,i));W=0;sel='';
  const s=state(),g=grid();
  const clue=Object.keys(s.revealed||{})[0];
- pendingBoardFocus=clue||(()=>{const p=g.ps.find((x,j)=>!s.completed[j]);if(!p)return null;const x=cells(p)[0];return x.r+','+c.x})();
+ pendingBoardFocus=clue||(()=>{const p=g.ps.find((x,j)=>!s.completed[j]);if(!p)return null;const x=cells(p)[0];return x.r+','+x.c})();
  render();
 }
 window.start4LettersLevelOne=function(){switchLevel(0);};
