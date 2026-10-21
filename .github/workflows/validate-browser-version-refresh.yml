@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/browser-version-refresh
+      - feature/kinetic-comic-opening
   pull_request:
     branches:
       - main
