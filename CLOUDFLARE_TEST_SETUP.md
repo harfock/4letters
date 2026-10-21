@@ -28,6 +28,15 @@ The build script stamps both the app's `app-version` meta tag and `version.json`
 
 The build output also includes `_headers` rules for `index.html` and `version.json` so stale client-side copies are less likely to be reused.
 
+## Launch flow and navigation
+
+On each fresh page launch, the app checks `version.json` before showing the cinematic opening. The full opening plays every launch and then moves to the home screen, which has two actions:
+
+- **開始遊戲** starts Level 1 using the saved game data; it does not erase progress.
+- **重播片頭** replays the cinematic opening and returns to the home screen.
+
+The game title in the top-left corner is a home control. Clicking it from gameplay returns to the home screen without clearing progress. When the home screen is idle for 10 seconds, the opening replays automatically; pointer, keyboard, touch, and scroll activity restart the idle countdown. The countdown pauses while the browser document is hidden.
+
 ## Output validation
 
 The build script checks the included dataset for 21 levels and 420 placements. It also copies `assets/opening-comic-bg.svg`, the data files, the manifest, and generated icons into `dist`. The GitHub Pages workflow for `main` remains separate; Cloudflare deployments use this Pages build script on the connected feature branch.
