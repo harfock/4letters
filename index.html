@@ -1,6 +1,13 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="__APP_BUILD_VERSION__"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-kinetic-opening-fix-20261022-01"><title>成語圖譜・縱橫解字</title>
 <script>
-/* Auto-refresh stale game builds. The build workflow stamps this page and version.json with the same commit SHA. */
+/* Cloudflare-compatible build refresh and legacy opening compatibility. */
+// Older cached opening controllers called say() from outside the game IIFE.
+// Keep a safe global fallback so that call cannot stop the opening buttons.
+window.say = window.say || function(message){
+ const status = document.getElementById('toast');
+ if(status) status.textContent = String(message == null ? '' : message);
+};
+/* Auto-refresh stale game builds. Deploys publish the same marker in version.json. */
 (()=>{'use strict';
  const meta=document.querySelector('meta[name="app-version"]');
  const running=meta&&meta.content;
