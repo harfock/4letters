@@ -602,6 +602,14 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 }
 
 
+/* Static comic-action art is reused with different crops: cinematic stills, never video. */
+.opening-scene-1,.opening-scene-7,.opening-scene-8,.opening-scene-9{
+ background-image:linear-gradient(105deg,rgba(4,12,26,.76) 0%,rgba(4,12,26,.34) 52%,rgba(4,12,26,.28) 100%),url('./assets/opening-comic-bg.svg');
+ background-size:cover;background-position:center;background-repeat:no-repeat;
+}
+.opening-scene-1 .opening-visual,.opening-scene-7 .opening-visual,.opening-scene-8 .opening-visual{filter:drop-shadow(0 14px 24px rgba(0,0,0,.22))}
+.opening-scene-8 .opening-invite-logo{filter:drop-shadow(0 0 14px rgba(43,191,255,.3))}
+.opening-scene-9{background-image:linear-gradient(105deg,rgba(4,12,26,.1),rgba(4,12,26,.25)),url('./assets/opening-comic-bg.svg')}
 /* Extra storyboard beats: the target lock, centred hint, title invitation and transition cut. */
 .opening-scene-3.is-active #openingChallengeTiles .opening-word-tile{animation:opening-target-hit .42s cubic-bezier(.18,.9,.25,1.25) both}
 .opening-scene-3.is-active #openingChallengeTiles .opening-word-tile:nth-child(2){animation-delay:.06s}
