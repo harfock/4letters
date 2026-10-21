@@ -836,7 +836,6 @@ function showIdiomMeaning(word,source){
  const box=$('explanationContent'),panel=$('idiomExplanation');if(!box||!panel||!word)return;
  const entry=idiomMeaningByWord.get(word);
  box.innerHTML='';
- const title=document.createElement('span');title.className='explanation-word';title.textContent=word;box.appendChild(title);
  const meaning=document.createElement('span');meaning.className='explanation-meaning';
  meaning.textContent=entry?entry.meaning:'';
  box.appendChild(meaning);
