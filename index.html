@@ -1440,9 +1440,12 @@ fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部�
   }
   window.__4lettersOpeningActive=true;overlay.hidden=false;
   showScene(0);
-  $('openingSkip').addEventListener('click',()=>dismissOpening(false));
-  $('openingPlay').addEventListener('click',()=>dismissOpening(true));
  };
+ // Bind the opening actions once at controller initialization. The same overlay
+ // is used for first-run playback and replay, so these handlers must not depend
+ // on start4LettersOpening taking the first-run path.
+ $('openingSkip').addEventListener('click',()=>dismissOpening(false));
+ $('openingPlay').addEventListener('click',()=>dismissOpening(true));
  window.replay4LettersOpening=function(){
   if(!hasStarted||!lastOpeningPayload){return}
   if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
