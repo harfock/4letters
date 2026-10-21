@@ -66,6 +66,12 @@ def main() -> None:
     ):
         copy_file(relative)
 
+    # The opening and homepage use this locally served cinematic background.
+    assets = ROOT / "assets"
+    if not assets.is_dir():
+        raise SystemExit("Required folder is missing: assets")
+    shutil.copytree(assets, OUT / "assets")
+
     # Generate the PNG icon sizes referenced by the manifest and Apple touch icon.
     try:
         import cairosvg
