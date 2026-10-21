@@ -1116,7 +1116,7 @@ function render(){
   b.append(el);
  }
  wrap.scrollTop=oldScrollTop;wrap.scrollLeft=oldScrollLeft;
- $('title').textContent='第 '+(L+1)+' 關 · '+g.ps.length+' 個成語';
+ $('title').textContent=D.levels[L].label+' '+D.levels[L].unit+' · 第 '+(L+1)+' 關 · '+g.ps.length+' 個成語';
  $('doneCount').textContent=Object.values(s.completed).filter(Boolean).length+' / '+g.ps.length;
  $('timer').textContent=fmt(s.seconds);
  const levelFinished=!!s.finished;
@@ -1137,7 +1137,7 @@ function render(){
   });
  }
  $('levels').innerHTML='';
- D.levels.forEach((p,i)=>{const el=document.createElement('button');el.textContent=i+1;el.className=(i===L?'current ':'')+(S.levels[i+1]?.finished?'done':'');el.onclick=()=>switchLevel(i);$('levels').append(el)});
+ D.levels.forEach((p,i)=>{const el=document.createElement('button');el.textContent=(D.levels[i].mode==='junior'?'初':'進')+D.levels[i].unit;el.title=D.levels[i].label+' 第 '+D.levels[i].unit+' 關 · '+D.levels[i].placements.length+' 個成語';el.className=(i===L?'current ':'')+(S.levels[i+1]?.finished?'done':'');el.onclick=()=>switchLevel(i);$('levels').append(el)});
  renderCandidates(s);
  updateBoardControls();
  applyPendingBoardFocus();
