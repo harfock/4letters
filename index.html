@@ -624,6 +624,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 .opening-invite-tiles span:nth-child(2){background:#5bc7ff;transform:rotate(4deg) translateY(-5px)}
 .opening-invite-tiles span:nth-child(3){background:#fb7081;transform:rotate(-3deg)}
 .opening-invite-tiles span:nth-child(4){background:#8be8b0;transform:rotate(7deg) translateY(-3px)}
+.opening-play[hidden]{display:none!important}
 .opening-play{opacity:0;pointer-events:none;transform:skew(-3deg) translateY(12px);transition:opacity .25s ease,transform .25s ease}
 .opening-play.is-ready{opacity:1;pointer-events:auto;transform:skew(-3deg);animation:opening-play-pulse 1.3s ease-in-out infinite}
 .opening-scene-9{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,#275d96 0%,#0a1c36 58%,#050a14 100%);overflow:hidden}
@@ -632,7 +633,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 .opening-transition-subtitle{position:relative;z-index:2;margin-top:20px;background:#ffd34d;color:#101c2d;padding:7px 12px;font-size:11px;font-weight:1000;letter-spacing:.18em;transform:skew(-8deg)}
 .opening-hint-viewport .opening-board-tilt{--focus-x:0px;--focus-y:0px}
 @keyframes opening-target-hit{0%{opacity:0;transform:translate(45px,-35px) rotate(12deg) scale(.7)}72%{opacity:1;transform:translate(-3px,3px) rotate(-2deg) scale(1.08)}100%{opacity:1;transform:rotate(var(--tilt)) scale(1)}}
-@keyframes opening-hint-pulse{0%,100%{background:#ffda47!important;transform:scale(1)}20%,60%{background:#132a47!important;color:#fff!important;transform:scale(1.22)}40%,80%{background:#ffda47!important;color:#15243b!important;transform:scale(1.1)}}
+@keyframes opening-hint-pulse{0%,100%{background:#ffda47;color:#15243b;transform:scale(1)}20%,60%{background:#132a47;color:#fff;transform:scale(1.22)}40%,80%{background:#ffda47;color:#15243b;transform:scale(1.1)}}
 @keyframes opening-hint-centre{0%{transform:rotateX(10deg) rotateZ(-2deg) scale(1.06)}70%{transform:translate(var(--focus-x),var(--focus-y)) rotateX(3deg) rotateZ(0) scale(1.26)}100%{transform:translate(var(--focus-x),var(--focus-y)) rotateX(0) rotateZ(0) scale(1.22)}}
 @keyframes opening-logo-hit{0%{opacity:0;transform:translateY(35px) rotate(-9deg) scale(.72)}72%{opacity:1;transform:translateY(-4px) rotate(-2deg) scale(1.05)}100%{opacity:1;transform:rotate(-4deg) scale(1)}}
 @keyframes opening-transition-swipe{0%{transform:translateX(-125%) skewX(-12deg)}100%{transform:translateX(0) skewX(-12deg)}}
