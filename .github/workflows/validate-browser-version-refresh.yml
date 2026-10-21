@@ -57,8 +57,13 @@ jobs:
           levels_data = json.loads((output / "data/levels.json").read_text(encoding="utf-8"))
           levels = levels_data.get("levels", [])
           placements = sum(len(level.get("placements", [])) for level in levels)
-          if len(levels) != 21 or placements != 420:
-              raise SystemExit(f"Unexpected crossword data: {len(levels)} levels, {placements} placements")
+          expected_levels = 40
+          expected_placements = 980
+          if len(levels) != expected_levels or placements != expected_placements:
+              raise SystemExit(
+                  f"Unexpected crossword data: {len(levels)} levels, {placements} placements; "
+                  f"expected {expected_levels} levels and {expected_placements} placements"
+              )
           for path in ("_headers", "app-icon.svg", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png"):
               if not (output / path).is_file():
                   raise SystemExit(f"Required deployed asset missing: {path}")
