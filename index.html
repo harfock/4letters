@@ -698,7 +698,9 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 @keyframes opening-transition-title{0%{opacity:0;transform:translateY(20px) scale(.8) rotate(-9deg)}100%{opacity:1;transform:rotate(-5deg) scale(1)}}
 
 
-.idiom-explanation{margin:10px 0 12px;padding:12px 14px;border:1px solid rgba(124,226,233,.38);border-radius:12px;background:linear-gradient(135deg,rgba(12,57,69,.96),rgba(9,43,55,.96));color:#effff8;min-height:58px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.board-stage{position:relative}
+.idiom-explanation{position:absolute;z-index:30;left:50%;top:14px;transform:translateX(-50%);width:min(360px,calc(100% - 28px));padding:12px 14px;border:1px solid rgba(124,226,233,.62);border-radius:12px;background:linear-gradient(135deg,rgba(7,32,43,.97),rgba(9,57,66,.97));color:#effff8;min-height:54px;box-shadow:0 12px 36px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none}
+.idiom-explanation[hidden]{display:none}
 .idiom-explanation .explanation-label{font-size:11px;letter-spacing:.08em;color:#8ce7c7;font-weight:900;margin-bottom:4px}
 .idiom-explanation .explanation-word{font-size:18px;font-weight:900;color:#ffdb82;margin-right:8px}
 .idiom-explanation .explanation-meaning{font-size:14px;line-height:1.65}
@@ -813,7 +815,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 </aside>
 <div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div id="homeLogoBtn" class="brand brand-home-button" role="button" tabindex="0" aria-label="返回首頁"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/420</div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
-<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><section id="idiomExplanation" class="idiom-explanation" aria-live="polite" aria-atomic="true"><div class="explanation-label">成語解說</div><div id="explanationContent"><span class="explanation-note">滑鼠移到已揭示的提示字，或點按提示字，即可查看成語意思。</span></div></section><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button><button id="replayOpeningBtn" type="button">重播片頭 ↻</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
+<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div id="idiomExplanation" class="idiom-explanation" role="status" aria-live="polite" hidden><div class="explanation-label">成語解說</div><div id="explanationContent"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button><button id="replayOpeningBtn" type="button">重播片頭 ↻</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
 <p class="foot">詞目以教育部《成語典》主條四字詞目為基礎；提示採遊戲內揭示字，不複製官方釋義。<a style="color:var(--mint)" href="https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html" target="_blank" rel="noopener">官方資料下載頁</a></p></main>
 <div id="modalback" class="modalback"><div class="modal"><h2 id="modalTitle">完成本關</h2><p id="modalBody"></p><div class="actions"><button id="review">留在本關</button><button id="advance" class="primary">下一關</button></div><small id="note"></small></div></div>
 <script>
@@ -831,16 +833,15 @@ let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoard
 let pendingHintEffectKey=null,pendingBounceKeys=[];
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
 function showIdiomMeaning(word,source){
- const box=$('explanationContent');if(!box||!word)return;
+ const box=$('explanationContent'),panel=$('idiomExplanation');if(!box||!panel||!word)return;
  const entry=idiomMeaningByWord.get(word);
  box.innerHTML='';
  const title=document.createElement('span');title.className='explanation-word';title.textContent=word;box.appendChild(title);
  const meaning=document.createElement('span');meaning.className='explanation-meaning';
- meaning.textContent=entry?entry.meaning:'此成語未收錄於香港成語表的 384 條釋義參考中。';
+ meaning.textContent=entry?entry.meaning:'';
  box.appendChild(meaning);
- if(source==='completed'){
-  const note=document.createElement('div');note.className='explanation-note';note.textContent='答對成語！先看意思，再欣賞四字連續彈跳。';box.appendChild(note);
- }
+ panel.hidden=false;
+
 }
 function idiomForCell(key){
  const g=grid(),z=g.m.get(key);if(!z)return null;
@@ -1015,16 +1016,31 @@ function returnFilledLetter(k){
  close();
  sel=k;say('已將「'+oldChar+'」退回候選字區。');render();return true;
 }
-// Explanation triggers for every level: hover, click, or tap a revealed hint letter.
+// The explanation is a board-overlay tooltip. It follows the revealed hint
+// interaction and disappears as soon as the pointer leaves that hint cell.
+let activeExplanationCell=null;
 $('board').addEventListener('mouseover',ev=>{
  const cell=ev.target.closest('.cell[data-key]');if(!cell)return;
+ if(ev.relatedTarget&&cell.contains(ev.relatedTarget))return;
  const key=cell.dataset.key,s=state();
- if(s.revealed[key]){const word=idiomForCell(key);if(word)showIdiomMeaning(word,'hint');}
+ if(s.revealed[key]){
+  const word=idiomForCell(key);
+  if(word){activeExplanationCell=cell;showIdiomMeaning(word,'hint');}
+ }
+});
+$('board').addEventListener('mouseout',ev=>{
+ const cell=ev.target.closest('.cell[data-key]');if(!cell||cell!==activeExplanationCell)return;
+ if(ev.relatedTarget&&cell.contains(ev.relatedTarget))return;
+ const panel=$('idiomExplanation');if(panel)panel.hidden=true;
+ activeExplanationCell=null;
 });
 $('board').addEventListener('click',ev=>{
  const cell=ev.target.closest('.cell[data-key]');if(!cell)return;
  const key=cell.dataset.key,s=state();
- if(s.revealed[key]){const word=idiomForCell(key);if(word)showIdiomMeaning(word,'hint');}
+ if(s.revealed[key]){
+  const word=idiomForCell(key);
+  if(word){activeExplanationCell=cell;showIdiomMeaning(word,'hint');}
+ }
 });
 function render(){
  const g=grid(),s=state(),b=$('board'),wrap=$('boardWrap');ensureTiles(s,g);
@@ -1103,8 +1119,8 @@ function render(){
  $('boardRow').classList.toggle('has-next',levelFinished);
  if(levelFinished){
   const completed=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
-  $('completionTitle').textContent=L===20?'全部 21 關完成！':'第 '+(L+1)+' 關完成';
-  $('completionDetail').textContent=L===20?'總用時 '+fmt(S.total)+' · '+completed+'/420':'本關用時 '+fmt(s.seconds);
+  $('completionTitle').textContent=L===20?'全部 40 關完成！':'第 '+(L+1)+' 關完成';
+  $('completionDetail').textContent=L===20?'總用時 '+fmt(S.total)+' · '+completed+' / '+D.levels.reduce((n,x)=>n+x.placements.length,0):'本關用時 '+fmt(s.seconds);
  }
  const words=$('words');
  if(words){
@@ -1357,14 +1373,14 @@ function showLevelTimePopup(){
 function complete(){
  showLevelTimePopup();
  const finishedCount=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
- if(L===20)say('恭喜完成全部 21 關！總用時 '+fmt(S.total)+'，完成 '+finishedCount+'/420。按左側「下一關」可重新開始。');
+ if(L===D.levels.length-1)say('恭喜完成全部 40 關！總用時 '+fmt(S.total)+'，完成 '+finishedCount+'/'+D.levels.reduce((n,x)=>n+x.placements.length,0)+'。按左側「下一關」可重新開始。');
  else say('第 '+(L+1)+' 關完成！本關用時 '+fmt(state().seconds)+'。按棋盤左側「下一關」繼續。');
 }
 function close(){if(advanceTimer)clearInterval(advanceTimer);advanceTimer=null;$('modalback').classList.remove('show')}
-function goNext(){close();switchLevel(L===20?0:L+1)}
+function goNext(){close();switchLevel(L===D.levels.length-1?0:L+1)}
 $('chooseLevelBtn').onclick=()=>setLevelPanelOpen($('levelPanel').hidden);
 $('nextLevelBtn').onclick=()=>{
- const last=L===20;
+ const last=L===D.levels.length-1;
  switchLevel(last?0:L+1);
  if(last)say('已重新開始第 1 關。');
 };
@@ -1398,7 +1414,7 @@ fetch('data/reference/hk_written_chinese_idioms.json').then(r=>{if(!r.ok)throw E
  (data.entries||[]).forEach(entry=>idiomMeaningByWord.set(entry.idiom,entry));
 }).catch(e=>console.warn('Idiom explanations unavailable; gameplay remains available.',e));
 fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部署');return r.json()}).then(d=>{
- if(!d.levels||d.levels.length!==21)throw Error('棋盤資料格式錯誤');
+ if(!d.levels||d.levels.length!==40)throw Error('棋盤資料格式錯誤：需要 40 關');
  D=d;
  return fetch('data/strokes.json').then(r=>{if(!r.ok)throw Error('筆畫資料尚未部署');return r.json()}).then(map=>{STROKES=map}).catch(e=>{STROKES={};console.warn('Stroke-count data unavailable; candidates will use character-code order.',e)}).then(()=>{
   try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
