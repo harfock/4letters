@@ -967,23 +967,6 @@ function waitForAnimation(tile,className){
   setTimeout(finish,className==='correct-double-bounce'?1500:1050);
  });
 }
-function bounceTile(tile){
- // Animate a fixed clone outside the board's overflow clipping.
- const rect=tile.getBoundingClientRect(),clone=tile.cloneNode(true);
- clone.removeAttribute('data-key');
- clone.classList.remove('active','locked','hint-flash-effect');
- Object.assign(clone.style,{position:'fixed',left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',margin:'0',zIndex:'2147483000',pointerEvents:'none',transformOrigin:'center center',willChange:'transform,box-shadow',opacity:'1',animationDuration:'.62s',animationIterationCount:'2',animationFillMode:'both'});
- document.body.appendChild(clone);
- void clone.offsetWidth;
- return new Promise(resolve=>{
-  let done=false;
-  const finish=()=>{if(done)return;done=true;clone.removeEventListener('animationend',onEnd);clone.remove();resolve();};
-  const onEnd=e=>{if(e.target===clone&&e.animationName==='correct-tile-bounce')finish();};
-  clone.addEventListener('animationend',onEnd);
-  clone.classList.add('correct-double-bounce');
-  setTimeout(finish,1450);
- });
-}
 function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord){
  const panel=$(panelId),board=$('board'),stage=$('boardStage');
  if(!panel||panel.hidden||!board||!stage)return;
@@ -1009,6 +992,15 @@ function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord
  panel.style.maxHeight=Math.max(90,Math.min(vh-16,completed?Math.min(vh*.4,available):vh*.65))+'px';
  panel.style.zIndex=completed?'21':'20';
 }
+function waitForAnimation(tile,className){
+ return new Promise(resolve=>{
+  let settled=false;
+  const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
+  const onEnd=e=>{if(e.target===tile)finish()};
+  tile.addEventListener('animationend',onEnd);
+  setTimeout(finish,className==='correct-double-bounce'?1500:1050);
+ });
+}
 function applyPendingVisualEffects(){
  const bounceKeys=pendingBounceKeys.splice(0);
  const hintKey=pendingHintEffectKey;
@@ -1031,7 +1023,10 @@ function applyPendingVisualEffects(){
   for(const key of [...new Set(bounceKeys)]){
    const tile=document.querySelector('.cell[data-key="'+key+'"]');
    if(!tile)continue;
-   await bounceTile(tile);
+   tile.classList.remove('correct-double-bounce');tile.style.animationDelay='0ms';
+   void tile.offsetWidth;
+   tile.classList.add('correct-double-bounce');
+   await waitForAnimation(tile,'correct-double-bounce');
   }
   if(flashKeys.length){
    // New hint/reveal animation begins 500 ms after the bounce sequence ends.
