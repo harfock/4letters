@@ -121,6 +121,61 @@ def main() -> None:
             f"expected {expected_levels} levels and {expected_placements} placements."
         )
 
+    # Validate every crossword map: entries are four characters, overlaps agree,
+    # and no horizontal or vertical contiguous occupied run exceeds four squares.
+    for level_index, level in enumerate(levels, start=1):
+        placements_in_level = level.get("placements", [])
+        seen_words = set()
+        occupied = {}
+        row_cells = {}
+        col_cells = {}
+        for placement in placements_in_level:
+            word = placement.get("word", "")
+            direction = placement.get("direction")
+            row = placement.get("row")
+            col = placement.get("col")
+            if len(word) != 4 or direction not in ("across", "down"):
+                raise SystemExit(f"Level {level_index}: invalid four-character crossword entry {word!r}")
+            if word in seen_words:
+                raise SystemExit(f"Level {level_index}: duplicate idiom {word!r}")
+            seen_words.add(word)
+            if not isinstance(row, int) or not isinstance(col, int) or row < 0 or col < 0:
+                raise SystemExit(f"Level {level_index}: invalid crossword coordinates for {word!r}")
+            for offset, character in enumerate(word):
+                r = row + (offset if direction == "down" else 0)
+                c = col + (offset if direction == "across" else 0)
+                key = (r, c)
+                previous = occupied.get(key)
+                if previous:
+                    if previous["character"] != character:
+                        raise SystemExit(f"Level {level_index}: conflicting letters at {key}")
+                    if direction in previous["directions"]:
+                        raise SystemExit(f"Level {level_index}: same-direction overlap at {key}")
+                    previous["directions"].add(direction)
+                else:
+                    occupied[key] = {"character": character, "directions": {direction}}
+                row_cells.setdefault(r, set()).add(c)
+                col_cells.setdefault(c, set()).add(r)
+
+        def max_contiguous_run(axis_cells):
+            maximum = 0
+            for positions in axis_cells.values():
+                run = 0
+                previous = None
+                for position in sorted(positions):
+                    run = run + 1 if previous is not None and position == previous + 1 else 1
+                    maximum = max(maximum, run)
+                    previous = position
+            return maximum
+
+        max_horizontal_run = max_contiguous_run(row_cells)
+        max_vertical_run = max_contiguous_run(col_cells)
+        if max_horizontal_run > 4 or max_vertical_run > 4:
+            raise SystemExit(
+                f"Level {level_index}: contiguous occupied-square run exceeds four "
+                f"(horizontal={max_horizontal_run}, vertical={max_vertical_run})"
+            )
+
     print(f"Cloudflare Pages site ready: version={version}, levels={len(levels)}, placements={placements}, output={OUT}")
 
 
