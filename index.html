@@ -1362,10 +1362,8 @@ function render(){
     }
     if(suppressTouchCellClick&&Date.now()>=suppressTouchCellClick.until)suppressTouchCellClick=null;
     sel=k;
-    if(!z.ids.includes(W)){
-     const unfinished=z.ids.find(id=>!state().completed[id]);
-     W=unfinished===undefined?z.ids[0]:unfinished;
-    }
+    const unfinished=z.ids.find(id=>!state().completed[id]);
+    if(!z.ids.includes(W)||state().completed[W])W=unfinished===undefined?z.ids[0]:unfinished;
     say(isLocked(z,state())?'這格已屬於已完成的成語。':'已選取這一格；點候選字填入，雙擊已填字可退回。');
     document.querySelectorAll('.cell[data-key]').forEach(cell=>cell.classList.toggle('active',cell.dataset.key===sel));
    };
@@ -1421,7 +1419,9 @@ function renderCandidates(s){
   const stroke=document.createElement('span');stroke.className='stroke-count';stroke.textContent=STROKES[tile.char]||'?';el.append(stroke);
   el.title=tile.char+' · '+(STROKES[tile.char]||'未知')+' 畫';
   el.setAttribute('aria-label','點選填入或拖曳候選字 '+tile.char+'，'+(STROKES[tile.char]||'未知')+' 畫，到棋盤格');el.dataset.tileId=tile.id;
-  el.addEventListener('pointerdown',e=>beginDrag(e,tile));box.append(el);
+  el.addEventListener('pointerdown',e=>beginDrag(e,tile));
+  el.addEventListener('click',e=>{if(e.detail===0)placeSelectedTile(tile)});
+  box.append(el);
  });
 }
 function setLevelPanelOpen(open){
@@ -1480,7 +1480,7 @@ function cancelPendingCandidateGesture(e){
  clearPendingCandidateGesture();
 }
 function startTileDrag(e,tile,origin=null){
- if(e.pointerType==='mouse'&&e.button!==0)return;
+ if(!origin&&e.pointerType==='mouse'&&e.button!==0)return;
  const s=state(),g=grid();ensureTiles(s,g);
  if(!availableTiles(s).some(t=>t.id===tile.id))return;
  e.preventDefault();cancelActiveDrag(false);
