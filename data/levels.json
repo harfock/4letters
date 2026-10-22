@@ -12,34 +12,16 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "唇亡齒寒",
+          "word": "負荊請罪",
           "pinyin": "",
-          "row": 1,
-          "col": 0,
+          "row": 0,
+          "col": 2,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "亡羊補牢",
-          "pinyin": "",
-          "row": 1,
-          "col": 1,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "不寒而慄",
-          "pinyin": "",
-          "row": 0,
-          "col": 3,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "唇齒相依",
+          "word": "負隅頑抗",
           "pinyin": "",
           "row": 0,
           "col": 2,
@@ -48,9 +30,27 @@
           "clue": ""
         },
         {
-          "word": "反唇相譏",
+          "word": "分庭抗禮",
           "pinyin": "",
-          "row": 0,
+          "row": 3,
+          "col": 0,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "禮尚往來",
+          "pinyin": "",
+          "row": 3,
+          "col": 3,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "分崩離析",
+          "pinyin": "",
+          "row": 3,
           "col": 0,
           "direction": "down",
           "initialReveal": 2,
@@ -67,34 +67,7 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "疾惡如仇",
-          "pinyin": "",
-          "row": 2,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "從善如流",
-          "pinyin": "",
-          "row": 0,
-          "col": 2,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "循循善誘",
-          "pinyin": "",
-          "row": 1,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "急流勇退",
+          "word": "黔驢技窮",
           "pinyin": "",
           "row": 3,
           "col": 1,
@@ -103,20 +76,47 @@
           "clue": ""
         },
         {
-          "word": "投筆從戎",
+          "word": "雕蟲小技",
           "pinyin": "",
           "row": 0,
-          "col": 0,
+          "col": 3,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "窮則思變",
+          "pinyin": "",
+          "row": 3,
+          "col": 4,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "變本加厲",
+          "pinyin": "",
+          "row": 6,
+          "col": 4,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "退避三舍",
+          "word": "再接再厲",
           "pinyin": "",
           "row": 3,
-          "col": 4,
+          "col": 7,
           "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "一箭雙雕",
+          "pinyin": "",
+          "row": 0,
+          "col": 0,
+          "direction": "across",
           "initialReveal": 2,
           "clue": ""
         }
@@ -131,43 +131,34 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "墨守成規",
+          "word": "按部就班",
           "pinyin": "",
-          "row": 5,
-          "col": 3,
+          "row": 2,
+          "col": 5,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "順理成章",
+          "word": "因陋就簡",
           "pinyin": "",
-          "row": 3,
+          "row": 0,
+          "col": 7,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "按兵不動",
+          "pinyin": "",
+          "row": 2,
           "col": 5,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "日理萬機",
-          "pinyin": "",
-          "row": 4,
-          "col": 4,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "斷章取義",
-          "pinyin": "",
-          "row": 6,
-          "col": 4,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "名正言順",
+          "word": "紙上談兵",
           "pinyin": "",
           "row": 3,
           "col": 2,
@@ -176,7 +167,7 @@
           "clue": ""
         },
         {
-          "word": "撥亂反正",
+          "word": "扶搖直上",
           "pinyin": "",
           "row": 0,
           "col": 3,
@@ -185,11 +176,20 @@
           "clue": ""
         },
         {
-          "word": "物極必反",
+          "word": "風雨飄搖",
           "pinyin": "",
-          "row": 2,
+          "row": 1,
           "col": 0,
           "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "暴風驟雨",
+          "pinyin": "",
+          "row": 0,
+          "col": 0,
+          "direction": "down",
           "initialReveal": 2,
           "clue": ""
         }
@@ -204,61 +204,16 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "世外桃源",
-          "pinyin": "",
-          "row": 5,
-          "col": 4,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "投桃報李",
-          "pinyin": "",
-          "row": 4,
-          "col": 6,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "左右逢源",
-          "pinyin": "",
-          "row": 2,
-          "col": 7,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "超然物外",
-          "pinyin": "",
-          "row": 2,
-          "col": 5,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "李代桃僵",
-          "pinyin": "",
-          "row": 7,
-          "col": 6,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "防患未然",
+          "word": "革故鼎新",
           "pinyin": "",
           "row": 3,
-          "col": 2,
+          "col": 0,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "養虎遺患",
+          "word": "吐故納新",
           "pinyin": "",
           "row": 0,
           "col": 3,
@@ -267,11 +222,56 @@
           "clue": ""
         },
         {
-          "word": "道不拾遺",
+          "word": "溫故知新",
           "pinyin": "",
           "row": 2,
+          "col": 1,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "標新立異",
+          "pinyin": "",
+          "row": 5,
           "col": 0,
           "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "異曲同工",
+          "pinyin": "",
+          "row": 5,
+          "col": 3,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "鬼斧神工",
+          "pinyin": "",
+          "row": 8,
+          "col": 0,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "同舟共濟",
+          "pinyin": "",
+          "row": 7,
+          "col": 3,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "濟濟一堂",
+          "pinyin": "",
+          "row": 6,
+          "col": 6,
+          "direction": "down",
           "initialReveal": 2,
           "clue": ""
         }
@@ -286,82 +286,82 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "困獸猶鬥",
+          "word": "觸類旁通",
           "pinyin": "",
-          "row": 1,
-          "col": 3,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "過猶不及",
-          "pinyin": "",
-          "row": 0,
-          "col": 5,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "民不聊生",
-          "pinyin": "",
-          "row": 2,
+          "row": 3,
           "col": 4,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "愛屋及烏",
-          "pinyin": "",
-          "row": 3,
-          "col": 3,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "瞞天過海",
+          "word": "融會貫通",
           "pinyin": "",
           "row": 0,
+          "col": 7,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "穿鑿附會",
+          "pinyin": "",
+          "row": 1,
+          "col": 4,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "旁若無人",
+          "pinyin": "",
+          "row": 3,
+          "col": 6,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "無妄之災",
+          "pinyin": "",
+          "row": 5,
+          "col": 6,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "下里巴人",
+          "pinyin": "",
+          "row": 6,
           "col": 3,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "愛不釋手",
+          "word": "禮賢下士",
           "pinyin": "",
-          "row": 3,
+          "row": 4,
           "col": 3,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "得心應手",
-          "pinyin": "",
-          "row": 6,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "患得患失",
+          "word": "任人唯賢",
           "pinyin": "",
           "row": 5,
           "col": 0,
-          "direction": "down",
+          "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "心曠神怡",
+          "word": "任重道遠",
           "pinyin": "",
-          "row": 6,
-          "col": 1,
+          "row": 5,
+          "col": 0,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
@@ -377,36 +377,27 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "眾志成城",
+          "word": "良藥苦口",
           "pinyin": "",
-          "row": 3,
-          "col": 0,
+          "row": 0,
+          "col": 3,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "滿城風雨",
+          "word": "口蜜腹劍",
           "pinyin": "",
-          "row": 2,
-          "col": 3,
+          "row": 0,
+          "col": 6,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "志大才疏",
+          "word": "刻舟求劍",
           "pinyin": "",
           "row": 3,
-          "col": 1,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "風雨同舟",
-          "pinyin": "",
-          "row": 4,
           "col": 3,
           "direction": "across",
           "initialReveal": 2,
@@ -415,8 +406,8 @@
         {
           "word": "同舟共濟",
           "pinyin": "",
-          "row": 3,
-          "col": 6,
+          "row": 2,
+          "col": 4,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
@@ -424,44 +415,53 @@
         {
           "word": "濟濟一堂",
           "pinyin": "",
-          "row": 6,
-          "col": 5,
+          "row": 5,
+          "col": 3,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "大器晚成",
+          "word": "一鼓作氣",
           "pinyin": "",
-          "row": 0,
-          "col": 2,
+          "row": 5,
+          "col": 5,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "同流合污",
+          "word": "作威作福",
           "pinyin": "",
-          "row": 3,
-          "col": 6,
+          "row": 7,
+          "col": 3,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "尾大不掉",
+          "word": "作壁上觀",
           "pinyin": "",
-          "row": 0,
-          "col": 1,
+          "row": 7,
+          "col": 3,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "甚囂塵上",
+          "pinyin": "",
+          "row": 9,
+          "col": 0,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "一箭雙雕",
+          "word": "不求甚解",
           "pinyin": "",
-          "row": 6,
-          "col": 7,
+          "row": 7,
+          "col": 0,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
@@ -477,100 +477,100 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "成竹在胸",
-          "pinyin": "",
-          "row": 9,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "青梅竹馬",
+          "word": "完璧歸趙",
           "pinyin": "",
           "row": 7,
-          "col": 1,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "走馬觀花",
-          "pinyin": "",
-          "row": 10,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "青出於藍",
-          "pinyin": "",
-          "row": 7,
-          "col": 1,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "脫穎而出",
-          "pinyin": "",
-          "row": 4,
-          "col": 2,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "脫胎換骨",
-          "pinyin": "",
-          "row": 4,
-          "col": 2,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "偷天換日",
-          "pinyin": "",
-          "row": 2,
-          "col": 4,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "天高地厚",
-          "pinyin": "",
-          "row": 3,
-          "col": 4,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "出人頭地",
-          "pinyin": "",
-          "row": 0,
           "col": 6,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "賓至如歸",
+          "pinyin": "",
+          "row": 4,
+          "col": 8,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "庸人自擾",
+          "word": "相敬如賓",
           "pinyin": "",
-          "row": 1,
+          "row": 4,
           "col": 5,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "出言不遜",
+          "word": "唇齒相依",
+          "pinyin": "",
+          "row": 2,
+          "col": 5,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "唇亡齒寒",
+          "pinyin": "",
+          "row": 2,
+          "col": 5,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "不足掛齒",
+          "pinyin": "",
+          "row": 3,
+          "col": 2,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "畫蛇添足",
           "pinyin": "",
           "row": 0,
-          "col": 6,
+          "col": 3,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "畫餅充饑",
+          "pinyin": "",
+          "row": 0,
+          "col": 3,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "打草驚蛇",
+          "pinyin": "",
+          "row": 1,
+          "col": 0,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "不約而同",
+          "pinyin": "",
+          "row": 3,
+          "col": 2,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "風雨同舟",
+          "pinyin": "",
+          "row": 6,
+          "col": 0,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
@@ -586,110 +586,110 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "窮則思變",
+          "word": "知己知彼",
           "pinyin": "",
-          "row": 3,
-          "col": 1,
+          "row": 10,
+          "col": 6,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "痛定思痛",
+          "word": "見微知著",
           "pinyin": "",
-          "row": 1,
-          "col": 3,
+          "row": 8,
+          "col": 6,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "聞過則喜",
+          "word": "見仁見智",
           "pinyin": "",
-          "row": 1,
-          "col": 2,
+          "row": 8,
+          "col": 6,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "殺身成仁",
+          "pinyin": "",
+          "row": 5,
+          "col": 7,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "變本加厲",
+          "word": "明哲保身",
           "pinyin": "",
-          "row": 3,
+          "row": 6,
+          "col": 4,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "明火執仗",
+          "pinyin": "",
+          "row": 6,
           "col": 4,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "疾言厲色",
-          "pinyin": "",
-          "row": 6,
-          "col": 2,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "談虎色變",
-          "pinyin": "",
-          "row": 4,
-          "col": 5,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "黔驢技窮",
-          "pinyin": "",
-          "row": 0,
-          "col": 1,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "疾惡如仇",
-          "pinyin": "",
-          "row": 6,
-          "col": 2,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "空空如也",
-          "pinyin": "",
-          "row": 8,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "司空見慣",
+          "word": "洞若觀火",
           "pinyin": "",
           "row": 7,
-          "col": 0,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "空穴來風",
-          "pinyin": "",
-          "row": 8,
-          "col": 1,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "風起雲湧",
-          "pinyin": "",
-          "row": 11,
           "col": 1,
           "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "大智若愚",
+          "pinyin": "",
+          "row": 5,
+          "col": 2,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "貽笑大方",
+          "pinyin": "",
+          "row": 5,
+          "col": 0,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "不苟言笑",
+          "pinyin": "",
+          "row": 2,
+          "col": 1,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "不一而足",
+          "pinyin": "",
+          "row": 2,
+          "col": 1,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "豐衣足食",
+          "pinyin": "",
+          "row": 0,
+          "col": 4,
+          "direction": "down",
           "initialReveal": 2,
           "clue": ""
         }
@@ -704,117 +704,117 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "毛遂自薦",
+          "word": "舉案齊眉",
           "pinyin": "",
-          "row": 5,
-          "col": 4,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "顧影自憐",
-          "pinyin": "",
-          "row": 3,
-          "col": 6,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "三顧茅廬",
-          "pinyin": "",
-          "row": 3,
+          "row": 4,
           "col": 5,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "名列前茅",
+          "word": "雙管齊下",
           "pinyin": "",
-          "row": 0,
+          "row": 2,
           "col": 7,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "舉一反三",
+          "word": "綱舉目張",
           "pinyin": "",
-          "row": 0,
+          "row": 3,
           "col": 5,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "初出茅廬",
+          "word": "明目張膽",
           "pinyin": "",
-          "row": 0,
-          "col": 8,
+          "row": 6,
+          "col": 3,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "柳暗花明",
+          "pinyin": "",
+          "row": 3,
+          "col": 3,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "不毛之地",
+          "word": "霧裡看花",
           "pinyin": "",
-          "row": 4,
+          "row": 5,
+          "col": 0,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "尋花問柳",
+          "pinyin": "",
+          "row": 3,
+          "col": 0,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "明日黃花",
+          "pinyin": "",
+          "row": 0,
+          "col": 1,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "日理萬機",
+          "pinyin": "",
+          "row": 1,
+          "col": 1,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "目不識丁",
+          "pinyin": "",
+          "row": 6,
           "col": 4,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "天長地久",
+          "word": "老馬識途",
           "pinyin": "",
-          "row": 7,
+          "row": 8,
           "col": 2,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "坐井觀天",
+          "word": "老當益壯",
           "pinyin": "",
-          "row": 4,
+          "row": 8,
           "col": 2,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "鞭長莫及",
+          "word": "波瀾壯闊",
           "pinyin": "",
-          "row": 6,
-          "col": 3,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "物極必反",
-          "pinyin": "",
-          "row": 2,
-          "col": 2,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "樂極生悲",
-          "pinyin": "",
-          "row": 1,
-          "col": 3,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "過猶不及",
-          "pinyin": "",
-          "row": 9,
+          "row": 11,
           "col": 0,
           "direction": "across",
           "initialReveal": 2,
@@ -831,64 +831,10 @@
       "explanationCoverage": "all",
       "placements": [
         {
-          "word": "捉襟見肘",
+          "word": "事半功倍",
           "pinyin": "",
-          "row": 0,
-          "col": 1,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "見仁見智",
-          "pinyin": "",
-          "row": 0,
-          "col": 3,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "見義勇為",
-          "pinyin": "",
-          "row": 2,
-          "col": 3,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "殺身成仁",
-          "pinyin": "",
-          "row": 1,
-          "col": 0,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "大智若愚",
-          "pinyin": "",
-          "row": 3,
-          "col": 2,
-          "direction": "across",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "大而化之",
-          "pinyin": "",
-          "row": 3,
-          "col": 2,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "秦晉之好",
-          "pinyin": "",
-          "row": 6,
-          "col": 0,
+          "row": 10,
+          "col": 4,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
@@ -896,26 +842,71 @@
         {
           "word": "好大喜功",
           "pinyin": "",
-          "row": 6,
-          "col": 3,
+          "row": 7,
+          "col": 6,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "大腹便便",
+          "word": "葉公好龍",
           "pinyin": "",
           "row": 7,
+          "col": 4,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "開誠佈公",
+          "pinyin": "",
+          "row": 4,
+          "col": 5,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "豁然開朗",
+          "pinyin": "",
+          "row": 4,
           "col": 3,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "事半功倍",
+          "word": "防患未然",
           "pinyin": "",
-          "row": 9,
-          "col": 1,
+          "row": 1,
+          "col": 4,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "患得患失",
+          "pinyin": "",
+          "row": 2,
+          "col": 4,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "塞翁失馬",
+          "pinyin": "",
+          "row": 0,
+          "col": 7,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "馬首是瞻",
+          "pinyin": "",
+          "row": 3,
+          "col": 7,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
@@ -923,35 +914,44 @@
         {
           "word": "半途而廢",
           "pinyin": "",
-          "row": 9,
-          "col": 2,
+          "row": 10,
+          "col": 5,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "不約而同",
+          "word": "不寒而慄",
+          "pinyin": "",
+          "row": 12,
+          "col": 3,
+          "direction": "across",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "樂不思蜀",
           "pinyin": "",
           "row": 11,
+          "col": 3,
+          "direction": "down",
+          "initialReveal": 2,
+          "clue": ""
+        },
+        {
+          "word": "行成於思",
+          "pinyin": "",
+          "row": 13,
           "col": 0,
           "direction": "across",
           "initialReveal": 2,
           "clue": ""
         },
         {
-          "word": "不求甚解",
+          "word": "行屍走肉",
           "pinyin": "",
-          "row": 11,
+          "row": 13,
           "col": 0,
-          "direction": "down",
-          "initialReveal": 2,
-          "clue": ""
-        },
-        {
-          "word": "約法三章",
-          "pinyin": "",
-          "row": 11,
-          "col": 1,
           "direction": "down",
           "initialReveal": 2,
           "clue": ""
