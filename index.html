@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-completion-flash-20261022-17"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-mobile-split-tap-fill-20261023-019"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -740,6 +740,50 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 .explanation-sidebar-content .explanation-meaning{writing-mode:vertical-rl;text-orientation:mixed;font-size:16px;line-height:1.5;word-break:break-all}
 .explanation-sidebar-content .explanation-entry+.explanation-entry{margin-inline-start:8px;padding-inline-start:6px;border-inline-start:1px solid rgba(140,231,199,.26)}
 @media(max-width:520px){.explanation-sidebar{width:clamp(38px,10vw,58px);max-height:62vh;padding:5px 3px}.explanation-sidebar-vertical{left:3px}.explanation-sidebar-horizontal{left:3px;right:auto}.explanation-sidebar-content,.explanation-sidebar-content .explanation-meaning{font-size:15px;line-height:1.45}.explanation-replay{width:24px;height:24px;font-size:19px}}
+
+/* Mobile portrait split view: independently scroll the crossword and letter library. */
+.mobile-split-view,.split-board-pane,.split-letter-pane{display:contents}
+#mobileSplitHandle{display:none}
+@media(max-width:759px) and (orientation:portrait){
+  main>p.foot{display:none!important}
+  .game-panel{height:calc(100dvh - 145px);max-height:calc(100dvh - 145px);min-height:340px;display:block;overflow:hidden;padding:7px!important}
+  .mobile-split-view{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(110px,1fr) 14px minmax(190px,2fr);width:100%;height:100%;min-height:0;overflow:hidden}
+  .split-board-pane,.split-letter-pane{display:block;min-width:0;min-height:0;overflow:hidden}
+  .split-board-pane{height:100%}
+  .split-board-pane #boardRow{display:grid;width:100%;height:100%;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:4px}
+  .split-board-pane #boardRow.has-next{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  .split-board-pane #boardArea{display:flex;flex-direction:column;height:100%;min-height:0;width:100%}
+  .split-board-pane .board-toolbar{flex:none;min-height:31px;margin:0 0 3px;padding:0 2px}
+  .split-board-pane .hint-float{min-width:53px;padding:6px 12px;font-size:13px}
+  .split-board-pane .board-toolbar-note{font-size:10px}
+  .split-board-pane #boardStage{flex:1;min-height:0;height:calc(100% - 34px)}
+  .split-board-pane #boardWrap.boardwrap{width:100%;height:100%;min-height:0;max-height:none;padding:4px;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .split-board-pane #board.board{margin:0 auto;width:max-content;max-width:none}
+  #mobileSplitHandle{display:flex;align-items:center;justify-content:center;position:relative;z-index:12;width:100%;height:14px;min-height:14px;cursor:row-resize;touch-action:none;background:linear-gradient(180deg,#0b2c3a,#1a5260 48%,#0b2c3a);border-top:1px solid rgba(140,231,199,.55);border-bottom:1px solid rgba(140,231,199,.55)}
+  #mobileSplitHandle:before{content:"";width:48px;height:4px;border-radius:999px;background:#a6f0d5;box-shadow:0 0 0 1px #071e2b,0 0 10px #74dce655}
+  #mobileSplitHandle:focus-visible{outline:2px solid #ffd166;outline-offset:-2px}
+  .split-letter-pane{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto;gap:4px;height:100%;min-height:0}
+  .split-letter-pane .candidate-panel{display:flex;flex-direction:column;min-height:0;height:100%;max-height:none;margin:0!important;padding:6px 7px!important;overflow:hidden}
+  .split-letter-pane .candidate-heading{flex:none;gap:6px;margin:0 0 4px;align-items:center}
+  .split-letter-pane .candidate-heading strong{font-size:13px}
+  .split-letter-pane .candidate-heading small{font-size:10px}
+  .split-letter-pane .candidate-panel .muted{display:none!important}
+  .split-letter-pane #candidates{display:flex;flex:1 1 auto;flex-wrap:wrap;align-content:flex-start;align-items:flex-start;min-height:0;max-height:none;overflow-y:auto;overflow-x:clip;touch-action:pan-y;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;gap:6px 7px;padding:2px 2px calc(12px + env(safe-area-inset-bottom))}
+  .split-letter-pane .candidate-tile{width:42px;height:47px;min-width:42px;font-size:21px;padding:2px 0 7px}
+  .split-letter-pane .candidate-character{font-size:21px}
+  .split-letter-pane .stroke-count{font-size:8px}
+  .split-letter-pane #toast{min-height:1.25em;max-height:2.5em;overflow:auto;margin:0;padding:0 2px;font-size:11px;line-height:1.25}
+  .split-letter-pane .actions{display:flex;gap:4px;margin:0;flex-wrap:wrap}
+  .split-letter-pane .actions button{flex:1 1 auto;min-height:32px;padding:4px 6px;font-size:11px;line-height:1.15}
+  .game-panel>.foot{display:none!important}
+}
+@media(max-width:759px) and (orientation:portrait) and (max-height:640px){
+  .game-panel{height:calc(100dvh - 132px);max-height:calc(100dvh - 132px);min-height:300px}
+  .split-letter-pane .candidate-tile{height:41px;width:38px;min-width:38px;font-size:19px}
+  .split-letter-pane .candidate-character{font-size:19px}
+  .split-letter-pane .actions button{min-height:29px;padding:3px 5px}
+}
+@media(prefers-reduced-motion:reduce){#mobileSplitHandle:before{box-shadow:none}}
 </style></head><body>
 <div id="openingOverlay" class="opening-overlay" hidden role="dialog" aria-modal="true" aria-label="4Letters 遊戲開場">
  <div class="opening-topbar">
@@ -860,7 +904,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 </aside>
 <div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div id="homeLogoBtn" class="brand brand-home-button" role="button" tabindex="0" aria-label="返回首頁"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/<span id="totalPlacementCount">—</span></div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
-<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div id="idiomExplanation" class="explanation-sidebars" role="status" aria-live="polite" hidden><section id="verticalExplanationSidebar" class="explanation-sidebar explanation-sidebar-vertical" hidden><button class="explanation-replay explanation-replay-down" type="button" aria-label="重新顯示縱向提示釋義" title="重新顯示縱向提示釋義">↓</button><div id="verticalExplanationContent" class="explanation-sidebar-content"></div></section><section id="horizontalExplanationSidebar" class="explanation-sidebar explanation-sidebar-horizontal" hidden><button class="explanation-replay explanation-replay-right" type="button" aria-label="重新顯示橫向提示釋義" title="重新顯示橫向提示釋義">→</button><div id="horizontalExplanationContent" class="explanation-sidebar-content"></div></section></div><div id="completedExplanation" class="idiom-explanation completed-explanation" role="status" aria-live="polite" hidden><div class="explanation-label">答對了！成語釋義</div><div id="completedExplanationContent"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button><button id="replayOpeningBtn" type="button">重播片頭 ↻</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
+<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="mobileSplitView" class="mobile-split-view"><div id="splitBoardPane" class="split-board-pane"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div id="idiomExplanation" class="explanation-sidebars" role="status" aria-live="polite" hidden><section id="verticalExplanationSidebar" class="explanation-sidebar explanation-sidebar-vertical" hidden><button class="explanation-replay explanation-replay-down" type="button" aria-label="重新顯示縱向提示釋義" title="重新顯示縱向提示釋義">↓</button><div id="verticalExplanationContent" class="explanation-sidebar-content"></div></section><section id="horizontalExplanationSidebar" class="explanation-sidebar explanation-sidebar-horizontal" hidden><button class="explanation-replay explanation-replay-right" type="button" aria-label="重新顯示橫向提示釋義" title="重新顯示橫向提示釋義">→</button><div id="horizontalExplanationContent" class="explanation-sidebar-content"></div></section></div><div id="completedExplanation" class="idiom-explanation completed-explanation" role="status" aria-live="polite" hidden><div class="explanation-label">答對了！成語釋義</div><div id="completedExplanationContent"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div></div><div id="mobileSplitHandle" class="mobile-split-handle" role="separator" aria-orientation="horizontal" aria-label="上下拖動調整棋盤與候選字區比例" tabindex="0"></div><div id="splitLetterPane" class="split-letter-pane"><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">先點選棋盤空格，再點候選字填入；也可按住候選字拖到棋盤。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button><button id="replayOpeningBtn" type="button">重播片頭 ↻</button></div></div></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">點選棋盤空格後，再點候選字即可填入；也可拖曳候選字。放錯字可雙擊格子退回，或按「清除選格」。答對成語後會揭示相交成語的提示字。</p></section></div></div>
 <p class="foot">成語及釋義以本遊戲採用的香港中文書面語成語資料為準。</p></main>
 <div id="modalback" class="modalback"><div class="modal"><h2 id="modalTitle">完成本關</h2><p id="modalBody"></p><div class="actions"><button id="review">留在本關</button><button id="advance" class="primary">下一關</button></div><small id="note"></small></div></div>
 <script>
@@ -1256,7 +1300,7 @@ function render(){
  // library together. If it would make cells too small, preserve the normal layout.
  const gamePanel=$('boardRow')?.closest('.game-panel');
  if(gamePanel)gamePanel.classList.remove('portrait-one-page');
- if(window.matchMedia('(orientation:portrait)').matches&&(Number(s.zoom)||1)<=1.01){
+ if(!isMobilePortraitSplit()&&window.matchMedia('(orientation:portrait)').matches&&(Number(s.zoom)||1)<=1.01){
   const rowCount=g.maxr-g.minr+1;
   const freeCount=availableTiles(s).length;
   const perCandidateRow=Math.max(1,Math.floor((window.innerWidth-36)/52));
@@ -1284,7 +1328,7 @@ function render(){
    if(activeCompletedKeys.has(k))el.classList.add('completed-success');
    if(s.letters[k])el.classList.add('filled');
    if(s.revealed[k]&&!pendingDelayedRevealKeys.has(k))el.classList.add('revealed');
-   if(z.ids.includes(W))el.classList.add('active');
+   if(k===sel)el.classList.add('active');
    if(isLocked(z,s))el.classList.add('locked');
    if(starts.has(k)){const n=document.createElement('span');n.className='num';n.textContent=starts.get(k);el.textContent='';el.append(n,document.createTextNode(letter))}
    let touchDown=null;
@@ -1317,12 +1361,11 @@ function render(){
      ev.preventDefault();ev.stopPropagation();suppressTouchCellClick=null;return;
     }
     if(suppressTouchCellClick&&Date.now()>=suppressTouchCellClick.until)suppressTouchCellClick=null;
-    sel=k;if(!z.ids.includes(W))W=z.ids[0];
-    say(isLocked(z,state())?'這格已屬於已完成的成語。':'已選取格子；雙擊已填字可退回候選字區。');
-    document.querySelectorAll('.cell[data-key]').forEach(cell=>{
-     const info=g.m.get(cell.dataset.key);
-     cell.classList.toggle('active',!!info&&info.ids.includes(W));
-    });
+    sel=k;
+    const unfinished=z.ids.find(id=>!state().completed[id]);
+    if(!z.ids.includes(W)||state().completed[W])W=unfinished===undefined?z.ids[0]:unfinished;
+    say(isLocked(z,state())?'這格已屬於已完成的成語。':'已選取這一格；點候選字填入，雙擊已填字可退回。');
+    document.querySelectorAll('.cell[data-key]').forEach(cell=>cell.classList.toggle('active',cell.dataset.key===sel));
    };
    el.ondblclick=ev=>{
     ev.preventDefault();ev.stopPropagation();
@@ -1375,8 +1418,10 @@ function renderCandidates(s){
   const ch=document.createElement('span');ch.className='candidate-character';ch.textContent=tile.char;el.append(ch);
   const stroke=document.createElement('span');stroke.className='stroke-count';stroke.textContent=STROKES[tile.char]||'?';el.append(stroke);
   el.title=tile.char+' · '+(STROKES[tile.char]||'未知')+' 畫';
-  el.setAttribute('aria-label','拖曳候選字 '+tile.char+'，'+(STROKES[tile.char]||'未知')+' 畫，到棋盤格');el.dataset.tileId=tile.id;
-  el.addEventListener('pointerdown',e=>beginDrag(e,tile));box.append(el);
+  el.setAttribute('aria-label','點選填入或拖曳候選字 '+tile.char+'，'+(STROKES[tile.char]||'未知')+' 畫，到棋盤格');el.dataset.tileId=tile.id;
+  el.addEventListener('pointerdown',e=>beginDrag(e,tile));
+  el.addEventListener('click',e=>{if(e.detail===0)placeSelectedTile(tile)});
+  box.append(el);
  });
 }
 function setLevelPanelOpen(open){
@@ -1399,22 +1444,49 @@ window.prepare4LettersHome=function(){
  cancelActiveDrag();close();setLevelPanelOpen(false);
 };
 function say(t){$('toast').textContent=t}
+let pendingCandidateGesture=null;
+function clearPendingCandidateGesture(){
+ document.removeEventListener('pointermove',movePendingCandidateGesture);
+ document.removeEventListener('pointerup',endPendingCandidateGesture);
+ document.removeEventListener('pointercancel',cancelPendingCandidateGesture);
+ pendingCandidateGesture=null;
+}
 function beginDrag(e,tile){
  if(e.pointerType==='mouse'&&e.button!==0)return;
  const s=state(),g=grid();ensureTiles(s,g);
  if(!availableTiles(s).some(t=>t.id===tile.id))return;
- // Touching an actual letter means "drag this letter" immediately.
- // Swipes on the empty candidate-panel space use native browser scrolling.
- startTileDrag(e,tile);
+ clearPendingCandidateGesture();e.preventDefault();
+ pendingCandidateGesture={tile,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,sourceElement:e.currentTarget};
+ document.addEventListener('pointermove',movePendingCandidateGesture,{passive:false});
+ document.addEventListener('pointerup',endPendingCandidateGesture);
+ document.addEventListener('pointercancel',cancelPendingCandidateGesture);
 }
-function startTileDrag(e,tile){
- if(e.pointerType==='mouse'&&e.button!==0)return;
+function movePendingCandidateGesture(e){
+ const pending=pendingCandidateGesture;
+ if(!pending||e.pointerId!==pending.pointerId)return;
+ if(Math.hypot(e.clientX-pending.startX,e.clientY-pending.startY)<8)return;
+ clearPendingCandidateGesture();
+ startTileDrag(e,pending.tile,pending);
+ moveDrag(e);
+}
+function endPendingCandidateGesture(e){
+ const pending=pendingCandidateGesture;
+ if(!pending||e.pointerId!==pending.pointerId)return;
+ clearPendingCandidateGesture();
+ if(Math.hypot(e.clientX-pending.startX,e.clientY-pending.startY)<8)placeSelectedTile(pending.tile);
+}
+function cancelPendingCandidateGesture(e){
+ if(!pendingCandidateGesture||(e&&e.pointerId!==pendingCandidateGesture.pointerId))return;
+ clearPendingCandidateGesture();
+}
+function startTileDrag(e,tile,origin=null){
+ if(!origin&&e.pointerType==='mouse'&&e.button!==0)return;
  const s=state(),g=grid();ensureTiles(s,g);
  if(!availableTiles(s).some(t=>t.id===tile.id))return;
  e.preventDefault();cancelActiveDrag(false);
  const ghost=document.createElement('div');ghost.className='drag-ghost';ghost.textContent=tile.char;ghost.setAttribute('aria-hidden','true');document.body.append(ghost);
  activeDrag={tile,tileId:tile.id,pointerId:e.pointerId,ghost,targetKey:null,
-  startX:e.clientX,startY:e.clientY,moved:false};
+  startX:origin?origin.startX:e.clientX,startY:origin?origin.startY:e.clientY,moved:false,sourceElement:origin&&origin.sourceElement};
  ghost.style.left=e.clientX+'px';
  ghost.style.top=Math.max(42,e.clientY-72)+'px';
  document.addEventListener('pointermove',moveDrag,{passive:false});
@@ -1481,6 +1553,34 @@ function endDrag(e){
  cleanupDrag();
  if(k&&moved)dropTile(tile,k);
 }
+function isWritableBlank(s,g,k){
+ const z=g.m.get(k);
+ return !!z&&!s.revealed[k]&&!s.letters[k]&&!isLocked(z,s);
+}
+function nextAutoSelection(afterKey,preferredWordIndex){
+ const s=state(),g=grid(),preferred=Number.isInteger(preferredWordIndex)?preferredWordIndex:W;
+ const current=g.ps[preferred],keyOf=x=>x.r+','+x.c;
+ if(current&&!s.completed[preferred]){
+  const wordCells=cells(current),start=wordCells.findIndex(x=>keyOf(x)===afterKey);
+  for(let i=Math.max(0,start+1);i<wordCells.length;i++){
+   const k=keyOf(wordCells[i]);
+   if(isWritableBlank(s,g,k))return {key:k,wordId:preferred};
+  }
+ }
+ const origin=g.m.get(afterKey)||{r:0,c:0},choices=[];
+ for(const [k,z] of g.m){
+  if(!isWritableBlank(s,g,k))continue;
+  const hintedIds=z.ids.filter(id=>!s.completed[id]&&cells(g.ps[id]).some(x=>!!s.revealed[keyOf(x)]));
+  if(!hintedIds.length)continue;
+  choices.push({key:k,wordId:hintedIds.includes(preferred)?preferred:hintedIds[0],distance:Math.abs(z.r-origin.r)+Math.abs(z.c-origin.c),r:z.r,c:z.c});
+ }
+ choices.sort((a,b)=>a.distance-b.distance||a.r-b.r||a.c-b.c);
+ return choices.length?choices[0]:null;
+}
+function placeSelectedTile(tile){
+ if(!sel){say('請先點選棋盤空格，再點候選字。');return}
+ dropTile(tile,sel);
+}
 function dropTile(tile,k){
  const s=state(),g=grid();ensureTiles(s,g);
  if(!canDrop(k)){say('請把候選字放到未完成成語的空格。');return}
@@ -1490,7 +1590,11 @@ function dropTile(tile,k){
  s.tileAssignment[k]=tile.id;s.letters[k]=tile.char;sel=k;
  if(tile.char===g.m.get(k).ch)say('已放入「'+tile.char+'」。');
  else say('已放入「'+tile.char+'」；若不合適，可選格後按「清除選格」。');
- checkAll();render();
+ const focusWord=W;
+ checkAll();
+ const next=nextAutoSelection(k,focusWord);
+ if(next){sel=next.key;W=next.wordId;}else sel='';
+ render();
 }
 function releaseTileAt(s,k){if(s.tileAssignment[k])delete s.tileAssignment[k];delete s.letters[k]}
 function revealCell(s,g,k,ch){
@@ -1636,7 +1740,48 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
   (data.entries||[]).forEach(entry=>idiomMeaningByWord.set(entry.idiom,entry));
   window.__4lettersIdiomDefinitions=Object.fromEntries((data.entries||[]).map(entry=>[entry.idiom,{pinyin:entry.pinyin||'',meaning:entry.meaning||''}]));
  }).catch(e=>{window.__4lettersIdiomDefinitions={};console.warn('Idiom explanations unavailable; gameplay remains available.',e)});
- fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部署');return r.json()}).then(d=>{
+ 
+function isMobilePortraitSplit(){return window.matchMedia('(max-width:759px) and (orientation:portrait)').matches}
+const MOBILE_SPLIT_KEY='4letters-mobile-split-ratio-v1';
+let mobileSplitRatio=1/3;
+function applyMobileSplitRatio(){
+ const view=$('mobileSplitView');if(!view)return;
+ view.style.gridTemplateRows=Math.max(.1,mobileSplitRatio)+'fr 14px '+Math.max(.45,1-mobileSplitRatio)+'fr';
+ const handle=$('mobileSplitHandle');if(handle)handle.setAttribute('aria-valuenow',String(Math.round(mobileSplitRatio*100)));
+}
+function saveMobileSplitRatio(){try{localStorage.setItem(MOBILE_SPLIT_KEY,String(mobileSplitRatio))}catch(_e){}}
+function setupMobileSplitView(){
+ const view=$('mobileSplitView'),handle=$('mobileSplitHandle');if(!view||!handle)return;
+ try{const saved=Number(localStorage.getItem(MOBILE_SPLIT_KEY));if(Number.isFinite(saved)&&saved>=.1&&saved<=.9)mobileSplitRatio=saved}catch(_e){}
+ applyMobileSplitRatio();
+ let dragging=false;
+ const move=e=>{
+  if(!dragging)return;
+  const rect=view.getBoundingClientRect(),usable=Math.max(1,rect.height-handle.offsetHeight);
+  mobileSplitRatio=Math.min(.9,Math.max(.1,(e.clientY-rect.top)/usable));
+  applyMobileSplitRatio();e.preventDefault();
+ };
+ const end=()=>{
+  if(!dragging)return;dragging=false;
+  document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',end);document.removeEventListener('pointercancel',end);
+  saveMobileSplitRatio();
+ };
+ handle.addEventListener('pointerdown',e=>{
+  if(e.button!==undefined&&e.button!==0)return;
+  dragging=true;handle.setPointerCapture?.(e.pointerId);e.preventDefault();
+  document.addEventListener('pointermove',move,{passive:false});document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);
+ });
+ handle.addEventListener('keydown',e=>{
+  if(e.key!=='ArrowUp'&&e.key!=='ArrowDown'&&e.key!=='Home'&&e.key!=='End')return;
+  e.preventDefault();
+  if(e.key==='Home')mobileSplitRatio=.1;else if(e.key==='End')mobileSplitRatio=.9;
+  else mobileSplitRatio=Math.min(.9,Math.max(.1,mobileSplitRatio+(e.key==='ArrowDown'?.03:-.03)));
+  applyMobileSplitRatio();saveMobileSplitRatio();
+ });
+}
+
+setupMobileSplitView();
+fetch('data/levels.json').then(r=>{if(!r.ok)throw Error('棋盤資料尚未部署');return r.json()}).then(d=>{
  if(!d.levels||d.levels.length!==40)throw Error('棋盤資料格式錯誤：需要 40 關');
  D=d;
  const totalPlacements=D.levels.reduce((n,level)=>n+level.placements.length,0);
@@ -1741,7 +1886,7 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  }
  const tutorialSteps=[
   {target:'#boardArea',cls:'tutorial-highlight-board',title:'先看棋盤',body:'每組成語沿橫向或直向排列。觀察已顯示的字，再推理空格。'},
-  {target:'.candidate-panel',cls:'tutorial-highlight-candidates',title:'拖曳候選字',body:'按住候選字磚，拖到棋盤空格。放錯字時，可選取格子再清除。'},
+  {target:'.candidate-panel',cls:'tutorial-highlight-candidates',title:'拖曳候選字',body:'先點棋盤空格，再點候選字填入；也可按住候選字拖到棋盤。放錯字時，可選取格子再清除。'},
   {target:'#boardArea',cls:'tutorial-highlight-board',title:'答對會有回饋',body:'完成一組成語後，四個字磚依次彈跳兩次；稍後會揭示相交成語的新提示字。'},
   {target:'#hintFloat',cls:'tutorial-highlight-hint',title:'善用提示',body:'遇到困難就按「提示」。新提示字會閃亮，棋盤也會平滑移到提示位置。'}
  ];
@@ -1881,7 +2026,7 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  });
 })();
 </script>
-<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 017">版本 017</div>
+<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 019">版本 019</div>
 <style>
 .build-version-badge{position:fixed;right:8px;bottom:calc(5px + env(safe-area-inset-bottom));z-index:1000;padding:3px 7px;border:1px solid rgba(140,231,199,.45);border-radius:7px;background:rgba(7,32,43,.82);color:#c9f5e6;font:700 10px/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:0 2px 8px #0004}
 </style>
