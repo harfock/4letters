@@ -859,11 +859,15 @@ const pendingDelayedRevealKeys=new Set();
 let lastTouchCellTap=null,lastTouchDoubleTap=null,suppressTouchCellClick=null;
 const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
 const fresh=()=>({levels:{},total:0});
+function layoutSignature(level){
+ return JSON.stringify((level&&level.placements||[]).map(p=>[p.word,p.row,p.col,p.direction,p.initialReveal||0]));
+}
 function state(){
- const key=L+1;
- if(!S.levels[key]){
-  const s=S.levels[key]={letters:{},revealed:{},completed:{},seconds:0,finished:false};
-  if(D&&D.levels[L])D.levels[L].placements.forEach(p=>{
+ const key=L+1,level=D&&D.levels[L],signature=layoutSignature(level);
+ // Saved answers use grid coordinates. Reset only this level when its layout changes.
+ if(!S.levels[key]||S.levels[key].layoutSignature!==signature){
+  const s=S.levels[key]={letters:{},revealed:{},completed:{},seconds:0,finished:false,layoutSignature:signature};
+  if(level)level.placements.forEach(p=>{
    if(p.initialReveal)cells(p).slice(0,p.initialReveal).forEach(c=>{s.revealed[c.r+','+c.c]=c.ch});
   });
  }
@@ -882,11 +886,11 @@ function grid(){
  return{ps,m,minr,minc,maxr,maxc};
 }
 function boardCellSize(available,gap){
- const first=D.levels[0].placements;
+ const placements=D.levels[L].placements;
  let minc=Infinity,maxc=-Infinity;
- first.forEach(p=>cells(p).forEach(x=>{minc=Math.min(minc,x.c);maxc=Math.max(maxc,x.c)}));
- const firstCols=maxc-minc+1;
- return Math.max(7,Math.min(40,(available-gap*(firstCols-1))/firstCols));
+ placements.forEach(p=>cells(p).forEach(x=>{minc=Math.min(minc,x.c);maxc=Math.max(maxc,x.c)}));
+ const columns=maxc-minc+1;
+ return Math.max(7,Math.min(40,(available-gap*(columns-1))/columns));
 }
 function focusBoardCell(key){
  if(!key)return;
