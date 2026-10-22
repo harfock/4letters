@@ -125,6 +125,27 @@ def main() -> None:
     if any(not entry.get("idiom") or not entry.get("meaning") for entry in explanation_entries):
         raise SystemExit("The idiom explanation dataset contains an entry without an idiom or meaning.")
 
+    # Explanation meanings are embedded in index.html so they still work if a
+    # hosting configuration returns the SPA HTML fallback for JSON asset URLs.
+    source_html = (ROOT / "index.html").read_text(encoding="utf-8")
+    start_marker = "/* IDIOM_MEANINGS_JSON_START */"
+    end_marker = "/* IDIOM_MEANINGS_JSON_END */"
+    if start_marker not in source_html or end_marker not in source_html:
+        raise SystemExit("index.html is missing its embedded idiom explanation data markers.")
+    embedded_json = source_html.split(start_marker, 1)[1].split(end_marker, 1)[0]
+    try:
+        embedded_entries = json.loads(embedded_json)
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"Embedded idiom explanations are invalid JSON: {exc}") from exc
+    expected_entries = [
+        {"idiom": entry["idiom"], "meaning": entry["meaning"]}
+        for entry in explanation_entries
+    ]
+    if embedded_entries != expected_entries:
+        raise SystemExit(
+            "Embedded idiom explanations do not match data/reference/hk_written_chinese_idioms.json."
+        )
+
     data = json.loads((OUT / "data/levels.json").read_text(encoding="utf-8"))
     levels = data.get("levels", [])
     placements = sum(len(level.get("placements", [])) for level in levels)
