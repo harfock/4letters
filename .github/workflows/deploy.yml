@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 concurrency:
@@ -87,18 +87,6 @@ jobs:
           curl -L --fail --retry 3 -o /tmp/stroke-data/2.3400-4dbf.txt https://raw.githubusercontent.com/caiguanhao/ChineseStrokes/master/data/2.3400-4dbf.txt
       - name: Generate stroke-count map for game characters
         run: python tools/build_stroke_counts.py public/data/levels.json /tmp/stroke-data public/data/strokes.json
-      - name: Keep generated levels available to all Pages sources
-        run: |
-          mkdir -p data
-          cp public/data/levels.json data/levels.json
-          cp public/data/strokes.json data/strokes.json
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/levels.json data/strokes.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Update generated crossword level data"
-            git push origin HEAD:main
-          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
