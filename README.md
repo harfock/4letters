@@ -2,9 +2,12 @@
 
 繁體中文成語縱橫解謎遊戲。棋盤在部署建置時預先產生，不在玩家開始遊戲時重新隨機排列。
 
+> **維護必讀：** 生產站 `https://4letters.pages.dev/` 連接 GitHub `main`；測試站 `https://4letters-s.pages.dev/` 連接 `feature/kinetic-comic-opening`。目前生產版 v021 使用 **40 關／980 個成語配置**及 **384 條成語釋義**。更新前請閱讀 [`DEVELOPMENT_NOTES.md`](DEVELOPMENT_NOTES.md)，尤其是嵌入資料同步、Cloudflare 建置驗證，以及不可恢復舊版工作流程自動覆寫 `main` 資料的規則。
+
+
 ## 已實作的功能
 
-- 21 關：第 1 關 10 個成語，逐關增加，至第 21 關 30 個，合計 420 個不同詞目。
+- 目前 Cloudflare 生產版：40 關、共 980 個成語配置；主資料為 `data/levels.json`，並同步嵌入 `index.html`，以避免執行時的靜態 JSON 路由錯誤。
 - 建置腳本產生靜態棋盤，檢查詞目重複、交叉字元一致及每關連通性。
 - 每關最多一半成語初始揭示一字；答對成語後，揭示相交未完成成語的提示字。
 - 候選字以獨立字磚列在主遊戲畫面，依筆畫數由少至多排列；字磚顯示筆畫數作參考，筆畫數相同時以 Unicode 碼位作穩定排序。字磚間有明顯間距；按住後拖曳至棋盤格，拖動預覽會放大並顯示在手指上方。
@@ -29,7 +32,10 @@
 - 官方資料下載頁：https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html
 - 使用及再散布官方資料時，請遵守下載頁列明的授權條款。
 
-## 本機建置
+## 舊版本機／GitHub Pages 建置（與 Cloudflare 生產版分開）
+
+以下的 `tools/build_levels.py` 與 `public/` 流程屬於另一套舊版建置路徑；其中仍有 21 關／420 個詞目的生成規則。請勿將其輸出覆寫到 Cloudflare 生產版的根目錄資料。Cloudflare 的正式建置與同步規則請以 [`DEVELOPMENT_NOTES.md`](DEVELOPMENT_NOTES.md) 為準。
+
 
 需要 Python 3 及 openpyxl：
 
