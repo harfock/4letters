@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-bounce-module-20261022-12"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-bounce-fallback-20261022-13"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -1089,7 +1089,29 @@ function applyPendingVisualEffects(){
    try{
     const bounceModule=await import('./bounce.js?v=cf-idiom-bounce-module-20261022-12');
     await bounceModule.bounceSequence([...new Set(bounceKeys)],document);
-   }catch(error){console.error('Dedicated bounce module failed:',error);}
+   }catch(error){
+    // Cloudflare may serve a stale deployment or an HTML 404 for a new asset.
+    // Keep the game playable: use the same Web Animations API as a local fallback.
+    console.warn('Bounce module unavailable; using inline fallback.',error);
+    for(const key of [...new Set(bounceKeys)]){
+     const escaped=String(key).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+     const tile=document.querySelector('.cell[data-key="'+escaped+'"]');
+     if(!tile||!tile.isConnected||typeof tile.animate!=='function')continue;
+     try{
+      const animation=tile.animate([
+       {offset:0,transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'},
+       {offset:.18,transform:'translate3d(0,-10px,0) scale(1.09)',boxShadow:'0 12px 18px rgba(0,0,0,.34)'},
+       {offset:.38,transform:'translate3d(0,0,0) scale(.97)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'},
+       {offset:.58,transform:'translate3d(0,-6px,0) scale(1.05)',boxShadow:'0 7px 12px rgba(0,0,0,.27)'},
+       {offset:.78,transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'},
+       {offset:1,transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'}
+      ],{duration:620,iterations:2,easing:'cubic-bezier(.2,.75,.25,1.15)',fill:'none'});
+      await animation.finished.catch(()=>{});
+      animation.cancel();
+      tile.style.transform='';tile.style.boxShadow='';
+     }catch(fallbackError){console.error('Inline bounce fallback failed:',fallbackError);}
+    }
+   }
   }
   if(flashKeys.length){
    // New hint/reveal animation begins 500 ms after the bounce sequence ends.
@@ -1846,7 +1868,7 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  });
 })();
 </script>
-<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 012">版本 012</div>
+<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 013">版本 013</div>
 <style>
 .build-version-badge{position:fixed;right:8px;bottom:calc(5px + env(safe-area-inset-bottom));z-index:1000;padding:3px 7px;border:1px solid rgba(140,231,199,.45);border-radius:7px;background:rgba(7,32,43,.82);color:#c9f5e6;font:700 10px/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:0 2px 8px #0004}
 </style>
