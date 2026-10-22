@@ -1113,7 +1113,7 @@ function applyPendingVisualEffects(){
   if(flashKeys.length){
    // Keep newly unlocked hint feedback after the completion highlight starts.
    if(completedKeys.length)await new Promise(resolve=>setTimeout(resolve,250));
-   if(hintRun!==hintAnimationCounter)return;
+   if(hintRun===hintAnimationCounter){
    if(delayedRevealKeys.length){
     const current=state();
     delayedRevealKeys.forEach(key=>{
@@ -1140,6 +1140,7 @@ function applyPendingVisualEffects(){
     flashPromises.push(waitForAnimation(tile,'hint-flash-effect'));
    });
    await Promise.all(flashPromises);
+   }
   }
   // The next-level panel waits for the completed-idiom flash animation itself to end.
   await Promise.all(completedFlashPromises);
