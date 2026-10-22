@@ -1070,7 +1070,7 @@ $('board').addEventListener('click',ev=>{
  const key=cell.dataset.key,s=state();
  if(s.revealed[key]){
   const word=idiomForCell(key);
-  if(word){activeExplanationCell=cell;showIdiomMeaning(word,'hint');}
+  if(word){activeExplanationCell=cell;showIdiomMeaning(word,'hint',key);}
  }
 });
 function render(){
