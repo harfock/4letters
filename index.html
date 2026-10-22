@@ -970,26 +970,58 @@ function waitForAnimation(tile,className){
 function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord){
  const panel=$(panelId),board=$('board'),stage=$('boardStage');
  if(!panel||panel.hidden||!board||!stage)return;
- const br=board.getBoundingClientRect(),sr=stage.getBoundingClientRect(),vh=window.innerHeight;
+ const vh=window.innerHeight,vw=window.innerWidth;
  const completed=panelId==='completedExplanation';
- const width=completed?Math.min(280,window.innerWidth-16):Math.min(84,window.innerWidth-12);
+ const width=completed?Math.min(240,vw-16):Math.min(84,vw-12);
  panel.style.position='fixed';panel.style.right='auto';panel.style.width=width+'px';panel.style.maxWidth='calc(100vw - 12px)';
- let left=Math.max(6,Math.min(window.innerWidth-width-6,sr.left+3));
- let top=br.top+4;
+ let left=Math.max(6,Math.min(vw-width-6,stage.getBoundingClientRect().left+3));
+ let top=board.getBoundingClientRect().top+4;
  if(completed&&word){
   const p=grid().ps.find(item=>item.word===word);
   if(p){
-   const rects=cells(p).map(c=>document.querySelector('.cell[data-key="'+c.r+','+c.c+'"]')).filter(Boolean).map(el=>el.getBoundingClientRect());
+   const wordCells=cells(p).map(c=>document.querySelector('.cell[data-key="'+c.r+','+c.c+'"]')).filter(Boolean);
+   const rects=wordCells.map(el=>el.getBoundingClientRect());
    if(rects.length){
-    const wordLeft=Math.min(...rects.map(r=>r.left)),wordRight=Math.max(...rects.map(r=>r.right)),wordBottom=Math.max(...rects.map(r=>r.bottom));
-    left=Math.max(6,Math.min(window.innerWidth-width-6,(wordLeft+wordRight-width)/2));
-    top=wordBottom+8;
+    // Anchor the explanation to the final character in the word's reading direction.
+    const lastRect=rects[rects.length-1];
+    top=lastRect.bottom+8;
+    if(p.direction!=='across'){
+     left=lastRect.left+(lastRect.width-width)/2;
+    }else{
+     const wordLeft=Math.min(...rects.map(r=>r.left)),wordRight=Math.max(...rects.map(r=>r.right));
+     left=(wordLeft+wordRight-width)/2;
+    }
+    // Keep the dialogue below the final character, but move it sideways when possible
+    // so it covers as few other board cells as possible.
+    const baseLeft=Math.max(6,Math.min(vw-width-6,left));
+    const candidates=[baseLeft];
+    for(let shift=12;shift<vw;shift+=12){
+     candidates.push(Math.max(6,Math.min(vw-width-6,baseLeft-shift)));
+     candidates.push(Math.max(6,Math.min(vw-width-6,baseLeft+shift)));
+    }
+    const solved=new Set(wordCells);
+    const otherCells=[...board.querySelectorAll('.cell[data-key]')].filter(el=>!solved.has(el));
+    const panelHeight=Math.min(Math.max(panel.scrollHeight,70),Math.max(70,vh-top-8));
+    const score=x=>{
+     const pr={left:x,right:x+width,top,bottom:top+panelHeight};
+     let overlap=0;
+     for(const el of otherCells){
+      const r=el.getBoundingClientRect();
+      const w=Math.max(0,Math.min(pr.right,r.right)-Math.max(pr.left,r.left));
+      const h=Math.max(0,Math.min(pr.bottom,r.bottom)-Math.max(pr.top,r.top));
+      overlap+=w*h;
+     }
+     return overlap*1000+Math.abs(x-baseLeft);
+    };
+    left=candidates.reduce((best,x)=>score(x)<score(best)?x:best,baseLeft);
    }
   }
  }
- const available=Math.max(90,vh-top-8);
+ left=Math.max(6,Math.min(vw-width-6,left));
  panel.style.left=left+'px';panel.style.top=Math.max(6,top)+'px';
- panel.style.maxHeight=Math.max(90,Math.min(vh-16,completed?Math.min(vh*.4,available):vh*.65))+'px';
+ const available=Math.max(70,vh-top-8);
+ panel.style.maxHeight=Math.max(70,Math.min(vh-16,completed?Math.min(vh*.4,available):vh*.65))+'px';
+ panel.style.overflowY='auto';
  panel.style.zIndex=completed?'21':'20';
 }
 function waitForAnimation(tile,className){
@@ -1782,7 +1814,7 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  });
 })();
 </script>
-<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 006">版本 005</div>
+<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 009">版本 009</div>
 <style>
 .build-version-badge{position:fixed;right:8px;bottom:calc(5px + env(safe-area-inset-bottom));z-index:1000;padding:3px 7px;border:1px solid rgba(140,231,199,.45);border-radius:7px;background:rgba(7,32,43,.82);color:#c9f5e6;font:700 10px/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:0 2px 8px #0004}
 </style>
