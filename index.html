@@ -793,6 +793,16 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
   </section>
   <section class="opening-scene opening-scene-7" data-scene="6" aria-label="逐關解鎖新挑戰">
    <div class="opening-copy">
+   <div class="opening-copy">
+    <div class="opening-eyebrow">NEED A CLUE?</div>
+    <h2>提示亮起<br><em>鎖定焦點</em></h2>
+    <p class="opening-subtitle">提示字閃亮，再移到視野中央。下一步更清楚，解謎節奏不中斷。</p>
+    <div class="opening-tagline">FOLLOW THE CLUE.</div>
+   </div>
+   <div class="opening-visual"><div class="opening-visual-card"><div class="opening-screen-label"><span>提示示範</span><span>FLASH · FOCUS</span></div><div id="openingHintViewport" class="opening-board-viewport opening-hint-viewport"><div id="openingHintBoardTilt" class="opening-board-tilt"><div id="openingHintBoardCopy" class="opening-board-copy" aria-hidden="true"></div></div></div><div class="opening-board-note">亮起提示字，棋盤平滑移動至焦點。</div></div></div>
+  </section>
+  <section class="opening-scene opening-scene-7" data-scene="6" aria-label="逐關解鎖新挑戰">
+   <div class="opening-copy">
     <div class="opening-eyebrow">LEVEL UP</div>
     <h2>逐關解鎖<br><em>新的挑戰</em></h2>
     <p class="opening-subtitle">完成眼前的關卡，累積解謎實力。每一步都帶你走得更遠。</p>
@@ -806,6 +816,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
     <h2>準備好了嗎？<br><em>開始挑戰</em></h2>
     <p class="opening-subtitle">觀察每一格，找出四字成語。你的第一個發現，就從現在開始。</p>
     <button id="openingPlay" class="opening-play" type="button" hidden>進入首頁 <span aria-hidden="true">➜</span></button>
+    <button id="openingPlay" class="opening-play" type="button" hidden>開始遊戲 <span aria-hidden="true">➜</span></button>
    </div>
    <div class="opening-visual opening-invitation-visual"><div class="opening-comic-rays"></div><div class="opening-invite-logo"><span class="opening-invite-four">4</span><span>LETTERS</span></div><div class="opening-invite-caption">FOUR LETTERS. ONE DISCOVERY.</div><div class="opening-invite-tiles" aria-hidden="true"><span>一</span><span>鼓</span><span>作</span><span>氣</span></div></div>
   </section>
@@ -1549,6 +1560,14 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  const sceneDurations=[2000,2000,2000,3800,3800,2000,2000,1800];
  let sceneIndex=0,sceneTimer=null,homeIdleTimer=null,tutorialIndex=0,hasStarted=false;
  let lastOpeningPayload=null;
+ let sceneIndex=0,sceneTimer=null,tutorialIndex=0,hasStarted=false;
+ const definitions={
+  '一鼓作氣':{pinyin:'yī gǔ zuò qì',meaning:'比喻趁著士氣旺盛時，一口氣完成事情。'},
+  '東山再起':{pinyin:'dōng shān zài qǐ',meaning:'比喻失勢後重新恢復地位或力量。'},
+  '一字千金':{pinyin:'yī zì qiān jīn',meaning:'形容文字極有價值，或文章寫得十分精妙。'},
+  '斷章取義':{pinyin:'duàn zhāng qǔ yì',meaning:'只取文章或言論的片段，忽略上下文而曲解原意。'},
+  '不遺餘力':{pinyin:'bù yí yú lì',meaning:'用盡全部力量，毫不保留。'}
+ };
  const safeGet=key=>{try{return localStorage.getItem(key)}catch(_e){return null}};
  const safeSet=(key,value)=>{try{localStorage.setItem(key,value)}catch(_e){}};
  function makeTiles(word,target){
@@ -1614,6 +1633,12 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
   if(sceneIndex<7)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
   else if(sceneIndex===7)sceneTimer=setTimeout(()=>showScene(8),sceneDurations[7]);
   else if(sceneIndex===8)sceneTimer=setTimeout(showHome,590);
+  const play=$('openingPlay');
+  if(sceneIndex===7){
+   play.hidden=false;play.classList.remove('is-ready');
+   sceneTimer=setTimeout(()=>{if(sceneIndex===7)play.classList.add('is-ready')},sceneDurations[7]);
+  }else{play.hidden=true;play.classList.remove('is-ready')}
+  if(sceneIndex<7)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
   if(sceneIndex===5)requestAnimationFrame(centerHintPreview);
  }
  const tutorialSteps=[
@@ -1671,6 +1696,9 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  function dismissOpening(withTransition){
   if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
   clearHomeIdleTimer();window.__4lettersOpeningActive=true;home.hidden=true;
+ function dismissOpening(withTransition){
+  if(sceneTimer)clearTimeout(sceneTimer);sceneTimer=null;
+  safeSet(OPENING_SEEN,'1');window.__4lettersOpeningActive=true;
   if(withTransition){
    sceneIndex=scenes.length-1;
    scenes.forEach((scene,i)=>{scene.classList.toggle('is-active',i===sceneIndex);scene.setAttribute('aria-hidden',i===sceneIndex?'false':'true')});
@@ -1680,6 +1708,10 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
    return;
   }
   showHome();
+   window.setTimeout(()=>{overlay.hidden=true;openTutorial()},590);
+   return;
+  }
+  overlay.hidden=true;openTutorial();
  }
  window.start4LettersOpening=function(payload){
   if(hasStarted)return;hasStarted=true;
@@ -1713,6 +1745,8 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
   overlay.hidden=false;
   showScene(0);
   const status=$('toast');if(status)status.textContent='正在重播片頭；你的關卡進度不會受到影響。';
+  $('openingSkip').addEventListener('click',()=>dismissOpening(false));
+  $('openingPlay').addEventListener('click',()=>dismissOpening(true));
  };
  $('replayOpeningBtn').addEventListener('click',()=>{
   if(window.replay4LettersOpening)window.replay4LettersOpening();
