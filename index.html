@@ -1064,7 +1064,7 @@ function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord
  const available=Math.max(70,vh-top-8);
  panel.style.maxHeight=Math.max(70,Math.min(vh-16,completed?Math.min(vh*.4,available):vh*.65))+'px';
  panel.style.overflowY='auto';
- panel.style.zIndex=completed?'21':'20';
+ panel.style.zIndex=completed?'100':'20';
 }
 function waitForAnimation(tile,className){
  return new Promise(resolve=>{
