@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-panels-bounce-20261022-07"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-bounce-module-20261022-12"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -731,13 +731,13 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 /* Directional explanation sidebars: vertical meaning on left, horizontal meaning on right. */
 .explanation-sidebars{position:fixed;inset:0;z-index:20;pointer-events:none}.explanation-sidebars[hidden]{display:none}
 .explanation-sidebar{position:fixed;top:50%;transform:translateY(-50%);width:clamp(42px,7vw,78px);max-height:68vh;box-sizing:border-box;padding:6px 4px;border:1px solid rgba(124,226,233,.9);border-radius:12px;background:linear-gradient(135deg,rgba(7,32,43,.94),rgba(9,57,66,.94));color:#effff8;box-shadow:0 8px 22px rgba(0,0,0,.3);backdrop-filter:blur(7px);display:flex;flex-direction:column;align-items:center;gap:5px;overflow:hidden;pointer-events:auto}
-.explanation-sidebar[hidden]{display:none}.explanation-sidebar-vertical{left:5px}.explanation-sidebar-horizontal{right:5px}
+.explanation-sidebar[hidden]{display:none}.explanation-sidebar-vertical{left:5px}.explanation-sidebar-horizontal{left:5px;right:auto}
 .explanation-replay{flex:0 0 auto;width:27px;height:27px;padding:0;border:1px solid rgba(140,231,199,.65);border-radius:50%;background:#123b48;color:#b8ffe3;font-size:21px;font-weight:900;line-height:1;cursor:pointer}.explanation-replay:active{transform:scale(.9)}
 .explanation-sidebar-content{width:100%;overflow:auto;overscroll-behavior:contain;writing-mode:vertical-rl;text-orientation:mixed;font-size:16px;line-height:1.5;word-break:break-all;scrollbar-width:thin}
 .explanation-sidebar-content .explanation-entry{display:contents}.explanation-sidebar-content .explanation-direction,.explanation-sidebar-content .explanation-word{display:none!important}
 .explanation-sidebar-content .explanation-meaning{writing-mode:vertical-rl;text-orientation:mixed;font-size:16px;line-height:1.5;word-break:break-all}
 .explanation-sidebar-content .explanation-entry+.explanation-entry{margin-inline-start:8px;padding-inline-start:6px;border-inline-start:1px solid rgba(140,231,199,.26)}
-@media(max-width:520px){.explanation-sidebar{width:clamp(38px,10vw,58px);max-height:62vh;padding:5px 3px}.explanation-sidebar-vertical{left:3px}.explanation-sidebar-horizontal{right:3px}.explanation-sidebar-content,.explanation-sidebar-content .explanation-meaning{font-size:15px;line-height:1.45}.explanation-replay{width:24px;height:24px;font-size:19px}}
+@media(max-width:520px){.explanation-sidebar{width:clamp(38px,10vw,58px);max-height:62vh;padding:5px 3px}.explanation-sidebar-vertical{left:3px}.explanation-sidebar-horizontal{left:3px;right:auto}.explanation-sidebar-content,.explanation-sidebar-content .explanation-meaning{font-size:15px;line-height:1.45}.explanation-replay{width:24px;height:24px;font-size:19px}}
 </style></head><body>
 <div id="openingOverlay" class="opening-overlay" hidden role="dialog" aria-modal="true" aria-label="4Letters 遊戲開場">
  <div class="opening-topbar">
@@ -878,6 +878,26 @@ let pendingHintEffectKey=null,pendingBounceKeys=[];
 let bounceAnimationCounter=0,hintAnimationCounter=0;
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
 let activeCompletedWord=null;
+function positionDirectionalSidebars(){
+ const board=$('board'),vertical=$('verticalExplanationSidebar'),horizontal=$('horizontalExplanationSidebar');
+ if(!board||!vertical||!horizontal)return;
+ const rect=board.getBoundingClientRect(),vw=window.innerWidth,gap=8;
+ const place=(panel,preferRight)=>{
+  if(!panel||panel.hidden)return;
+  const width=panel.getBoundingClientRect().width||Math.min(78,Math.max(42,vw*.07));
+  const rightX=rect.right+gap,leftX=rect.left-width-gap;
+  let x=preferRight?rightX:leftX;
+  if(preferRight&&rightX+width>vw-6)x=leftX;
+  if(x<6&&rightX+width<=vw-6)x=rightX;
+  if(x<6&&rightX+width>vw-6)x=Math.max(rect.left+8,rect.right-width-8);
+  x=Math.max(6,Math.min(vw-width-6,x));
+  panel.style.left=x+'px';panel.style.right='auto';
+  panel.style.top=Math.max(8,Math.min(window.innerHeight-panel.offsetHeight-8,rect.top+rect.height/2))+'px';
+ };
+ place(vertical,false);place(horizontal,true);
+}
+window.addEventListener('resize',positionDirectionalSidebars,{passive:true});
+$('boardWrap')?.addEventListener('scroll',positionDirectionalSidebars,{passive:true});
 function showIdiomMeaning(word,source,key){
   const completed=source==='completed';if(completed)activeCompletedWord=word;else activeCompletedWord=null;
   const panel=$(completed?'completedExplanation':'idiomExplanation');if(!panel||!word)return;
@@ -894,7 +914,7 @@ function showIdiomMeaning(word,source,key){
    const vertical=$('verticalExplanationContent'),horizontal=$('horizontalExplanationContent');vertical.replaceChildren();horizontal.replaceChildren();
    const vs=entries.filter(x=>x.direction==='縱向'),hs=entries.filter(x=>x.direction==='橫向');
    const fill=(box,items)=>items.forEach(item=>{const row=document.createElement('div'),meaning=document.createElement('div');row.className='explanation-entry';meaning.className='explanation-meaning';meaning.textContent=item.meaning;row.append(meaning);box.append(row);});
-   fill(vertical,vs);fill(horizontal,hs);$('verticalExplanationSidebar').hidden=!vs.length;$('horizontalExplanationSidebar').hidden=!hs.length;
+   fill(vertical,vs);fill(horizontal,hs);$('verticalExplanationSidebar').hidden=!vs.length;$('horizontalExplanationSidebar').hidden=!hs.length;positionDirectionalSidebars();
    $('completedExplanation').hidden=true;panel.hidden=!(vs.length||hs.length);
   }
 }
@@ -1056,22 +1076,20 @@ function applyPendingVisualEffects(){
  const completedWord=pendingCompletedExplanation;
  pendingCompletedExplanation=null;
  // Each effect owns a counter. A new hint can run without cancelling the bounce animation.
- const bounceRun=bounceKeys.length?++bounceAnimationCounter:bounceAnimationCounter;
+ if(bounceKeys.length)bounceAnimationCounter++;
  const hintRun=flashKeys.length?++hintAnimationCounter:hintAnimationCounter;
  (async()=>{
   if(completedWord){
    showIdiomMeaning(completedWord,'completed');
    await new Promise(resolve=>setTimeout(resolve,320));
   }
-  // Bounce each completed letter in word order, exactly twice, so the motion is unmistakable.
-  if(bounceRun!==bounceAnimationCounter)return;
-  for(const key of [...new Set(bounceKeys)]){
-   const tile=document.querySelector('.cell[data-key="'+key+'"]');
-   if(!tile)continue;
-   tile.classList.remove('correct-double-bounce');tile.style.animationDelay='0ms';
-   void tile.offsetWidth;
-   tile.classList.add('correct-double-bounce');
-   await waitForAnimation(tile,'correct-double-bounce');
+  // The dedicated module serializes completion sequences and uses Web Animations API,
+  // avoiding fragile CSS class remove/re-add and animationend timing.
+  if(bounceKeys.length){
+   try{
+    const bounceModule=await import('./bounce.js?v=cf-idiom-bounce-module-20261022-12');
+    await bounceModule.bounceSequence([...new Set(bounceKeys)],document);
+   }catch(error){console.error('Dedicated bounce module failed:',error);}
   }
   if(flashKeys.length){
    // New hint/reveal animation begins 500 ms after the bounce sequence ends.
@@ -1828,7 +1846,7 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  });
 })();
 </script>
-<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 011">版本 011</div>
+<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 012">版本 012</div>
 <style>
 .build-version-badge{position:fixed;right:8px;bottom:calc(5px + env(safe-area-inset-bottom));z-index:1000;padding:3px 7px;border:1px solid rgba(140,231,199,.45);border-radius:7px;background:rgba(7,32,43,.82);color:#c9f5e6;font:700 10px/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:0 2px 8px #0004}
 </style>
