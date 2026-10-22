@@ -997,7 +997,7 @@ function waitForAnimation(tile,className){
  return new Promise(resolve=>{
   let settled=false;
   const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
-  const onEnd=e=>{if(e.target===tile)finish()};
+  const onEnd=e=>{if(e.target===tile&&(className!=='completed-success'||e.animationName==='completed-idiom-flash'))finish()};
   tile.addEventListener('animationend',onEnd);
   setTimeout(finish,className==='correct-double-bounce'?1500:(className==='completed-success'?2600:2200));
  });
@@ -1070,7 +1070,7 @@ function waitForAnimation(tile,className){
  return new Promise(resolve=>{
   let settled=false;
   const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
-  const onEnd=e=>{if(e.target===tile)finish()};
+  const onEnd=e=>{if(e.target===tile&&(className!=='completed-success'||e.animationName==='completed-idiom-flash'))finish()};
   tile.addEventListener('animationend',onEnd);
   setTimeout(finish,className==='correct-double-bounce'?1500:(className==='completed-success'?2600:2200));
  });
