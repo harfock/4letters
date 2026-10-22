@@ -876,7 +876,7 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
 let pendingHintEffectKey=null,pendingCompletedKeys=[];
-/* Completed tiles use a static success highlight, independent of motion settings. */
+/* Completed tiles use a high-contrast CSS flash, preserved with reduced-motion settings. */
 const activeCompletedKeys=new Set(),completedHighlightTimers=new Map();
 let hintAnimationCounter=0,completionFlashPending=false;
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
@@ -1072,7 +1072,7 @@ function waitForAnimation(tile,className){
   const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
   const onEnd=e=>{if(e.target===tile)finish()};
   tile.addEventListener('animationend',onEnd);
-  setTimeout(finish,className==='correct-double-bounce'?1500:1050);
+  setTimeout(finish,className==='correct-double-bounce'?1500:(className==='completed-success'?2600:2200));
  });
 }
 function applyPendingVisualEffects(){
@@ -1093,8 +1093,7 @@ function applyPendingVisualEffects(){
    await new Promise(resolve=>setTimeout(resolve,320));
   }
   if(completedKeys.length){
-   // Apply all four gold highlights together; no animation API, CSS animation,
-   // transition, or motion preference is involved in the success feedback.
+   // Start the same bold, animated success ring on all four cells of the completed idiom.
    [...new Set(completedKeys)].forEach(key=>{
     activeCompletedKeys.add(key);
     const tile=document.querySelector('.cell[data-key="'+key.replace(/"/g,'\\"')+'"]');
