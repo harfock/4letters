@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-panels-bounce-20261022-06"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-panels-bounce-20261022-07"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -1026,17 +1026,13 @@ function applyPendingVisualEffects(){
    showIdiomMeaning(completedWord,'completed');
    await new Promise(resolve=>setTimeout(resolve,320));
   }
-  // Animate unique live tiles through the Web Animations API. De-duplication matters
-  // when two newly completed idioms share a crossword cell in the same checkAll pass.
-  const bouncePromises=[];
+  // Bounce each completed letter in word order, exactly twice, so the motion is unmistakable.
   if(bounceRun!==bounceAnimationCounter)return;
-  [...new Set(bounceKeys)].forEach(key=>{
+  for(const key of [...new Set(bounceKeys)]){
    const tile=document.querySelector('.cell[data-key="'+key+'"]');
-   if(!tile)return;
-   bouncePromises.push(bounceTile(tile));
-  });
-  // Do not let hint handling rebuild or interrupt the bouncing cells.
-  await Promise.all(bouncePromises);
+   if(!tile)continue;
+   await bounceTile(tile);
+  }
   if(flashKeys.length){
    // New hint/reveal animation begins 500 ms after the bounce sequence ends.
    if(bounceKeys.length)await new Promise(resolve=>setTimeout(resolve,500));
