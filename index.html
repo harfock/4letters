@@ -699,15 +699,20 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 
 
 .board-stage{position:relative}
-.idiom-explanation{position:relative;z-index:2;width:100%;box-sizing:border-box;margin:0 0 9px;padding:10px 13px;border:1px solid rgba(124,226,233,.62);border-radius:12px;background:linear-gradient(135deg,rgba(7,32,43,.97),rgba(9,57,66,.97));color:#effff8;min-height:0;box-shadow:0 5px 18px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none}
+/* Explanation is a floating overlay: it never changes game-panel layout height. JS
+   moves it into unused horizontal space when available, otherwise to the board toolbar zone. */
+#boardArea{position:relative}
+.idiom-explanation{position:absolute;z-index:30;top:0;right:4px;width:min(390px,52%);max-height:min(42vh,280px);overflow:auto;box-sizing:border-box;margin:0;padding:9px 12px;border:1px solid rgba(124,226,233,.72);border-radius:12px;background:linear-gradient(135deg,rgba(7,32,43,.97),rgba(9,57,66,.97));color:#effff8;box-shadow:0 12px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none;backdrop-filter:blur(7px)}
 .idiom-explanation[hidden]{display:none}
-.idiom-explanation .explanation-label{font-size:11px;letter-spacing:.08em;color:#8ce7c7;font-weight:900;margin-bottom:6px}
-.idiom-explanation .explanation-entry{display:grid;grid-template-columns:minmax(95px,auto) minmax(0,1fr);gap:2px 10px;align-items:start;padding:5px 0}
+.idiom-explanation.in-board-gap{top:48px;right:4px;width:min(300px,calc(100% - 8px))}
+.idiom-explanation .explanation-label{font-size:10px;letter-spacing:.08em;color:#8ce7c7;font-weight:900;margin-bottom:4px}
+.idiom-explanation .explanation-entry{display:grid;grid-template-columns:minmax(86px,auto) minmax(0,1fr);gap:2px 8px;align-items:start;padding:4px 0}
 .idiom-explanation .explanation-entry+.explanation-entry{border-top:1px solid rgba(140,231,199,.22)}
-.idiom-explanation .explanation-direction{font-size:11px;letter-spacing:.04em;color:#8ce7c7;font-weight:900}
-.idiom-explanation .explanation-word{font-size:15px;font-weight:900;color:#ffdb82}
-.idiom-explanation .explanation-meaning{grid-column:2;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
-@media(max-width:520px){.idiom-explanation{padding:8px 10px}.idiom-explanation .explanation-entry{grid-template-columns:1fr;gap:2px}.idiom-explanation .explanation-meaning{grid-column:1}.idiom-explanation .explanation-word{font-size:14px}}
+.idiom-explanation .explanation-direction{font-size:10px;letter-spacing:.04em;color:#8ce7c7;font-weight:900}
+.idiom-explanation .explanation-word{font-size:14px;font-weight:900;color:#ffdb82}
+.idiom-explanation .explanation-meaning{grid-column:2;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+@media(max-width:520px){.idiom-explanation{width:min(280px,78%);padding:7px 9px;max-height:32vh}.idiom-explanation .explanation-entry{grid-template-columns:1fr;gap:1px}.idiom-explanation .explanation-meaning{grid-column:1}.idiom-explanation .explanation-word{font-size:13px}}
+
 .cell.revealed{cursor:pointer}
 </style></head><body>
 <div id="openingOverlay" class="opening-overlay" hidden role="dialog" aria-modal="true" aria-label="4Letters 遊戲開場">
@@ -818,7 +823,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 </aside>
 <div id="levelTimePopup" class="level-time-popup" role="status" aria-live="polite" hidden><span id="levelTimePopupTitle">本關完成</span><strong id="levelTimePopupValue">00:00</strong></div><header><div id="homeLogoBtn" class="brand brand-home-button" role="button" tabindex="0" aria-label="返回首頁"><h1>成語圖譜・縱橫解字</h1><small>逐字填寫 · 交叉解謎 · 逐關解鎖</small></div><div class="stats top-stats"><div class="stat">總用時 <b id="total">00:00</b></div><div class="stat">已完成 <b id="count">0</b>/<span id="totalPlacementCount">—</span></div></div></header><main>
 <section class="panel summarybar"><b id="title">載入棋盤中…</b><div class="summary-metrics"><div class="summarymetric">本關 <b id="timer">00:00</b></div><div class="summarymetric">已完成 <b id="doneCount">0</b></div></div></section>
-<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="idiomExplanation" class="idiom-explanation" role="status" aria-live="polite" hidden><div class="explanation-label">橫向／縱向成語解說</div><div id="explanationContent"></div></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button><button id="replayOpeningBtn" type="button">重播片頭 ↻</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
+<div id="layoutViewport" class="layout-viewport"><div id="layout" class="layout"><section class="panel game-panel"><div id="boardRow" class="board-row"><div id="nextFloat" class="next-float" hidden><strong id="completionTitle">本關完成</strong><small id="completionDetail"></small><button id="nextLevelBtn" class="primary">下一關 →</button></div><div id="boardArea"><div class="board-toolbar"><button id="hintFloat" class="hint-float primary" type="button" aria-label="揭示下一個未完成成語的提示字">提示</button><span class="board-toolbar-note">揭示下一個提示字</span></div><div id="boardStage" class="board-stage"><div id="boardWrap" class="boardwrap"><div id="board" class="board"></div></div><div id="idiomExplanation" class="idiom-explanation" role="status" aria-live="polite" hidden><div class="explanation-label">橫向／縱向成語解說</div><div id="explanationContent"></div></div><div class="board-nav" aria-label="棋盤視野導航"><button id="navUp" type="button" aria-label="向上移動棋盤" hidden>↑</button><button id="navLeft" type="button" aria-label="向左移動棋盤" hidden>←</button><button id="navRight" type="button" aria-label="向右移動棋盤" hidden>→</button><button id="navDown" type="button" aria-label="向下移動棋盤" hidden>↓</button><div class="board-zoom" aria-label="棋盤縮放"><button id="zoomOut" type="button" aria-label="縮小棋盤">−</button><span id="zoomLabel">100%</span><button id="zoomIn" type="button" aria-label="放大棋盤">＋</button></div></div></div></div></div><section class="candidate-panel"><div class="candidate-heading"><strong>候選字</strong><small id="candidateCount">載入候選字中…</small></div><div class="muted" style="font-size:.84rem;margin-bottom:9px">按住一個字，拖到上方空格。拖動時字會放大並移到手指上方，方便看清楚。</div><div id="candidates" class="candidate-list" aria-label="候選字"></div></section><div id="toast" class="toast" role="status"></div><div class="actions"><button id="hint" class="primary">提示一字</button><button id="check">檢查本詞</button><button id="clear">清除選格</button><button id="reset">重玩本關</button><button id="chooseLevelBtn">選擇關卡</button><button id="replayOpeningBtn" type="button">重播片頭 ↻</button></div><section id="levelPanel" class="panel level-panel" style="margin-top:12px" hidden><h3 style="margin-top:0">選擇關卡</h3><div id="levels" class="levelgrid"></div><div class="actions" style="margin-top:10px"><button id="export">匯出進度</button><button id="import">匯入進度</button><input id="file" type="file" accept="application/json" hidden></div></section><p class="foot">把下方候選字拖到空格；放錯字可在格子上雙擊，將字退回候選字區；亦可選取格子後按「清除選格」。答對成語後，會揭示相交成語的提示字。</p></section></div></div>
 <p class="foot">詞目以教育部《成語典》主條四字詞目為基礎；提示採遊戲內揭示字，不複製官方釋義。<a style="color:var(--mint)" href="https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_idiomsdict_download.html" target="_blank" rel="noopener">官方資料下載頁</a></p></main>
 <div id="modalback" class="modalback"><div class="modal"><h2 id="modalTitle">完成本關</h2><p id="modalBody"></p><div class="actions"><button id="review">留在本關</button><button id="advance" class="primary">下一關</button></div><small id="note"></small></div></div>
 <script>
@@ -865,6 +870,7 @@ function showIdiomMeaning(word,source,key){
   row.append(direction,title,meaning);box.appendChild(row);
  });
  panel.hidden=false;
+ positionExplanation();
 }
 function idiomForCell(key){
  const g=grid(),z=g.m.get(key);if(!z)return null;
@@ -938,65 +944,82 @@ function focusHintCell(key){
  wrap.scrollTo({top:Math.max(0,top),left:Math.max(0,left),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
  updateBoardControls();
 }
-let visualEffectQueue=Promise.resolve();
 function waitForAnimation(tile,className){
  return new Promise(resolve=>{
   let settled=false;
   const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
   const onEnd=e=>{if(e.target===tile)finish()};
   tile.addEventListener('animationend',onEnd);
-  // Safety fallback for hidden tabs or browsers that suppress animation events.
-  setTimeout(finish,1400);
+  const duration=className==='correct-double-bounce'?1500:1050;
+  setTimeout(finish,duration);
  });
+}
+function positionExplanation(){
+ const panel=$('idiomExplanation'),area=$('boardArea'),board=$('board');
+ if(!panel||!area||panel.hidden||!board)return;
+ const ar=area.getBoundingClientRect(),br=board.getBoundingClientRect();
+ const leftSpace=br.left-ar.left,rightSpace=ar.right-br.right;
+ panel.classList.remove('in-board-gap');
+ if(rightSpace>=Math.min(230,area.clientWidth*.28)){
+  panel.style.left='auto';panel.style.right='4px';panel.style.top='48px';
+  panel.style.width=Math.min(320,rightSpace-8)+'px';
+ }else if(leftSpace>=Math.min(230,area.clientWidth*.28)){
+  panel.style.left='4px';panel.style.right='auto';panel.style.top='48px';
+  panel.style.width=Math.min(320,leftSpace-8)+'px';
+ }else{
+  // No side gutter exists: keep the card in the floating toolbar zone rather than
+  // adding a row or changing panel height. Compact display preserves more of the board.
+  panel.style.left='auto';panel.style.right='4px';panel.style.top='0px';
+  panel.style.width='min(300px, 78%)';
+ }
 }
 function applyPendingVisualEffects(){
  const bounceKeys=pendingBounceKeys.splice(0);
  const hintKey=pendingHintEffectKey;
  pendingHintEffectKey=null;
  const delayedRevealKeys=[...pendingDelayedRevealKeys];
- if(!bounceKeys.length&&!hintKey&&!delayedRevealKeys.length)return;
- // Show the completed idiom's meaning before starting its left-to-right bounce.
- visualEffectQueue=visualEffectQueue.then(async()=>{
-  if(pendingCompletedExplanation){
-   showIdiomMeaning(pendingCompletedExplanation,'completed');
-   pendingCompletedExplanation=null;
-   await new Promise(resolve=>setTimeout(resolve,650));
+ if(!bounceKeys.length&&!hintKey&&!delayedRevealKeys.length&&!pendingCompletedExplanation)return;
+ const completedWord=pendingCompletedExplanation;
+ pendingCompletedExplanation=null;
+ // Keep the explanation as a non-layout overlay. All solved tiles bounce together;
+ // hint flashes are independent effects and may run concurrently on other cells.
+ (async()=>{
+  if(completedWord){
+   showIdiomMeaning(completedWord,'completed');
+   positionExplanation();
+   await new Promise(resolve=>setTimeout(resolve,320));
   }
+  const bouncePromises=[];
   for(const key of bounceKeys){
    const tile=document.querySelector('.cell[data-key="'+key+'"]');
    if(!tile)continue;
    tile.classList.remove('correct-double-bounce');tile.style.animationDelay='0ms';
    void tile.offsetWidth;tile.classList.add('correct-double-bounce');
-   await waitForAnimation(tile,'correct-double-bounce');
+   bouncePromises.push(waitForAnimation(tile,'correct-double-bounce'));
   }
-  if(delayedRevealKeys.length&&bounceKeys.length){
-   await new Promise(resolve=>setTimeout(resolve,500));
+  const flashKeys=[...delayedRevealKeys];
+  if(hintKey)flashKeys.push(hintKey);
+  // Start flashes shortly after the group bounce begins. The different animations
+  // intentionally coexist on screen; no global queue serializes unrelated tiles.
+  if(flashKeys.length){
+   await new Promise(resolve=>setTimeout(resolve,bounceKeys.length?360:0));
    delayedRevealKeys.forEach(key=>pendingDelayedRevealKeys.delete(key));
-   // Re-render only after the delay so the newly unlocked hint letter is
-   // actually revealed at the intended time, rather than merely animated later.
-   render();
-   for(const key of delayedRevealKeys){
+   if(delayedRevealKeys.length)render();
+   const flashPromises=[];
+   [...new Set(flashKeys)].forEach(key=>{
     const tile=document.querySelector('.cell[data-key="'+key+'"]');
-    if(!tile)continue;
+    if(!tile)return;
     focusHintCell(key);
     tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
     tile.classList.add('hint-flash-effect');
-    await waitForAnimation(tile,'hint-flash-effect');
-   }
+    flashPromises.push(waitForAnimation(tile,'hint-flash-effect'));
+   });
+   await Promise.all(flashPromises);
   }
-  if(hintKey){
-   // Manual hint effects also wait 500 ms after any bounce in the same action.
-   if(bounceKeys.length) await new Promise(resolve=>setTimeout(resolve,500));
-   const tile=document.querySelector('.cell[data-key="'+hintKey+'"]');
-   if(tile){
-    focusHintCell(hintKey);
-    tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
-    tile.classList.add('hint-flash-effect');
-    await waitForAnimation(tile,'hint-flash-effect');
-   }
-  }
- }).catch(err=>console.warn('Visual effect sequence recovered after an animation error.',err));
+  await Promise.all(bouncePromises);
+ })().catch(err=>console.warn('Visual effects recovered after an animation error.',err));
 }
+window.addEventListener('resize',()=>requestAnimationFrame(positionExplanation));
 function applyPendingBoardFocus(){
  if(!pendingBoardFocus)return;
  const key=pendingBoardFocus;pendingBoardFocus=null;
