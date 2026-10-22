@@ -1318,7 +1318,7 @@ function render(){
  $('timer').textContent=fmt(s.seconds);
  const levelFinished=!!s.finished;
  $('nextFloat').hidden=!levelFinished||completionFlashPending;
- $('boardRow').classList.toggle('has-next',levelFinished);
+ $('boardRow').classList.toggle('has-next',levelFinished&&!completionFlashPending);
  if(levelFinished){
   const completed=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
   $('completionTitle').textContent=L===D.levels.length-1?'全部 40 關完成！':'第 '+(L+1)+' 關完成';
