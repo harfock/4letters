@@ -435,6 +435,14 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 .board{position:relative;isolation:isolate}
 /* No animation or transition: this remains visible with prefers-reduced-motion enabled. */
 .cell.completed-success{position:relative;z-index:50;background:#ffd166!important;color:#302307!important;outline:3px solid #fff0a6;outline-offset:1px;box-shadow:0 0 0 4px rgba(255,209,102,.58),0 0 18px rgba(255,209,102,.95)}
+/* Completed idioms get their own longer success flash (separate from hint-letter flashing). */
+.board .cell.completed-success{position:relative!important;z-index:80!important;background:#ffd166!important;color:#302307!important}
+.board .cell.completed-success::after{content:"";position:absolute;inset:-4px;border:6px solid #ffd166;border-radius:9px;pointer-events:none;z-index:9;opacity:0;transform:scale(.92);box-shadow:0 0 0 4px rgba(255,209,102,.58),0 0 24px 8px rgba(255,209,102,.85);animation:completed-idiom-flash 2.1s steps(1,end) both}
+@keyframes completed-idiom-flash{
+ 0%,100%{opacity:.9;transform:scale(1.02);border-color:#ffd166;box-shadow:0 0 0 4px rgba(255,209,102,.62),0 0 20px 6px rgba(255,209,102,.85)}
+ 12%,38%,64%,90%{opacity:1;transform:scale(1.14);border-color:#fff2ad;box-shadow:0 0 0 7px rgba(255,209,102,.78),0 0 34px 12px rgba(255,209,102,1)}
+ 25%,51%,77%{opacity:.48;transform:scale(1.015);border-color:#f59e0b;box-shadow:0 0 0 3px rgba(255,183,3,.55),0 0 12px 3px rgba(255,183,3,.55)}
+}
 /* The high-contrast feedback flash is intentionally preserved when reduced-motion is enabled. */
 
 
@@ -716,7 +724,7 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 .hover-explanation .explanation-entry{display:grid;grid-template-columns:17px minmax(0,1fr);gap:3px;align-items:start}
 .hover-explanation .explanation-direction{writing-mode:vertical-rl;text-orientation:mixed;font-size:14px;line-height:1.2;white-space:nowrap}
 .hover-explanation .explanation-meaning{writing-mode:vertical-rl;text-orientation:mixed;font-size:16px;line-height:1.45;max-height:48vh;overflow-wrap:normal;word-break:break-all}
-.completed-explanation{width:min(330px,calc(100vw - 24px));max-height:40vh;padding:12px 14px;z-index:21}
+.completed-explanation{width:min(330px,calc(100vw - 24px));max-height:40vh;padding:12px 14px;z-index:21;pointer-events:auto}
 .completed-explanation .explanation-entry{display:block}
 .completed-explanation .explanation-meaning{font-size:17px;line-height:1.55}
 @media(max-width:520px){.hover-explanation{width:78px;padding:5px 4px}.hover-explanation .explanation-meaning{font-size:16px}.completed-explanation{width:calc(100vw - 24px)}}
@@ -991,7 +999,7 @@ function waitForAnimation(tile,className){
   const finish=()=>{if(settled)return;settled=true;tile.removeEventListener('animationend',onEnd);tile.classList.remove(className);tile.style.animationDelay='';resolve()};
   const onEnd=e=>{if(e.target===tile)finish()};
   tile.addEventListener('animationend',onEnd);
-  setTimeout(finish,className==='correct-double-bounce'?1500:1050);
+  setTimeout(finish,className==='correct-double-bounce'?1500:(className==='completed-success'?2600:2200));
  });
 }
 function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord){
@@ -1008,19 +1016,25 @@ function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord
   const p=grid().ps.find(item=>item.word===word);
   if(p){
    const wordCells=cells(p).map(c=>document.querySelector('.cell[data-key="'+c.r+','+c.c+'"]')).filter(Boolean);
-   const rects=wordCells.map(el=>el.getBoundingClientRect());
+   const getRects=()=>wordCells.map(el=>el.getBoundingClientRect());
+   let rects=getRects();
    if(rects.length){
-    // Anchor the explanation to the final character in the word's reading direction.
-    const lastRect=rects[rects.length-1];
-    top=lastRect.bottom+8;
-    if(p.direction!=='across'){
-     left=lastRect.left+(lastRect.width-width)/2;
-    }else{
-     const wordLeft=Math.min(...rects.map(r=>r.left)),wordRight=Math.max(...rects.map(r=>r.right));
-     left=(wordLeft+wordRight-width)/2;
+    const bottomOfWord=()=>Math.max(...rects.map(r=>r.bottom));
+    top=bottomOfWord()+8;
+    // If the completed idiom is near the bottom of the visible board, scroll the
+    // board down just enough to make room for the meaning beneath it.
+    const desiredPopupHeight=Math.min(Math.max(panel.scrollHeight,80),Math.max(80,vh*.4));
+    const wrap=$('boardWrap');
+    if(top+desiredPopupHeight+8>vh-8&&wrap){
+     const maxScroll=Math.max(0,wrap.scrollHeight-wrap.clientHeight);
+     const spareScroll=Math.max(0,maxScroll-wrap.scrollTop);
+     const shift=Math.min(spareScroll,top+desiredPopupHeight+16-vh);
+     if(shift>0){wrap.scrollTop+=shift;rects=getRects();top=bottomOfWord()+8;}
     }
-    // Keep the dialogue below the final character, but move it sideways when possible
-    // so it covers as few other board cells as possible.
+    const wordLeft=Math.min(...rects.map(r=>r.left));
+    const wordRight=Math.max(...rects.map(r=>r.right));
+    // Always place the popup beneath the idiom's full footprint, whether across or down.
+    left=(wordLeft+wordRight-width)/2;
     const baseLeft=Math.max(6,Math.min(vw-width-6,left));
     const candidates=[baseLeft];
     for(let shift=12;shift<vw;shift+=12){
@@ -1071,6 +1085,7 @@ function applyPendingVisualEffects(){
  const completedWord=pendingCompletedExplanation;
  pendingCompletedExplanation=null;
  const hintRun=flashKeys.length?++hintAnimationCounter:hintAnimationCounter;
+ const completedFlashPromises=[];
  (async()=>{
   if(completedWord){
    // Always explain a correctly completed idiom, in every level.
@@ -1083,7 +1098,7 @@ function applyPendingVisualEffects(){
    [...new Set(completedKeys)].forEach(key=>{
     activeCompletedKeys.add(key);
     const tile=document.querySelector('.cell[data-key="'+key.replace(/"/g,'\\"')+'"]');
-    if(tile)tile.classList.add('completed-success');
+    if(tile){tile.classList.add('completed-success');completedFlashPromises.push(waitForAnimation(tile,'completed-success'));}
     const oldTimer=completedHighlightTimers.get(key);
     if(oldTimer)clearTimeout(oldTimer);
     const timer=setTimeout(()=>{
@@ -1092,7 +1107,7 @@ function applyPendingVisualEffects(){
      document.querySelectorAll('.cell[data-key]').forEach(cell=>{
       if(cell.dataset.key===key)cell.classList.remove('completed-success');
      });
-    },1000);
+    },2300);
     completedHighlightTimers.set(key,timer);
    });
   }
@@ -1127,9 +1142,9 @@ function applyPendingVisualEffects(){
    });
    await Promise.all(flashPromises);
   }
+  // The next-level panel waits for the completed-idiom flash animation itself to end.
+  await Promise.all(completedFlashPromises);
   if(completionFlashPending){
-   // Let the stronger flash and completed-word highlight finish before exposing Next Level.
-   await new Promise(resolve=>setTimeout(resolve,1900));
    completionFlashPending=false;
    const current=state();
    if(current.finished){$('nextFloat').hidden=false;$('boardRow').classList.add('has-next');}
@@ -1217,6 +1232,11 @@ $('board').addEventListener('click',ev=>{
 });
 document.querySelectorAll('.explanation-replay').forEach(button=>button.addEventListener('click',ev=>{ev.stopPropagation();const target=button.closest('.explanation-sidebar'),content=target&&target.querySelector('.explanation-sidebar-content');if(content){content.scrollTo({top:0,left:0,behavior:'smooth'});content.animate([{opacity:.35,transform:'translateY(4px)'},{opacity:1,transform:'translateY(0)'}],{duration:480,easing:'ease-out'});}}));
 document.addEventListener('click',ev=>{
+ const completedPanel=$('completedExplanation');
+ if(completedPanel&&!completedPanel.hidden&&!completedPanel.contains(ev.target)){
+  completedPanel.hidden=true;
+  activeCompletedWord=null;
+ }
  const panel=$('idiomExplanation');
  if(panel&&!panel.hidden){
   const cell=ev.target.closest?.('.cell[data-key]');
@@ -1861,7 +1881,7 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  });
 })();
 </script>
-<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 016">版本 016</div>
+<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 017">版本 017</div>
 <style>
 .build-version-badge{position:fixed;right:8px;bottom:calc(5px + env(safe-area-inset-bottom));z-index:1000;padding:3px 7px;border:1px solid rgba(140,231,199,.45);border-radius:7px;background:rgba(7,32,43,.82);color:#c9f5e6;font:700 10px/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:0 2px 8px #0004}
 </style>
