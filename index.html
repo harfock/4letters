@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-bounce-fallback-20261022-13"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-flash-wait-20261022-16"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -426,16 +426,16 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
 }
 
 /* Art-directed feedback: hint reveal flash and a static, reduced-motion-safe success highlight. */
-.cell.hint-flash-effect{z-index:4;animation:hint-color-reverse .88s steps(1,end) both;outline:3px solid var(--gold);outline-offset:1px}
+.cell.hint-flash-effect{z-index:60;animation:hint-color-reverse 1.9s steps(1,end) both;outline:6px solid #ffd166;outline-offset:2px;box-shadow:0 0 0 5px rgba(255,209,102,.5),0 0 28px 10px rgba(255,209,102,.9)}
 @keyframes hint-color-reverse{
  0%,100%{background:var(--gold);color:#513a08;transform:scale(1)}
- 12.5%,37.5%,62.5%,87.5%{background:#173946;color:#f1f2e8;transform:scale(1.28);box-shadow:0 0 0 3px rgba(255,209,102,.42),0 0 16px rgba(255,209,102,.55)}
- 25%,50%,75%{background:var(--gold);color:#513a08;transform:scale(1.12);box-shadow:0 0 0 2px rgba(255,209,102,.24)}
+ 12.5%,37.5%,62.5%,87.5%{background:#173946;color:#f1f2e8;transform:scale(1.32);outline:6px solid #ffd166;outline-offset:2px;box-shadow:0 0 0 6px rgba(255,209,102,.6),0 0 30px 12px rgba(255,209,102,.95)}
+ 25%,50%,75%{background:var(--gold);color:#513a08;transform:scale(1.16);outline:5px solid #fff0a6;outline-offset:2px;box-shadow:0 0 0 4px rgba(255,209,102,.4),0 0 20px 6px rgba(255,209,102,.72)}
 }
 .board{position:relative;isolation:isolate}
 /* No animation or transition: this remains visible with prefers-reduced-motion enabled. */
 .cell.completed-success{position:relative;z-index:50;background:#ffd166!important;color:#302307!important;outline:3px solid #fff0a6;outline-offset:1px;box-shadow:0 0 0 4px rgba(255,209,102,.58),0 0 18px rgba(255,209,102,.95)}
-@media(prefers-reduced-motion:reduce){.cell.hint-flash-effect{animation-duration:.01ms!important;animation-iteration-count:1!important;will-change:auto}}
+/* The high-contrast feedback flash is intentionally preserved when reduced-motion is enabled. */
 
 
 
@@ -870,7 +870,7 @@ let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoard
 let pendingHintEffectKey=null,pendingCompletedKeys=[];
 /* Completed tiles use a static success highlight, independent of motion settings. */
 const activeCompletedKeys=new Set(),completedHighlightTimers=new Map();
-let hintAnimationCounter=0;
+let hintAnimationCounter=0,completionFlashPending=false;
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
 let activeCompletedWord=null;
 function positionDirectionalSidebars(){
@@ -1127,7 +1127,17 @@ function applyPendingVisualEffects(){
    });
    await Promise.all(flashPromises);
   }
- })().catch(err=>console.warn('Visual effects recovered after an error.',err));
+  if(completionFlashPending){
+   // Let the stronger flash and completed-word highlight finish before exposing Next Level.
+   await new Promise(resolve=>setTimeout(resolve,1900));
+   completionFlashPending=false;
+   const current=state();
+   if(current.finished){$('nextFloat').hidden=false;$('boardRow').classList.add('has-next');}
+  }
+ })().catch(err=>{
+  console.warn('Visual effects recovered after an error.',err);
+  if(completionFlashPending){completionFlashPending=false;if(state().finished){$('nextFloat').hidden=false;$('boardRow').classList.add('has-next');}}
+ });
 }
 window.addEventListener('resize',()=>requestAnimationFrame(()=>{positionExplanation('idiomExplanation');positionExplanation('completedExplanation',activeCompletedWord);}));
 function applyPendingBoardFocus(){
@@ -1307,7 +1317,7 @@ function render(){
  $('doneCount').textContent=Object.values(s.completed).filter(Boolean).length+' / '+g.ps.length;
  $('timer').textContent=fmt(s.seconds);
  const levelFinished=!!s.finished;
- $('nextFloat').hidden=!levelFinished;
+ $('nextFloat').hidden=!levelFinished||completionFlashPending;
  $('boardRow').classList.toggle('has-next',levelFinished);
  if(levelFinished){
   const completed=Object.values(S.levels).reduce((n,x)=>n+Object.values(x.completed||{}).filter(Boolean).length,0);
@@ -1513,7 +1523,7 @@ function checkAll(){
    say('答對：'+p.word+'！已解鎖相交成語的提示字。');
   }
  });
- if(Object.values(s.completed).filter(Boolean).length===g.ps.length&&!s.finished){s.finished=true;complete()}
+ if(Object.values(s.completed).filter(Boolean).length===g.ps.length&&!s.finished){s.finished=true;completionFlashPending=true;complete()}
 }
 function hint(){
  const s=state(),g=grid();ensureTiles(s,g);
