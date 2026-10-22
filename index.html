@@ -1736,7 +1736,13 @@ window.addEventListener('resize',()=>{
   if(!activeDrag)render();
  },140);
 });
-const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r=>{if(!r.ok)throw Error('成語釋義資料未能載入');return r.json()}).then(data=>{
+const meaningUrl=new URL('/data/reference/hk_written_chinese_idioms.json',location.origin);
+const meaningReady=fetch(meaningUrl.href,{cache:'no-store'}).then(r=>{
+  if(!r.ok)throw Error('成語釋義資料未能載入（HTTP '+r.status+'）');
+  const contentType=r.headers.get('content-type')||'';
+  if(!/json/i.test(contentType))throw Error('成語釋義資料網址回傳非 JSON：'+r.url+'（'+contentType+'）');
+  return r.json();
+ }).then(data=>{
   (data.entries||[]).forEach(entry=>idiomMeaningByWord.set(entry.idiom,entry));
   window.__4lettersIdiomDefinitions=Object.fromEntries((data.entries||[]).map(entry=>[entry.idiom,{pinyin:entry.pinyin||'',meaning:entry.meaning||''}]));
  }).catch(e=>{window.__4lettersIdiomDefinitions={};console.warn('Idiom explanations unavailable; gameplay remains available.',e)});

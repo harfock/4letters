@@ -106,9 +106,24 @@ def main() -> None:
         "/index.html\n"
         "  Cache-Control: no-store, no-cache, must-revalidate, max-age=0\n"
         "/version.json\n"
+        "  Cache-Control: no-store, no-cache, must-revalidate, max-age=0\n"
+        "/data/reference/hk_written_chinese_idioms.json\n"
         "  Cache-Control: no-store, no-cache, must-revalidate, max-age=0\n",
         encoding="utf-8",
     )
+
+    # Validate that the explanation JSON is in the published artifact, not just in the source tree.
+    explanation_path = OUT / "data/reference/hk_written_chinese_idioms.json"
+    if not explanation_path.is_file():
+        raise SystemExit("Required explanation JSON is missing from the build output.")
+    explanation_data = json.loads(explanation_path.read_text(encoding="utf-8"))
+    explanation_entries = explanation_data.get("entries", [])
+    if len(explanation_entries) != 384:
+        raise SystemExit(
+            f"Unexpected idiom explanation dataset: {len(explanation_entries)} entries; expected 384."
+        )
+    if any(not entry.get("idiom") or not entry.get("meaning") for entry in explanation_entries):
+        raise SystemExit("The idiom explanation dataset contains an entry without an idiom or meaning.")
 
     data = json.loads((OUT / "data/levels.json").read_text(encoding="utf-8"))
     levels = data.get("levels", [])
