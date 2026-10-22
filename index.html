@@ -1491,15 +1491,15 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
   tilt.classList.add('focus-ready');
  }
  function populateMeaning(words){
-   const idiom=words[0]||'成語';
-   const def=(window.__4lettersIdiomDefinitions||{})[idiom]||{pinyin:'',meaning:'成語釋義暫時未能載入。'};
-   makeTiles(idiom,$('openingHeroTiles'));makeTiles(idiom,$('openingWordTiles'));
-   $('openingMeaningWord').textContent=idiom;
-   $('openingMeaningPinyin').textContent=def.pinyin;
-   $('openingMeaningText').textContent=def.meaning;
-   $('openingHitWord').textContent=idiom+' · 破解成功';
-  }
-  scenes.forEach((scene,index)=>{
+  const idiom=words[0]||'成語';
+  const def=(window.__4lettersIdiomDefinitions||{})[idiom]||{pinyin:'',meaning:'成語釋義暫時未能載入。'};
+  makeTiles(idiom,$('openingHeroTiles'));makeTiles(idiom,$('openingWordTiles'));
+  $('openingMeaningWord').textContent=idiom;
+  $('openingMeaningPinyin').textContent=def.pinyin;
+  $('openingMeaningText').textContent=def.meaning;
+  $('openingHitWord').textContent=idiom+' · 破解成功';
+ }
+ scenes.forEach((scene,index)=>{
   const dot=document.createElement('span');dot.className='opening-dot'+(index===0?' is-active':'');dot.setAttribute('aria-hidden','true');dotsBox.append(dot);
  });
  function showScene(index){
@@ -1509,8 +1509,6 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
   [...dotsBox.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===sceneIndex));
   $('openingProgressFill').style.width=((sceneIndex+1)/scenes.length*100)+'%';
   $('openingSceneCount').textContent=sceneIndex===scenes.length-1?'GO':String(sceneIndex+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0');
-  // The cinematic opening now ends by revealing the homepage automatically.
-  // The homepage owns the two choices: start Level 1 or replay the opening.
   const play=$('openingPlay');if(play){play.hidden=true;play.classList.remove('is-ready')}
   if(sceneIndex<7)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
   else if(sceneIndex===7)sceneTimer=setTimeout(()=>showScene(8),sceneDurations[7]);
