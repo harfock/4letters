@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-panels-bounce-20261022-05"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-idiom-panels-bounce-20261022-06"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -718,14 +718,14 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 .idiom-explanation .explanation-direction{font-size:15px;line-height:1.3;color:#8ce7c7;font-weight:900}
 .idiom-explanation .explanation-word{display:none!important}
 .idiom-explanation .explanation-meaning{font-size:16px;line-height:1.4;overflow-wrap:anywhere;word-break:normal}
-.hover-explanation{width:104px;padding:7px 6px;max-height:65vh}
-.hover-explanation .explanation-entry{display:grid;grid-template-columns:20px minmax(0,1fr);gap:5px;align-items:start}
+.hover-explanation{width:84px;padding:6px 4px;max-height:65vh}
+.hover-explanation .explanation-entry{display:grid;grid-template-columns:17px minmax(0,1fr);gap:3px;align-items:start}
 .hover-explanation .explanation-direction{writing-mode:vertical-rl;text-orientation:mixed;font-size:14px;line-height:1.2;white-space:nowrap}
 .hover-explanation .explanation-meaning{writing-mode:vertical-rl;text-orientation:mixed;font-size:16px;line-height:1.45;max-height:48vh;overflow-wrap:normal;word-break:break-all}
 .completed-explanation{width:min(330px,calc(100vw - 24px));max-height:40vh;padding:12px 14px;z-index:21}
 .completed-explanation .explanation-entry{display:block}
 .completed-explanation .explanation-meaning{font-size:17px;line-height:1.55}
-@media(max-width:520px){.hover-explanation{width:94px;padding:6px 5px}.hover-explanation .explanation-meaning{font-size:16px}.completed-explanation{width:calc(100vw - 24px)}}
+@media(max-width:520px){.hover-explanation{width:78px;padding:5px 4px}.hover-explanation .explanation-meaning{font-size:16px}.completed-explanation{width:calc(100vw - 24px)}}
 
 .cell.revealed{cursor:pointer}
 </style></head><body>
@@ -867,8 +867,10 @@ let pendingHintEffectKey=null,pendingBounceKeys=[];
 /* Independent counters: hint requests must never invalidate an active bounce sequence. */
 let bounceAnimationCounter=0,hintAnimationCounter=0;
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
+let activeCompletedWord=null;
 function showIdiomMeaning(word,source,key){
  const completed=source==='completed';
+ if(completed)activeCompletedWord=word; else activeCompletedWord=null;
  const box=$(completed?'completedExplanationContent':'explanationContent');
  const panel=$(completed?'completedExplanation':'idiomExplanation');
  if(!box||!panel||!word)return;
@@ -881,7 +883,7 @@ function showIdiomMeaning(word,source,key){
  if(!entries.length){const row=document.createElement('div');row.className='explanation-entry';const meaning=document.createElement('div');meaning.className='explanation-meaning';meaning.textContent='請查看相交位置的提示。';row.append(meaning);box.append(row);}
  else entries.forEach(item=>{const row=document.createElement('div');row.className='explanation-entry';const direction=document.createElement('div');direction.className='explanation-direction';direction.textContent=item.direction+'提示';const meaning=document.createElement('div');meaning.className='explanation-meaning';meaning.textContent=item.meaning;row.append(direction,meaning);box.append(row);});
  panel.hidden=false;
- if(completed){$('idiomExplanation').hidden=true;activeExplanationCell=null;positionExplanation('completedExplanation');}
+ if(completed){$('idiomExplanation').hidden=true;activeExplanationCell=null;positionExplanation('completedExplanation',word);}
  else { $('completedExplanation').hidden=true;positionExplanation('idiomExplanation');}
 }
 function idiomForCell(key){
@@ -966,36 +968,46 @@ function waitForAnimation(tile,className){
  });
 }
 function bounceTile(tile){
- // The board wrapper scrolls and clips overflow, so animate a fixed visual clone above it.
- // This makes the bounce visible even when the actual cell is clipped by the scroll viewport.
+ // Animate a fixed clone outside the board's overflow clipping.
  const rect=tile.getBoundingClientRect(),clone=tile.cloneNode(true);
- clone.removeAttribute('data-key');clone.classList.remove('active','locked','correct-double-bounce','hint-flash-effect');
- Object.assign(clone.style,{position:'fixed',left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',margin:'0',zIndex:'99999',pointerEvents:'none',transformOrigin:'center center',willChange:'transform,box-shadow',opacity:'1'});
+ clone.removeAttribute('data-key');
+ clone.classList.remove('active','locked','hint-flash-effect');
+ Object.assign(clone.style,{position:'fixed',left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',margin:'0',zIndex:'2147483000',pointerEvents:'none',transformOrigin:'center center',willChange:'transform,box-shadow',opacity:'1',animationDuration:'.62s',animationIterationCount:'2',animationFillMode:'both'});
  document.body.appendChild(clone);
- const frames=[
-  {transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)',offset:0},
-  {transform:'translate3d(0,-15px,0) scale(1.18)',boxShadow:'0 15px 24px rgba(0,0,0,.5)',offset:.18},
-  {transform:'translate3d(0,0,0) scale(.94)',offset:.38},
-  {transform:'translate3d(0,-9px,0) scale(1.1)',boxShadow:'0 9px 16px rgba(0,0,0,.4)',offset:.58},
-  {transform:'translate3d(0,0,0) scale(1)',offset:.78},
-  {transform:'translate3d(0,0,0) scale(1)',offset:1}
- ];
- if(typeof clone.animate==='function'){
-  const animation=clone.animate(frames,{duration:620,iterations:2,easing:'cubic-bezier(.2,.75,.25,1.15)',fill:'both'});
-  return animation.finished.catch(()=>{}).then(()=>{animation.cancel();clone.remove();});
- }
- clone.classList.add('correct-double-bounce');
- return new Promise(resolve=>setTimeout(()=>{clone.remove();resolve();},1350));
+ void clone.offsetWidth;
+ return new Promise(resolve=>{
+  let done=false;
+  const finish=()=>{if(done)return;done=true;clone.removeEventListener('animationend',onEnd);clone.remove();resolve();};
+  const onEnd=e=>{if(e.target===clone&&e.animationName==='correct-tile-bounce')finish();};
+  clone.addEventListener('animationend',onEnd);
+  clone.classList.add('correct-double-bounce');
+  setTimeout(finish,1450);
+ });
 }
-function positionExplanation(panelId='idiomExplanation'){
+function positionExplanation(panelId='idiomExplanation',word=activeCompletedWord){
  const panel=$(panelId),board=$('board'),stage=$('boardStage');
  if(!panel||panel.hidden||!board||!stage)return;
  const br=board.getBoundingClientRect(),sr=stage.getBoundingClientRect(),vh=window.innerHeight;
  const completed=panelId==='completedExplanation';
- const width=completed?Math.min(330,window.innerWidth-24):Math.min(104,window.innerWidth-12);
- // Never hide on narrow layouts: deliberately overlay a small part of the crossword when needed.
- panel.style.position='fixed';panel.style.left=Math.max(6,Math.min(window.innerWidth-width-6,sr.left+3))+'px';panel.style.right='auto';panel.style.width=width+'px';panel.style.maxWidth='calc(100vw - 12px)';
- panel.style.top=Math.max(6,Math.min(vh-140,br.top+4))+'px';panel.style.maxHeight=Math.max(120,Math.min(vh-16,completed?vh*.4:vh*.65))+'px';panel.style.zIndex=completed?'21':'20';
+ const width=completed?Math.min(280,window.innerWidth-16):Math.min(84,window.innerWidth-12);
+ panel.style.position='fixed';panel.style.right='auto';panel.style.width=width+'px';panel.style.maxWidth='calc(100vw - 12px)';
+ let left=Math.max(6,Math.min(window.innerWidth-width-6,sr.left+3));
+ let top=br.top+4;
+ if(completed&&word){
+  const p=grid().ps.find(item=>item.word===word);
+  if(p){
+   const rects=cells(p).map(c=>document.querySelector('.cell[data-key="'+c.r+','+c.c+'"]')).filter(Boolean).map(el=>el.getBoundingClientRect());
+   if(rects.length){
+    const wordLeft=Math.min(...rects.map(r=>r.left)),wordRight=Math.max(...rects.map(r=>r.right)),wordBottom=Math.max(...rects.map(r=>r.bottom));
+    left=Math.max(6,Math.min(window.innerWidth-width-6,(wordLeft+wordRight-width)/2));
+    top=wordBottom+8;
+   }
+  }
+ }
+ const available=Math.max(90,vh-top-8);
+ panel.style.left=left+'px';panel.style.top=Math.max(6,top)+'px';
+ panel.style.maxHeight=Math.max(90,Math.min(vh-16,completed?Math.min(vh*.4,available):vh*.65))+'px';
+ panel.style.zIndex=completed?'21':'20';
 }
 function applyPendingVisualEffects(){
  const bounceKeys=pendingBounceKeys.splice(0);
@@ -1059,7 +1071,7 @@ function applyPendingVisualEffects(){
   }
  })().catch(err=>console.warn('Visual effects recovered after an animation error.',err));
 }
-window.addEventListener('resize',()=>requestAnimationFrame(()=>{positionExplanation('idiomExplanation');positionExplanation('completedExplanation');}));
+window.addEventListener('resize',()=>requestAnimationFrame(()=>{positionExplanation('idiomExplanation');positionExplanation('completedExplanation',activeCompletedWord);}));
 function applyPendingBoardFocus(){
  if(!pendingBoardFocus)return;
  const key=pendingBoardFocus;pendingBoardFocus=null;
@@ -1560,7 +1572,6 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  const sceneDurations=[2000,2000,2000,3800,3800,2000,2000,1800];
  let sceneIndex=0,sceneTimer=null,homeIdleTimer=null,tutorialIndex=0,hasStarted=false;
  let lastOpeningPayload=null;
- let sceneIndex=0,sceneTimer=null,tutorialIndex=0,hasStarted=false;
  const definitions={
   '一鼓作氣':{pinyin:'yī gǔ zuò qì',meaning:'比喻趁著士氣旺盛時，一口氣完成事情。'},
   '東山再起':{pinyin:'dōng shān zài qǐ',meaning:'比喻失勢後重新恢復地位或力量。'},
@@ -1629,16 +1640,13 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
   [...dotsBox.children].forEach((dot,i)=>dot.classList.toggle('is-active',i===sceneIndex));
   $('openingProgressFill').style.width=((sceneIndex+1)/scenes.length*100)+'%';
   $('openingSceneCount').textContent=sceneIndex===scenes.length-1?'GO':String(sceneIndex+1).padStart(2,'0')+' / '+String(scenes.length).padStart(2,'0');
-  const play=$('openingPlay');if(play){play.hidden=true;play.classList.remove('is-ready')}
-  if(sceneIndex<7)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
-  else if(sceneIndex===7)sceneTimer=setTimeout(()=>showScene(8),sceneDurations[7]);
-  else if(sceneIndex===8)sceneTimer=setTimeout(showHome,590);
   const play=$('openingPlay');
-  if(sceneIndex===7){
-   play.hidden=false;play.classList.remove('is-ready');
-   sceneTimer=setTimeout(()=>{if(sceneIndex===7)play.classList.add('is-ready')},sceneDurations[7]);
-  }else{play.hidden=true;play.classList.remove('is-ready')}
+  if(play){play.hidden=sceneIndex!==7;play.classList.remove('is-ready');}
   if(sceneIndex<7)sceneTimer=setTimeout(()=>showScene(sceneIndex+1),sceneDurations[sceneIndex]);
+  else if(sceneIndex===7){
+   sceneTimer=setTimeout(()=>showScene(8),sceneDurations[7]);
+   setTimeout(()=>{if(sceneIndex===7)play.classList.add('is-ready')},Math.max(250,sceneDurations[7]-450));
+  }else if(sceneIndex===8)sceneTimer=setTimeout(showHome,590);
   if(sceneIndex===5)requestAnimationFrame(centerHintPreview);
  }
  const tutorialSteps=[
