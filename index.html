@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-kinetic-opening-fix-20261022-01"><title>成語圖譜・縱橫解字</title>
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b3543"><link rel="icon" type="image/svg+xml" href="./app-icon.svg"><link rel="apple-touch-icon" href="./apple-touch-icon.png"><link rel="manifest" href="./manifest.webmanifest"><meta name="app-version" content="cf-kinetic-opening-fix-20261022-02"><title>成語圖譜・縱橫解字</title>
 <script>
 /* Cloudflare-compatible version gate, opening, and legacy compatibility. */
 window.__4lettersOpeningActive = true;
@@ -707,19 +707,18 @@ body.tutorial-highlight-hint #hintFloat{animation:opening-play-pulse 1s ease-in-
 
 
 .board-stage{position:relative}
-/* Explanation is a floating overlay: it never changes game-panel layout height. JS
-   moves it into unused horizontal space when available, otherwise to the board toolbar zone. */
+/* Explanations float at the left of the viewport without changing layout.
+   JS selects a free vertical band above/below the crossword to avoid covering cells. */
 #boardArea{position:relative}
-.idiom-explanation{position:absolute;z-index:30;top:0;right:4px;width:min(390px,52%);max-height:min(42vh,280px);overflow:auto;box-sizing:border-box;margin:0;padding:9px 12px;border:1px solid rgba(124,226,233,.72);border-radius:12px;background:linear-gradient(135deg,rgba(7,32,43,.97),rgba(9,57,66,.97));color:#effff8;box-shadow:0 12px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none;backdrop-filter:blur(7px)}
+.idiom-explanation{position:fixed;z-index:120;top:8px;left:8px;right:auto;width:min(300px,calc(100vw - 16px));max-height:min(28vh,240px);overflow:auto;box-sizing:border-box;margin:0;padding:9px 12px;border:1px solid rgba(124,226,233,.82);border-radius:12px;background:linear-gradient(135deg,rgba(7,32,43,.97),rgba(9,57,66,.97));color:#effff8;box-shadow:0 12px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);pointer-events:none;backdrop-filter:blur(7px)}
 .idiom-explanation[hidden]{display:none}
-.idiom-explanation.in-board-gap{top:48px;right:4px;width:min(300px,calc(100% - 8px))}
 .idiom-explanation .explanation-label{font-size:10px;letter-spacing:.08em;color:#8ce7c7;font-weight:900;margin-bottom:4px}
 .idiom-explanation .explanation-entry{display:grid;grid-template-columns:minmax(86px,auto) minmax(0,1fr);gap:2px 8px;align-items:start;padding:4px 0}
 .idiom-explanation .explanation-entry+.explanation-entry{border-top:1px solid rgba(140,231,199,.22)}
 .idiom-explanation .explanation-direction{font-size:10px;letter-spacing:.04em;color:#8ce7c7;font-weight:900}
 .idiom-explanation .explanation-word{font-size:14px;font-weight:900;color:#ffdb82}
 .idiom-explanation .explanation-meaning{grid-column:2;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
-@media(max-width:520px){.idiom-explanation{width:min(280px,78%);padding:7px 9px;max-height:32vh}.idiom-explanation .explanation-entry{grid-template-columns:1fr;gap:1px}.idiom-explanation .explanation-meaning{grid-column:1}.idiom-explanation .explanation-word{font-size:13px}}
+@media(max-width:520px){.idiom-explanation{width:min(300px,calc(100vw - 16px));padding:7px 9px;max-height:min(28vh,220px)}.idiom-explanation .explanation-entry{grid-template-columns:1fr;gap:1px}.idiom-explanation .explanation-meaning{grid-column:1}.idiom-explanation .explanation-word{font-size:13px}}
 
 .cell.revealed{cursor:pointer}
 </style></head><body>
@@ -847,6 +846,8 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
 let pendingHintEffectKey=null,pendingBounceKeys=[];
+/* Independent counters: hint requests must never invalidate an active bounce sequence. */
+let bounceAnimationCounter=0,hintAnimationCounter=0;
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
 function showIdiomMeaning(word,source,key){
  const box=$('explanationContent'),panel=$('idiomExplanation');if(!box||!panel||!word)return;
@@ -878,6 +879,7 @@ function showIdiomMeaning(word,source,key){
   row.append(direction,title,meaning);box.appendChild(row);
  });
  panel.hidden=false;
+ if(source==='completed')activeExplanationCell=null;
  positionExplanation();
 }
 function idiomForCell(key){
@@ -963,22 +965,29 @@ function waitForAnimation(tile,className){
  });
 }
 function positionExplanation(){
- const panel=$('idiomExplanation'),area=$('boardArea'),board=$('board');
- if(!panel||!area||panel.hidden||!board)return;
- const ar=area.getBoundingClientRect(),br=board.getBoundingClientRect();
- const leftSpace=br.left-ar.left,rightSpace=ar.right-br.right;
- panel.classList.remove('in-board-gap');
- if(rightSpace>=Math.min(230,area.clientWidth*.28)){
-  panel.style.left='auto';panel.style.right='4px';panel.style.top='48px';
-  panel.style.width=Math.min(320,rightSpace-8)+'px';
- }else if(leftSpace>=Math.min(230,area.clientWidth*.28)){
-  panel.style.left='4px';panel.style.right='auto';panel.style.top='48px';
-  panel.style.width=Math.min(320,leftSpace-8)+'px';
+ const panel=$('idiomExplanation'),board=$('board');
+ if(!panel||panel.hidden||!board)return;
+ const br=board.getBoundingClientRect(),vh=window.innerHeight,vw=window.innerWidth;
+ const bottomSafe=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom'))||0;
+ const width=Math.max(180,Math.min(300,vw-16));
+ panel.style.position='fixed';panel.style.left='8px';panel.style.right='auto';
+ panel.style.width=width+'px';panel.style.maxHeight=Math.min(240,vh*.28)+'px';
+ panel.style.top='8px';
+ const desired=Math.min(panel.scrollHeight,240,vh*.28);
+ const above=br.top-16,below=vh-br.bottom-bottomSafe-16;
+ if(above>=Math.min(desired,76)){
+  panel.style.top=Math.max(8,Math.min(120,br.top-desired-8))+'px';
+  panel.style.maxHeight=Math.max(48,Math.min(240,vh*.28,br.top-16))+'px';
+ }else if(below>=Math.min(desired,76)){
+  panel.style.top=(br.bottom+8)+'px';
+  panel.style.maxHeight=Math.max(48,Math.min(240,vh*.28,below))+'px';
+ }else if(br.left>=width+16){
+  panel.style.left=(br.left-width-8)+'px';
+  panel.style.top=Math.max(8,Math.min(vh-desired-bottomSafe-8,br.top))+'px';
  }else{
-  // No side gutter exists: keep the card in the floating toolbar zone rather than
-  // adding a row or changing panel height. Compact display preserves more of the board.
-  panel.style.left='auto';panel.style.right='4px';panel.style.top='0px';
-  panel.style.width='min(300px, 78%)';
+  // On very short screens, never cover a crossword cell just to keep the card visible.
+  panel.hidden=true;
+  return;
  }
 }
 function applyPendingVisualEffects(){
@@ -986,33 +995,31 @@ function applyPendingVisualEffects(){
  const hintKey=pendingHintEffectKey;
  pendingHintEffectKey=null;
  const delayedRevealKeys=[...pendingDelayedRevealKeys];
- if(!bounceKeys.length&&!hintKey&&!delayedRevealKeys.length&&!pendingCompletedExplanation)return;
+ const flashKeys=[...new Set([...delayedRevealKeys,...(hintKey?[hintKey]:[])])];
+ if(!bounceKeys.length&&!flashKeys.length&&!pendingCompletedExplanation)return;
  const completedWord=pendingCompletedExplanation;
  pendingCompletedExplanation=null;
- // Keep the explanation as a non-layout overlay. All solved tiles bounce together;
- // hint flashes are independent effects and may run concurrently on other cells.
+ // Each effect owns a counter. A new hint can run without cancelling the bounce animation.
+ const bounceRun=bounceKeys.length?++bounceAnimationCounter:bounceAnimationCounter;
+ const hintRun=flashKeys.length?++hintAnimationCounter:hintAnimationCounter;
  (async()=>{
   if(completedWord){
    showIdiomMeaning(completedWord,'completed');
-   positionExplanation();
    await new Promise(resolve=>setTimeout(resolve,320));
   }
-  const bouncePromises=[];
+  // Bounce solved letters left-to-right, with exactly two CSS bounces per tile.
   for(const key of bounceKeys){
+   if(bounceRun!==bounceAnimationCounter)return;
    const tile=document.querySelector('.cell[data-key="'+key+'"]');
    if(!tile)continue;
    tile.classList.remove('correct-double-bounce');tile.style.animationDelay='0ms';
    void tile.offsetWidth;tile.classList.add('correct-double-bounce');
-   bouncePromises.push(waitForAnimation(tile,'correct-double-bounce'));
+   await waitForAnimation(tile,'correct-double-bounce');
   }
-  const flashKeys=[...delayedRevealKeys];
-  if(hintKey)flashKeys.push(hintKey);
-  // Start flashes shortly after the group bounce begins. The different animations
-  // intentionally coexist on screen; no global queue serializes unrelated tiles.
   if(flashKeys.length){
-   await new Promise(resolve=>setTimeout(resolve,bounceKeys.length?360:0));
-   // Update only newly revealed cells in place. A full render replaces every
-   // cell node and silently cancels the group bounce that is still running.
+   // New hint/reveal animation begins 500 ms after the bounce sequence ends.
+   if(bounceKeys.length)await new Promise(resolve=>setTimeout(resolve,500));
+   if(hintRun!==hintAnimationCounter)return;
    if(delayedRevealKeys.length){
     const current=state();
     delayedRevealKeys.forEach(key=>{
@@ -1020,7 +1027,7 @@ function applyPendingVisualEffects(){
      const tile=document.querySelector('.cell[data-key="'+key+'"]');
      if(!tile)return;
      const number=tile.querySelector('.num');
-     tile.innerHTML='';
+     tile.replaceChildren();
      if(number)tile.append(number);
      tile.append(document.createTextNode(current.revealed[key]||''));
      tile.classList.add('revealed');
@@ -1028,18 +1035,19 @@ function applyPendingVisualEffects(){
     renderCandidates(current);
     save();
    }
+   // Hint flashes run concurrently with one another, independently from bounce counters.
    const flashPromises=[];
-   [...new Set(flashKeys)].forEach(key=>{
+   flashKeys.forEach((key,index)=>{
+    if(hintRun!==hintAnimationCounter)return;
     const tile=document.querySelector('.cell[data-key="'+key+'"]');
     if(!tile)return;
-    focusHintCell(key);
+    if(index===0)focusHintCell(key);
     tile.classList.remove('hint-flash-effect');void tile.offsetWidth;
     tile.classList.add('hint-flash-effect');
     flashPromises.push(waitForAnimation(tile,'hint-flash-effect'));
    });
    await Promise.all(flashPromises);
   }
-  await Promise.all(bouncePromises);
  })().catch(err=>console.warn('Visual effects recovered after an animation error.',err));
 }
 window.addEventListener('resize',()=>requestAnimationFrame(positionExplanation));
@@ -1094,8 +1102,7 @@ function returnFilledLetter(k){
  close();
  sel=k;say('已將「'+oldChar+'」退回候選字區。');render();return true;
 }
-// Explanation lives in normal flow above the board, so it never covers idiom cells.
- // It remains visible until another hint/solved idiom replaces it or the level resets.
+// The explanation is dismissed by any click outside the currently active hint cell.
 let activeExplanationCell=null;
 $('board').addEventListener('mouseover',ev=>{
  const cell=ev.target.closest('.cell[data-key]');if(!cell)return;
@@ -1118,6 +1125,13 @@ $('board').addEventListener('click',ev=>{
   const word=idiomForCell(key);
   if(word){activeExplanationCell=cell;showIdiomMeaning(word,'hint',key);}
  }
+});
+document.addEventListener('click',ev=>{
+ const panel=$('idiomExplanation');
+ if(!panel||panel.hidden)return;
+ const cell=ev.target.closest?.('.cell[data-key]');
+ if(cell&&activeExplanationCell&&cell.dataset.key===activeExplanationCell.dataset.key)return;
+ panel.hidden=true;activeExplanationCell=null;
 });
 function render(){
  const g=grid(),s=state(),b=$('board'),wrap=$('boardWrap');ensureTiles(s,g);
@@ -1737,4 +1751,8 @@ const meaningReady=fetch('data/reference/hk_written_chinese_idioms.json').then(r
  });
 })();
 </script>
+<div id="buildVersionBadge" class="build-version-badge" aria-label="遊戲版本 003">版本 003</div>
+<style>
+.build-version-badge{position:fixed;right:8px;bottom:calc(5px + env(safe-area-inset-bottom));z-index:1000;padding:3px 7px;border:1px solid rgba(140,231,199,.45);border-radius:7px;background:rgba(7,32,43,.82);color:#c9f5e6;font:700 10px/1.2 system-ui,-apple-system,sans-serif;letter-spacing:.08em;font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:0 2px 8px #0004}
+</style>
 </body></html>
