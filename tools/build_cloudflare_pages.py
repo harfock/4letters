@@ -157,6 +157,21 @@ def main() -> None:
             f"expected {expected_levels} levels and {expected_placements} placements."
         )
 
+    # Embed the exact validated levels in the app page so static-host path rewrites
+    # cannot accidentally serve a different dataset at data/levels.json.
+    levels_start_marker = "/* LEVELS_JSON_START */"
+    levels_end_marker = "/* LEVELS_JSON_END */"
+    if levels_start_marker not in html or levels_end_marker not in html:
+        raise SystemExit("index.html is missing embedded crossword data markers.")
+    try:
+        embedded_levels = json.loads(
+            html.split(levels_start_marker, 1)[1].split(levels_end_marker, 1)[0]
+        )
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"Embedded crossword data is invalid JSON: {exc}") from exc
+    if embedded_levels != data:
+        raise SystemExit("Embedded crossword data does not match data/levels.json.")
+
     # Validate every crossword map: entries are four characters, overlaps agree,
     # and no horizontal or vertical contiguous occupied run exceeds four squares.
     for level_index, level in enumerate(levels, start=1):
