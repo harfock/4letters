@@ -225,6 +225,14 @@ html,body{width:100%;max-width:100%;overflow-x:hidden}
 .cell{width:var(--cell);height:var(--cell);min-width:0;min-height:0;font-size:var(--cell-font,clamp(7px,2.3vw,20px));padding:0;border-radius:clamp(1px,calc(var(--cell)*.15),7px)}
 .cell .num{font-size:clamp(5px,calc(var(--cell)*.22),9px);top:0;left:1px}
 .candidate-panel,.actions,.level-panel{width:100%;min-width:0}
+@media(orientation:portrait){
+ .game-panel.portrait-one-page .candidate-panel{margin-top:4px;padding:6px 8px}
+ .game-panel.portrait-one-page .candidate-panel .muted{display:none!important}
+ .game-panel.portrait-one-page .candidate-heading{margin-bottom:3px}
+ .game-panel.portrait-one-page .candidate-list{gap:5px;padding:2px}
+ .game-panel.portrait-one-page .candidate-tile{width:34px;height:38px;min-width:34px;font-size:18px;padding:2px 0 6px}
+ .game-panel.portrait-one-page .stroke-count{font-size:8px}
+}
 .actions{gap:6px}
 .actions button{padding:8px 10px;min-height:40px}
 .level-panel[hidden],.next-float[hidden]{display:none!important}
@@ -1104,7 +1112,27 @@ function render(){
  const available=Math.max(80,wrap.clientWidth-12);
  const gap=colCount>18?1:2;
  const baseCellSize=boardCellSize(available,gap);
- const cellSize=Math.max(7,Math.min(100,baseCellSize*(Number(s.zoom)||1)));
+ let cellSize=Math.max(7,Math.min(100,baseCellSize*(Number(s.zoom)||1)));
+ // In portrait, use genuinely spare vertical space to fit the board and candidate
+ // library together. If it would make cells too small, preserve the normal layout.
+ const gamePanel=$('boardRow')?.closest('.game-panel');
+ if(gamePanel)gamePanel.classList.remove('portrait-one-page');
+ if(window.matchMedia('(orientation:portrait)').matches&&(Number(s.zoom)||1)<=1.01){
+  const rowCount=g.maxr-g.minr+1;
+  const freeCount=availableTiles(s).length;
+  const perCandidateRow=Math.max(1,Math.floor((window.innerWidth-36)/52));
+  const candidateRows=Math.max(1,Math.ceil(freeCount/perCandidateRow));
+  const chrome=($('siteHeader')?.offsetHeight||document.querySelector('header')?.offsetHeight||70)+($('title')?.closest('.summarybar')?.offsetHeight||42)+132;
+  const candidateHeight=82+candidateRows*54;
+  const boardSpace=window.innerHeight-chrome-candidateHeight;
+  const fitCell=(boardSpace-gap*Math.max(0,rowCount-1)-22)/Math.max(1,rowCount);
+  if(fitCell>=20&&fitCell<cellSize){
+   cellSize=fitCell;
+   if(gamePanel)gamePanel.classList.add('portrait-one-page');
+  }else if(fitCell>=20&&rowCount*cellSize+candidateHeight+chrome<window.innerHeight&&gamePanel){
+   gamePanel.classList.add('portrait-one-page');
+  }
+ }
  b.style.setProperty('--cell',cellSize+'px');
  b.style.setProperty('--cell-font',Math.max(6,Math.min(20,cellSize*.62))+'px');
  b.style.gap=gap+'px';
