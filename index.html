@@ -425,7 +425,7 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
  .board-zoom button{width:28px;height:28px;min-width:28px}
 }
 
-/* Art-directed feedback: hint reveal flash and sequential double-bounce for solved idioms. */
+/* Art-directed feedback: hint reveal flash and a static, reduced-motion-safe success highlight. */
 .cell.hint-flash-effect{z-index:4;animation:hint-color-reverse .88s steps(1,end) both;outline:3px solid var(--gold);outline-offset:1px}
 @keyframes hint-color-reverse{
  0%,100%{background:var(--gold);color:#513a08;transform:scale(1)}
@@ -433,15 +433,9 @@ button,a,span,small,p,h1,h2,h3,section,div{-webkit-touch-callout:none}
  25%,50%,75%{background:var(--gold);color:#513a08;transform:scale(1.12);box-shadow:0 0 0 2px rgba(255,209,102,.24)}
 }
 .board{position:relative;isolation:isolate}
-.cell.correct-double-bounce{position:relative;z-index:50;animation:correct-tile-bounce .62s cubic-bezier(.2,.75,.25,1.15) 2 both;will-change:transform}
-@keyframes correct-tile-bounce{
- 0%,100%{transform:translate3d(0,0,0) scale(1);box-shadow:0 1px 0 rgba(1,19,31,.22)}
- 18%{transform:translate3d(0,-10px,0) scale(1.09);box-shadow:0 12px 18px rgba(0,0,0,.34)}
- 38%{transform:translate3d(0,0,0) scale(.97)}
- 58%{transform:translate3d(0,-6px,0) scale(1.05);box-shadow:0 7px 12px rgba(0,0,0,.27)}
- 78%{transform:translate3d(0,0,0) scale(1)}
-}
-@media(prefers-reduced-motion:reduce){.cell.hint-flash-effect,.cell.correct-double-bounce{animation-duration:.01ms!important;animation-iteration-count:1!important;will-change:auto}}
+/* No animation or transition: this remains visible with prefers-reduced-motion enabled. */
+.cell.completed-success{position:relative;z-index:50;background:#ffd166!important;color:#302307!important;outline:3px solid #fff0a6;outline-offset:1px;box-shadow:0 0 0 4px rgba(255,209,102,.58),0 0 18px rgba(255,209,102,.95)}
+@media(prefers-reduced-motion:reduce){.cell.hint-flash-effect{animation-duration:.01ms!important;animation-iteration-count:1!important;will-change:auto}}
 
 
 
@@ -873,9 +867,10 @@ document.addEventListener('selectstart',e=>{if(!e.target.closest('input,textarea
    pointer handler below: short movement scrolls; a stationary hold starts a drag. */
 
 let D,S,STROKES={},L=0,W=0,sel='',advanceTimer=null,activeDrag=null,pendingBoardFocus=null;
-let pendingHintEffectKey=null,pendingBounceKeys=[];
-/* Independent counters: hint requests must never invalidate an active bounce sequence. */
-let bounceAnimationCounter=0,hintAnimationCounter=0;
+let pendingHintEffectKey=null,pendingCompletedKeys=[];
+/* Completed tiles use a static success highlight, independent of motion settings. */
+const activeCompletedKeys=new Set(),completedHighlightTimers=new Map();
+let hintAnimationCounter=0;
 let idiomMeaningByWord=new Map(),pendingCompletedExplanation=null;
 let activeCompletedWord=null;
 function positionDirectionalSidebars(){
@@ -1067,50 +1062,43 @@ function waitForAnimation(tile,className){
  });
 }
 function applyPendingVisualEffects(){
- const bounceKeys=pendingBounceKeys.splice(0);
+ const completedKeys=pendingCompletedKeys.splice(0);
  const hintKey=pendingHintEffectKey;
  pendingHintEffectKey=null;
  const delayedRevealKeys=[...pendingDelayedRevealKeys];
  const flashKeys=[...new Set([...delayedRevealKeys,...(hintKey?[hintKey]:[])])];
- if(!bounceKeys.length&&!flashKeys.length&&!pendingCompletedExplanation)return;
+ if(!completedKeys.length&&!flashKeys.length&&!pendingCompletedExplanation)return;
  const completedWord=pendingCompletedExplanation;
  pendingCompletedExplanation=null;
- // Each effect owns a counter. A new hint can run without cancelling the bounce animation.
- if(bounceKeys.length)bounceAnimationCounter++;
  const hintRun=flashKeys.length?++hintAnimationCounter:hintAnimationCounter;
  (async()=>{
   if(completedWord){
+   // Always explain a correctly completed idiom, in every level.
    showIdiomMeaning(completedWord,'completed');
    await new Promise(resolve=>setTimeout(resolve,320));
   }
-  // The dedicated module serializes completion sequences and uses Web Animations API,
-  // avoiding fragile CSS class remove/re-add and animationend timing.
-  if(bounceKeys.length){
-   // Use the inline Web Animations implementation directly. The standalone
-   // bounce.js remains in the repo, but the live Pages deployment has returned
-   // HTML for that asset; do not repeatedly request a missing module.
-   for(const key of [...new Set(bounceKeys)]){
-    const escaped=String(key).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
-    const tile=document.querySelector('.cell[data-key="'+escaped+'"]');
-    if(!tile||!tile.isConnected||typeof tile.animate!=='function')continue;
-    try{
-     const animation=tile.animate([
-      {offset:0,transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'},
-      {offset:.18,transform:'translate3d(0,-10px,0) scale(1.09)',boxShadow:'0 12px 18px rgba(0,0,0,.34)'},
-      {offset:.38,transform:'translate3d(0,0,0) scale(.97)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'},
-      {offset:.58,transform:'translate3d(0,-6px,0) scale(1.05)',boxShadow:'0 7px 12px rgba(0,0,0,.27)'},
-      {offset:.78,transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'},
-      {offset:1,transform:'translate3d(0,0,0) scale(1)',boxShadow:'0 1px 0 rgba(1,19,31,.22)'}
-     ],{duration:620,iterations:2,easing:'cubic-bezier(.2,.75,.25,1.15)',fill:'none'});
-     await animation.finished.catch(()=>{});
-     animation.cancel();
-     tile.style.transform='';tile.style.boxShadow='';
-    }catch(fallbackError){console.error('Inline bounce animation failed:',fallbackError);}
-   }
+  if(completedKeys.length){
+   // Apply all four gold highlights together; no animation API, CSS animation,
+   // transition, or motion preference is involved in the success feedback.
+   [...new Set(completedKeys)].forEach(key=>{
+    activeCompletedKeys.add(key);
+    const tile=document.querySelector('.cell[data-key="'+key.replace(/"/g,'\\"')+'"]');
+    if(tile)tile.classList.add('completed-success');
+    const oldTimer=completedHighlightTimers.get(key);
+    if(oldTimer)clearTimeout(oldTimer);
+    const timer=setTimeout(()=>{
+     activeCompletedKeys.delete(key);
+     completedHighlightTimers.delete(key);
+     document.querySelectorAll('.cell[data-key]').forEach(cell=>{
+      if(cell.dataset.key===key)cell.classList.remove('completed-success');
+     });
+    },1000);
+    completedHighlightTimers.set(key,timer);
+   });
   }
   if(flashKeys.length){
-   // New hint/reveal animation begins 500 ms after the bounce sequence ends.
-   if(bounceKeys.length)await new Promise(resolve=>setTimeout(resolve,500));
+   // Keep newly unlocked hint feedback after the completion highlight starts.
+   if(completedKeys.length)await new Promise(resolve=>setTimeout(resolve,250));
    if(hintRun!==hintAnimationCounter)return;
    if(delayedRevealKeys.length){
     const current=state();
@@ -1127,7 +1115,6 @@ function applyPendingVisualEffects(){
     renderCandidates(current);
     save();
    }
-   // Hint flashes run concurrently with one another, independently from bounce counters.
    const flashPromises=[];
    flashKeys.forEach((key,index)=>{
     if(hintRun!==hintAnimationCounter)return;
@@ -1140,7 +1127,7 @@ function applyPendingVisualEffects(){
    });
    await Promise.all(flashPromises);
   }
- })().catch(err=>console.warn('Visual effects recovered after an animation error.',err));
+ })().catch(err=>console.warn('Visual effects recovered after an error.',err));
 }
 window.addEventListener('resize',()=>requestAnimationFrame(()=>{positionExplanation('idiomExplanation');positionExplanation('completedExplanation',activeCompletedWord);}));
 function applyPendingBoardFocus(){
@@ -1264,6 +1251,7 @@ function render(){
   const z=g.m.get(r+','+c),el=document.createElement('button');el.type='button';el.className='cell'+(z?'':' block');el.style.gridRow=r-g.minr+1;el.style.gridColumn=c-g.minc+1;
   if(z){
    const k=r+','+c,letter=pendingDelayedRevealKeys.has(k)?'':(s.letters[k]||s.revealed[k]||'');el.dataset.key=k;el.textContent=letter;
+   if(activeCompletedKeys.has(k))el.classList.add('completed-success');
    if(s.letters[k])el.classList.add('filled');
    if(s.revealed[k]&&!pendingDelayedRevealKeys.has(k))el.classList.add('revealed');
    if(z.ids.includes(W))el.classList.add('active');
@@ -1508,8 +1496,8 @@ function checkAll(){
   const cs=cells(p);
   if(cs.map(val).join('')===p.word){
    s.completed[i]=true;
-   if(D.levels[L].mode==='junior'||i%3===0)pendingCompletedExplanation=p.word;
-   cs.forEach(x=>pendingBounceKeys.push(x.r+','+x.c));
+   pendingCompletedExplanation=p.word;
+   cs.forEach(x=>pendingCompletedKeys.push(x.r+','+x.c));
    cs.forEach((x,j)=>{s.letters[x.r+','+x.c]=p.word[j]});
    cs.forEach(x=>{
     const z=g.m.get(x.r+','+x.c);
