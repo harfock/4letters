@@ -1011,8 +1011,23 @@ function applyPendingVisualEffects(){
   // intentionally coexist on screen; no global queue serializes unrelated tiles.
   if(flashKeys.length){
    await new Promise(resolve=>setTimeout(resolve,bounceKeys.length?360:0));
-   delayedRevealKeys.forEach(key=>pendingDelayedRevealKeys.delete(key));
-   if(delayedRevealKeys.length)render();
+   // Update only newly revealed cells in place. A full render replaces every
+   // cell node and silently cancels the group bounce that is still running.
+   if(delayedRevealKeys.length){
+    const current=state();
+    delayedRevealKeys.forEach(key=>{
+     pendingDelayedRevealKeys.delete(key);
+     const tile=document.querySelector('.cell[data-key="'+key+'"]');
+     if(!tile)return;
+     const number=tile.querySelector('.num');
+     tile.innerHTML='';
+     if(number)tile.append(number);
+     tile.append(document.createTextNode(current.revealed[key]||''));
+     tile.classList.add('revealed');
+    });
+    renderCandidates(current);
+    save();
+   }
    const flashPromises=[];
    [...new Set(flashKeys)].forEach(key=>{
     const tile=document.querySelector('.cell[data-key="'+key+'"]');
